@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.services.*;
 
@@ -23,43 +24,53 @@ public class PerfilController {
     @Autowired
     private PerfilService perfilService;
 
-    // Peticion GET para obtener todos los perfiles
+    // Método GET para obtener todos los perfiles
     @GetMapping
     public ArrayList<PerfilModel> getPerfiles() {
+        // Llama al servicio para obtener la lista de perfiles y la retorna
         return this.perfilService.getPerfiles();
     }
 
-    // Peticion POST para guardar un perfil
+    // Método POST para guardar un nuevo perfil
     @PostMapping
     public ResponseEntity<?> savePerfil(@RequestBody PerfilModel perfil) {
-         try {
-            // Intentamos guardar el perfil
+        try {
+            // Intenta guardar el perfil recibido en el cuerpo de la petición
             PerfilModel savedPerfil = this.perfilService.savePerfil(perfil);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPerfil);  // Devuelve el perfil guardado con estado 201 (CREATED)
+            // Devuelve el perfil guardado con estado HTTP 201 (CREATED)
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPerfil);
         } catch (Exception e) {
-            // Si ocurre un error, devolvemos un mensaje con código de error 500 (Internal Server Error)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el perfil: " + e.getMessage());
+            // En caso de error, devuelve estado HTTP 500 (INTERNAL SERVER ERROR) con el mensaje del error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar el perfil: " + e.getMessage());
         }
     }
 
+    // Método GET para obtener un perfil por su ID
     @GetMapping(path = "/{id}")
     public Optional<PerfilModel> getPerfilById(@PathVariable("id") Long id) {
+        // Llama al servicio para buscar el perfil por ID
         return this.perfilService.getById(id);
     }
 
+    // Método POST para actualizar un perfil existente según su ID
     @PostMapping(path = "/{id}")
     public PerfilModel updatePerfilById(@RequestBody PerfilModel request, @PathVariable("id") Long id) {
+        // Llama al servicio para actualizar el perfil con los nuevos datos
         return this.perfilService.updateByID(request, id);
     }
 
+    // Método DELETE para eliminar un perfil por su ID
     @DeleteMapping(path = "/{id}")
     public String deleteById(@PathVariable("id") Long id) {
+        // Intenta eliminar el perfil con el ID especificado
         boolean ok = this.perfilService.deletePerfil(id);
 
-        if(ok) {
+        // Devuelve un mensaje indicando si la eliminación fue exitosa o no
+        if (ok) {
             return "Se ha eliminado el perfil con id: " + id;
         } else {
             return "No se ha podido eliminar el perfil con id: " + id;
         }
     }
-} 
+}

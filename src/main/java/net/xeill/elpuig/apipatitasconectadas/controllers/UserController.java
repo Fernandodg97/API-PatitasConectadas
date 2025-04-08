@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.services.*;
 
@@ -42,16 +43,19 @@ public class UserController {
         }
     }
 
+    // Peticion GET para obtener un usuario por su ID
     @GetMapping(path = "/{id}")
     public Optional<UserModel> getUserById(@PathVariable("id") Long id) {
         return this.userService.getById(id);
     }
 
+    // Peticion POST para actualizar un usuario por su ID
     @PostMapping(path = "/{id}")
     public UserModel updateUserById(@RequestBody UserModel request,@PathVariable("id") Long id){
         return this.userService.updateByID(request, id);
     }
 
+    // Peticion DELETE para eliminar un usuario por su ID
     @DeleteMapping(path = "/{id}")
     public String deleteById(@PathVariable("id") Long id){
         boolean ok = this.userService.deleteUser(id);

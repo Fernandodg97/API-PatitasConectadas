@@ -1,25 +1,35 @@
+
 package net.xeill.elpuig.apipatitasconectadas.models;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "usuario")
 public class UserModel {
 
+    // ID autogenerado
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // La base de datos genera automáticamente el ID (auto-incremental)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
-    
-    @Column
+
+    // Campo que representa el nombre del usuario
+    @Column(length = 50, nullable = false)
     private String nombre;
 
-    @Column
+    // Campo que representa el apellido del usuario
+    @Column(length = 50, nullable = false)
     private String apellido;
 
-    @Column
+    // Campo que representa el correo electrónico del usuario
+    @Column(length = 50, nullable = false)
     private String correo;
 
-    @Column
+    // Campo que representa la contraseña del usuario
+    @Column(length = 250, nullable = false)
     private String contrasena;
+
+    // Getters y Setters
 
     public Long getId() {
         return id;
