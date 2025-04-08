@@ -1,6 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class UserService {
     public ArrayList<UserModel> getUsers() {
         //findAll() es un metodo que me permite obtener todos los registros de la tabla
         return (ArrayList<UserModel>) userRepository.findAll();
+    }
+
+    public List<UserModel> getUsers(String apellido){
+        return userRepository.findByApellidoStartsWith(apellido);
     }
 
     //Metodo que me permite guardar un usuario

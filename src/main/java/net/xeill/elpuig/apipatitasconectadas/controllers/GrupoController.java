@@ -1,0 +1,65 @@
+package net.xeill.elpuig.apipatitasconectadas.controllers;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import net.xeill.elpuig.apipatitasconectadas.models.*;
+import net.xeill.elpuig.apipatitasconectadas.services.*;
+
+@RestController
+@RequestMapping("/grupos")
+public class GrupoController {
+
+    @Autowired
+    private GrupoService grupoService;
+
+    // Peticion GET para obtener todos los grupos
+    @GetMapping
+    public ArrayList<GrupoModel> getGrupos() {
+        return this.grupoService.getGrupos();
+    }
+
+    // Peticion POST para guardar un grupo
+    @PostMapping
+    public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo) {
+         try {
+            // Intentamos guardar el grupo
+            GrupoModel savedGrupo = this.grupoService.saveGrupo(grupo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedGrupo);  // Devuelve el grupo guardado con estado 201 (CREATED)
+        } catch (Exception e) {
+            // Si ocurre un error, devolvemos un mensaje con código de error 500 (Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar el grupo: " + e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/{id}")
+    public Optional<GrupoModel> getGrupoById(@PathVariable("id") Long id) {
+        return this.grupoService.getById(id);
+    }
+
+    @PostMapping(path = "/{id}")
+    public GrupoModel updateGrupoById(@RequestBody GrupoModel request, @PathVariable("id") Long id) {
+        return this.grupoService.updateByID(request, id);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public String deleteById(@PathVariable("id") Long id) {
+        boolean ok = this.grupoService.deleteGrupo(id);
+
+        if(ok) {
+            return "Se ha eliminado el grupo con id: " + id;
+        } else {
+            return "No se ha podido eliminar el grupo con id: " + id;
+        }
+    }
+} 

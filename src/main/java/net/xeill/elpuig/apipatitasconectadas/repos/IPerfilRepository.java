@@ -4,13 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import net.xeill.elpuig.apipatitasconectadas.models.*;
-import java.util.List;
-
 
 //Clase que me permite realizar las consultas a la base de datos
-
 @Repository
-public interface IUserRepository extends JpaRepository<UserModel, Long> {
+public interface IPerfilRepository extends JpaRepository<PerfilModel, Long> {
 
-    List<UserModel> findByApellidoStartsWith(String apellido);
-}
+} 
