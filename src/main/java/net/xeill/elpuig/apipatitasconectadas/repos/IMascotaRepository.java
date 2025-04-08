@@ -3,10 +3,17 @@ package net.xeill.elpuig.apipatitasconectadas.repos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import net.xeill.elpuig.apipatitasconectadas.models.*;
+import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
 
-//Clase que me permite realizar las consultas a la base de datos
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface IMascotaRepository extends JpaRepository<MascotaModel, Long> {
 
-} 
+    // Obtener todas las mascotas de un usuario
+    List<MascotaModel> findByUsuarioId(Long usuarioId);
+
+    // Buscar una mascota específica de un usuario
+    Optional<MascotaModel> findByIdAndUsuarioId(Long id, Long usuarioId);
+}

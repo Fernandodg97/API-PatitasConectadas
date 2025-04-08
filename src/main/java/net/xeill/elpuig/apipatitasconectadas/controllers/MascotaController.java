@@ -1,6 +1,6 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,45 +12,50 @@ import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
 import net.xeill.elpuig.apipatitasconectadas.services.MascotaService;
 
 @RestController
-@RequestMapping("/mascotas")
+@RequestMapping("/usuarios/{usuarioId}/mascotas")
 public class MascotaController {
 
     @Autowired
     private MascotaService mascotaService;
 
-    // Petición GET para obtener todas las mascotas
+    // Obtener todas las mascotas de un usuario
     @GetMapping
-    public ArrayList<MascotaModel> getMascotas() {
-        return this.mascotaService.getMascotas();
+    public ResponseEntity<?> getMascotasByUsuario(@PathVariable("usuarioId") Long usuarioId) {
+        List<MascotaModel> mascotas = mascotaService.getMascotasByUsuario(usuarioId);
+        return ResponseEntity.ok(mascotas);
     }
 
-    // Petición POST para guardar una nueva mascota
+    // Guardar una nueva mascota para un usuario
     @PostMapping
-    public ResponseEntity<?> saveMascota(@RequestBody MascotaModel mascota) {
+    public ResponseEntity<?> saveMascota(@PathVariable("usuarioId") Long usuarioId, @RequestBody MascotaModel mascota) {
         try {
-            MascotaModel savedMascota = this.mascotaService.saveMascota(mascota);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedMascota);
+            mascota.setUsuarioId(usuarioId); // Aseguramos que se asigne el ID del usuario
+            MascotaModel saved = mascotaService.saveMascota(mascota);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error al guardar la mascota: " + e.getMessage());
         }
     }
 
-    // Petición GET para obtener una mascota por su ID
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getMascotaById(@PathVariable("id") Long id) {
-        Optional<MascotaModel> mascota = this.mascotaService.getById(id);
+    // Obtener una mascota específica de un usuario
+    @GetMapping("/{mascotaId}")
+    public ResponseEntity<?> getMascotaById(@PathVariable("usuarioId") Long usuarioId,
+                                            @PathVariable("mascotaId") Long mascotaId) {
+        Optional<MascotaModel> mascota = mascotaService.getByIdAndUsuarioId(mascotaId, usuarioId);
         return mascota.isPresent()
             ? ResponseEntity.ok(mascota.get())
-            : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mascota no encontrada con ID: " + id);
+            : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mascota no encontrada con ID: " + mascotaId);
     }
 
-    // Petición PUT para actualizar una mascota por su ID
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateMascotaById(@RequestBody MascotaModel request, @PathVariable("id") Long id) {
+    // Actualizar una mascota específica de un usuario
+    @PutMapping("/{mascotaId}")
+    public ResponseEntity<?> updateMascota(@PathVariable("usuarioId") Long usuarioId,
+                                           @PathVariable("mascotaId") Long mascotaId,
+                                           @RequestBody MascotaModel request) {
         try {
-            MascotaModel updatedMascota = this.mascotaService.updateByID(request, id);
-            return ResponseEntity.ok(updatedMascota);
+            MascotaModel updated = mascotaService.updateByIdAndUsuarioId(request, mascotaId, usuarioId);
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -59,15 +64,15 @@ public class MascotaController {
         }
     }
 
-    // Petición DELETE para eliminar una mascota por su ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMascotaById(@PathVariable("id") Long id) {
-        boolean ok = this.mascotaService.deleteMascota(id);
-        if (ok) {
-            return ResponseEntity.ok("Mascota eliminada con ID: " + id);
+    // Eliminar una mascota específica de un usuario
+    @DeleteMapping("/{mascotaId}")
+    public ResponseEntity<?> deleteMascota(@PathVariable("usuarioId") Long usuarioId,
+                                           @PathVariable("mascotaId") Long mascotaId) {
+        boolean deleted = mascotaService.deleteMascotaByUsuario(mascotaId, usuarioId);
+        if (deleted) {
+            return ResponseEntity.ok("Mascota eliminada con ID: " + mascotaId);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("No se pudo eliminar la mascota con ID: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mascota no encontrada o no pertenece al usuario");
         }
     }
 }
