@@ -7,6 +7,6 @@ import net.xeill.elpuig.apipatitasconectadas.models.*;
 
 //Clase que me permite realizar las consultas a la base de datos
 @Repository
-public interface IGrupoRepository extends JpaRepository<GrupoModel, Long> {
+public interface EventoRepository extends JpaRepository<EventoModel, Long> {
 
 } 

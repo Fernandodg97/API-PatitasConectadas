@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface IMascotaRepository extends JpaRepository<MascotaModel, Long> {
+public interface MascotaRepository extends JpaRepository<MascotaModel, Long> {
 
     // Obtener todas las mascotas de un usuario
     List<MascotaModel> findByUsuarioId(Long usuarioId);

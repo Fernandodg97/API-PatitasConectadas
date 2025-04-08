@@ -11,9 +11,8 @@ import net.xeill.elpuig.apipatitasconectadas.repos.*;
 @Service
 public class GrupoService {
 
-    //Sirve para injectar dependencias
     @Autowired
-    IGrupoRepository grupoRepository;
+    GrupoRepository grupoRepository;
 
     //Metodo que me permite obtener todos los grupos
     public ArrayList<GrupoModel> getGrupos() {

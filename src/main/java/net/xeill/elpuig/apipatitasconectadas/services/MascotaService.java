@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
-import net.xeill.elpuig.apipatitasconectadas.repos.IMascotaRepository;
+import net.xeill.elpuig.apipatitasconectadas.repos.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class MascotaService {
 
     @Autowired
-    IMascotaRepository mascotaRepository;
+    MascotaRepository mascotaRepository;
 
     // Obtener todas las mascotas de un usuario
     public List<MascotaModel> getMascotasByUsuario(Long usuarioId) {

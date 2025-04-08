@@ -8,7 +8,7 @@
 
 // //Clase que me permite realizar las consultas a la base de datos
 // @Repository
-// public interface IUsuarioGrupoRepository extends JpaRepository<UsuarioGrupoModel, Long> {
+// public interface UsuarioGrupoRepository extends JpaRepository<UsuarioGrupoModel, Long> {
     
 //     // Método para encontrar todos los grupos a los que pertenece un usuario
 //     List<UsuarioGrupoModel> findByUsuario_id(Long usuario_id);

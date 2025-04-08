@@ -7,28 +7,25 @@ import org.springframework.transaction.annotation.Transactional;
 import net.xeill.elpuig.apipatitasconectadas.models.PostModel;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import net.xeill.elpuig.apipatitasconectadas.models.GrupoModel;
-import net.xeill.elpuig.apipatitasconectadas.repos.IPostRepository;
-import net.xeill.elpuig.apipatitasconectadas.repos.IUserRepository;
-import net.xeill.elpuig.apipatitasconectadas.repos.IGrupoRepository;
+import net.xeill.elpuig.apipatitasconectadas.repos.*;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
 
     @Autowired
-    private IPostRepository postRepository;
+    private PostRepository postRepository;
     
     @Autowired
-    private IUserRepository userRepository;
+    private UserRepository userRepository;
     
     @Autowired
-    private IGrupoRepository grupoRepository;
+    private GrupoRepository grupoRepository;
 
     public List<PostModel> getPosts() {
         return postRepository.findAll();

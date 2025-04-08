@@ -14,7 +14,7 @@ public class UserService {
 
     //Sirve para injectar dependencias
     @Autowired
-    IUserRepository userRepository;
+    UserRepository userRepository;
 
     //Metodo que me permite obtener todos los usuarios
     public ArrayList<UserModel> getUsers() {

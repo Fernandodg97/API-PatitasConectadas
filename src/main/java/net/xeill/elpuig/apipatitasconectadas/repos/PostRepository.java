@@ -12,7 +12,7 @@ import java.util.List;
 //Clase que me permite realizar las consultas a la base de datos
 
 @Repository
-public interface IPostRepository extends JpaRepository<PostModel, Long> {
+public interface PostRepository extends JpaRepository<PostModel, Long> {
 
     List<PostModel> findByCreador(UserModel creador);
     

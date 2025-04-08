@@ -10,7 +10,7 @@ import java.util.List;
 //Clase que me permite realizar las consultas a la base de datos
 
 @Repository
-public interface IUserRepository extends JpaRepository<UserModel, Long> {
+public interface UserRepository extends JpaRepository<UserModel, Long> {
 
     List<UserModel> findByApellidoStartsWith(String apellido);
 }

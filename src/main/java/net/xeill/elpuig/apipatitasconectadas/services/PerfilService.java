@@ -13,7 +13,7 @@ public class PerfilService {
 
     //Sirve para injectar dependencias
     @Autowired
-    IPerfilRepository perfilRepository;
+    PerfilRepository perfilRepository;
 
     //Metodo que me permite obtener todos los perfiles
     public ArrayList<PerfilModel> getPerfiles() {
