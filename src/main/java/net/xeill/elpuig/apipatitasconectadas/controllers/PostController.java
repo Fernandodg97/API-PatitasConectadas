@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/publicaciones")
+@RequestMapping("/posts")
 public class PostController {
 
     @Autowired
@@ -129,7 +129,7 @@ public class PostController {
     }
 
     // Petición GET para obtener todas las publicaciones de un usuario específico
-    @GetMapping("/usuarios/{userId}/publicaciones")
+    @GetMapping("/usuarios/{userId}/posts")
     public ResponseEntity<?> getPostsByUser(@PathVariable Long userId) {
         try {
             List<PostModel> posts = postService.getPostsByUser(userId);
@@ -143,7 +143,7 @@ public class PostController {
     }
 
     // Petición GET para obtener todas las publicaciones de un grupo específico
-    @GetMapping("/grupos/{grupoId}/publicaciones")
+    @GetMapping("/grupos/{grupoId}/posts")
     public ResponseEntity<?> getPostsByGrupo(@PathVariable Long grupoId) {
         try {
             List<PostModel> posts = postService.getPostsByGrupo(grupoId);

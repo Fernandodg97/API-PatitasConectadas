@@ -21,13 +21,13 @@ public class UserModel {
     @Column(length = 50, nullable = false)
     private String apellido;
 
-    // Campo que representa el correo electrónico del usuario
+    // Campo que representa el email electrónico del usuario
     @Column(length = 50, nullable = false)
-    private String correo;
+    private String email;
 
     // Campo que representa la contraseña del usuario
     @Column(length = 250, nullable = false)
-    private String contrasena;
+    private String password;
 
     // Getters y Setters
 
@@ -55,19 +55,19 @@ public class UserModel {
         this.apellido = apellido;
     }
 
-    public String getCorreo() {
-        return correo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getContrasena() {
-        return contrasena;
+    public String getPassword() {
+        return password;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -44,8 +44,8 @@ public class UserService {
 
         user.setNombre(request.getNombre());
         user.setApellido(request.getApellido());
-        user.setCorreo(request.getCorreo());
-        user.setContrasena(request.getContrasena());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
 
         return user;
     }
