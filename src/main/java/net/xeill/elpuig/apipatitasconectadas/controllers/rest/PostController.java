@@ -1,4 +1,4 @@
-package net.xeill.elpuig.apipatitasconectadas.controllers;
+package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

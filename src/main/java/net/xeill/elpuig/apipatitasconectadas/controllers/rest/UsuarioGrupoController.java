@@ -1,3 +1,4 @@
+package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 // package net.xeill.elpuig.apipatitasconectadas.controllers;
 
 // import java.util.ArrayList;
