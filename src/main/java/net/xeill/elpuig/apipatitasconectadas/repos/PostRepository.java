@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 
 import java.util.List;
+import java.util.Optional;
 
 //Clase que me permite realizar las consultas a la base de datos
 
@@ -26,4 +27,10 @@ public interface PostRepository extends JpaRepository<PostModel, Long> {
     @Query("SELECT p FROM PostModel p WHERE p.fecha >= :startDate AND p.fecha <= :endDate")
     List<PostModel> findByDateRange(@Param("startDate") java.time.LocalDateTime startDate, 
                                   @Param("endDate") java.time.LocalDateTime endDate);
+    
+    @Query("SELECT p FROM PostModel p JOIN FETCH p.creador WHERE p.id = :id")
+    Optional<PostModel> findByIdWithCreador(@Param("id") Long id);
+    
+    @Query("SELECT p FROM PostModel p JOIN FETCH p.creador")
+    List<PostModel> findAllWithCreador();
 }

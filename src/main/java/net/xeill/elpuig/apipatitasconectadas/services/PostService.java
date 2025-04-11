@@ -28,7 +28,7 @@ public class PostService {
     private GrupoRepository grupoRepository;
 
     public List<PostModel> getPosts() {
-        return postRepository.findAll();
+        return postRepository.findAllWithCreador();
     }
 
     @Transactional
@@ -39,7 +39,7 @@ public class PostService {
     }
 
     public PostModel getById(Long id) {
-        return postRepository.findById(id)
+        return postRepository.findByIdWithCreador(id)
             .orElseThrow(() -> new EntityNotFoundException("Post no encontrado con id: " + id));
     }
 

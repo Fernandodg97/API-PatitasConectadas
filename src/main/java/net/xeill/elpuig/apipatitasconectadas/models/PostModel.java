@@ -23,7 +23,7 @@ public class PostModel {
     private UserModel creador;
 
     @Column
-    @Size(max = 1000, message = "El contenido no puede tener más de 1000 caracteres")
+    @Size(max = 255, message = "El contenido no puede tener más de 1000 caracteres")
     private String contenido;
 
     @Column(nullable = false)
