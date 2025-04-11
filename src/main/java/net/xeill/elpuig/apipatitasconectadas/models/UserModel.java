@@ -1,7 +1,7 @@
-
 package net.xeill.elpuig.apipatitasconectadas.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -29,6 +29,7 @@ public class UserModel {
     private String email;
 
     // Campo que representa la contraseña del usuario
+    @JsonIgnore
     @Column(length = 250, nullable = false)
     private String password;
 
