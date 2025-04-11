@@ -1,0 +1,4 @@
+Desarollo:
+Esta carpeta almacena objetos de transferencia de datos, estos se utilizan para enviar al cliente los datos requeridos. 
+
+¿Implementar?
