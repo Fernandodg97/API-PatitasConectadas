@@ -67,3 +67,96 @@ Configure the webserver, if you installed pgadmin4-web:
 ```bash
 sudo /usr/pgadmin4/bin/setup-web.sh
 ```
+
+# Documentación API - Módulo de Perfiles
+
+## Descripción General
+Este módulo permite gestionar los perfiles de usuarios en el sistema. Cada perfil está asociado a un usuario específico y contiene información personal como descripción, fecha de nacimiento e imagen.
+
+## Endpoints
+
+### 1. Obtener todos los perfiles
+- **Método**: GET
+- **URL**: `/perfiles`
+- **Descripción**: Retorna una lista de todos los perfiles existentes en el sistema
+- **Respuesta Exitosa**:
+  ```json
+  [
+    {
+      "id": 1,
+      "usuario_id": 123,
+      "descripcion": "Descripción del perfil",
+      "fecha_nacimiento": "1990-01-01",
+      "img": "url_imagen"
+    }
+  ]
+  ```
+
+### 2. Crear un nuevo perfil
+- **Método**: POST
+- **URL**: `/perfiles`
+- **Descripción**: Crea un nuevo perfil en el sistema
+- **Cuerpo de la Petición**:
+  ```json
+  {
+    "usuario_id": 123,
+    "descripcion": "Descripción del perfil",
+    "fecha_nacimiento": "1990-01-01",
+    "img": "url_imagen"
+  }
+  ```
+- **Respuesta Exitosa** (201 Created):
+  ```json
+  {
+    "id": 1,
+    "usuario_id": 123,
+    "descripcion": "Descripción del perfil",
+    "fecha_nacimiento": "1990-01-01",
+    "img": "url_imagen"
+  }
+  ```
+
+### 3. Obtener perfil por ID de usuario
+- **Método**: GET
+- **URL**: `/usuarios/{id}/perfiles`
+- **Descripción**: Obtiene el perfil asociado a un usuario específico
+- **Parámetros URL**:
+  - `id`: ID del usuario
+
+### 4. Actualizar perfil
+- **Método**: POST
+- **URL**: `/usuarios/{id}/perfiles`
+- **Descripción**: Actualiza la información de un perfil existente
+- **Parámetros URL**:
+  - `id`: ID del usuario
+
+### 5. Eliminar perfil
+- **Método**: DELETE
+- **URL**: `/usuarios/{id}/perfiles`
+- **Descripción**: Elimina un perfil del sistema
+- **Parámetros URL**:
+  - `id`: ID del usuario
+
+## Modelo de Datos
+
+### PerfilModel
+```json
+{
+  "id": "Long",
+  "usuario_id": "Long",
+  "descripcion": "String",
+  "fecha_nacimiento": "Date (formato: YYYY-MM-DD)",
+  "img": "String (URL de la imagen)"
+}
+```
+
+## Consideraciones Importantes
+1. El campo `fecha_nacimiento` debe ser enviado en formato YYYY-MM-DD
+2. El campo `img` debe contener la URL completa de la imagen
+3. El `usuario_id` debe corresponder a un usuario existente en el sistema
+4. Todos los endpoints requieren autenticación
+
+## Manejo de Errores
+- Los errores 500 indican problemas del servidor
+- Los errores 404 indican que el recurso no fue encontrado
+- Los errores 400 indican que la petición es inválida
