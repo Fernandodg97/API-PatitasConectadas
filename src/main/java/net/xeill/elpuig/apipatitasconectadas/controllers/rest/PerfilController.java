@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.xeill.elpuig.apipatitasconectadas.models.*;
-import net.xeill.elpuig.apipatitasconectadas.services.*;
+import net.xeill.elpuig.apipatitasconectadas.models.PerfilModel;
+import net.xeill.elpuig.apipatitasconectadas.services.PerfilService;
 
 @RestController
 public class PerfilController {
@@ -51,8 +52,8 @@ public class PerfilController {
         return this.perfilService.getById(id);
     }
 
-    // Método POST para actualizar un perfil existente según su ID
-    @PostMapping(path = "/usuarios/{id}/perfiles")
+    // Método PUT para actualizar un perfil existente según su ID
+    @PutMapping(path = "/usuarios/{id}/perfiles")
     public PerfilModel updatePerfilById(@RequestBody PerfilModel request, @PathVariable("id") Long id) {
         // Llama al servicio para actualizar el perfil con los nuevos datos
         return this.perfilService.updateByID(request, id);
