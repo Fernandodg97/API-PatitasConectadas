@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import net.xeill.elpuig.apipatitasconectadas.models.PerfilModel;
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
-import net.xeill.elpuig.apipatitasconectadas.repos.UserRepository;
-import net.xeill.elpuig.apipatitasconectadas.repos.PerfilRepository;
-import net.xeill.elpuig.apipatitasconectadas.repos.MascotaRepository;
+import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 import net.xeill.elpuig.apipatitasconectadas.security.JwtUtil;
 import net.xeill.elpuig.apipatitasconectadas.services.AuthService;
 

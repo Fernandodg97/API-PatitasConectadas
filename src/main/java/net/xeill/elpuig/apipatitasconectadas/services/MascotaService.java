@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
-import net.xeill.elpuig.apipatitasconectadas.repos.*;
+import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
 import java.util.List;
 import java.util.Optional;

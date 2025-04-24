@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import net.xeill.elpuig.apipatitasconectadas.models.PostModel;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import net.xeill.elpuig.apipatitasconectadas.models.GrupoModel;
-import net.xeill.elpuig.apipatitasconectadas.repos.*;
+import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;

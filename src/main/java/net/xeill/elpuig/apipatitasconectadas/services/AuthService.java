@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import net.xeill.elpuig.apipatitasconectadas.repos.UserRepository;
+import net.xeill.elpuig.apipatitasconectadas.repositories.UserRepository;
 import net.xeill.elpuig.apipatitasconectadas.security.JwtUtil;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import java.util.HashMap;

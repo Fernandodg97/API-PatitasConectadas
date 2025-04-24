@@ -1,4 +1,4 @@
-package net.xeill.elpuig.apipatitasconectadas.repos;
+package net.xeill.elpuig.apipatitasconectadas.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

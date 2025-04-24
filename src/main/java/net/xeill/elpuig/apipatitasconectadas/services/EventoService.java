@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
-import net.xeill.elpuig.apipatitasconectadas.repos.*;
+import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
 @Service
 public class EventoService {
