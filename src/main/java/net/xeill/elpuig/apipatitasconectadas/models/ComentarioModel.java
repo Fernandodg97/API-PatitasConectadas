@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "comentario")
 public class ComentarioModel {
@@ -17,7 +19,8 @@ public class ComentarioModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private GrupoModel grupo;
+    @JsonBackReference
+    private PostModel post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -52,12 +55,12 @@ public class ComentarioModel {
         this.id = id;
     }
 
-    public GrupoModel getGrupo() {
-        return grupo;
+    public PostModel getPost() {
+        return post;
     }
 
-    public void setGrupo(GrupoModel grupo) {
-        this.grupo = grupo;
+    public void setPost(PostModel post) {
+        this.post = post;
     }
 
     public UserModel getCreador() {

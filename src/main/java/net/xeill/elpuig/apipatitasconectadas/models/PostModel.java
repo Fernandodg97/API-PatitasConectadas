@@ -1,10 +1,16 @@
 package net.xeill.elpuig.apipatitasconectadas.models;
+
 import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "post")
@@ -40,6 +46,13 @@ public class PostModel {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // RELACIÓN CON COMENTARIOS
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ComentarioModel> comentarios;
+
+    // Getters y Setters
 
     public Long getId() {
         return id;
@@ -104,5 +117,12 @@ public class PostModel {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public List<ComentarioModel> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<ComentarioModel> comentarios) {
+        this.comentarios = comentarios;
+    }
 }
-    

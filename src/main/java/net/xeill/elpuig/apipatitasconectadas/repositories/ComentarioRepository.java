@@ -14,16 +14,15 @@ import java.util.List;
 @Repository
 public interface ComentarioRepository extends JpaRepository<ComentarioModel, Long> {
 
+    List<ComentarioModel> findByPostId(Long postId);
+
     List<ComentarioModel> findByCreador(UserModel creador);
-    
-    List<ComentarioModel> findByGrupo(GrupoModel grupo);
-    
-    List<ComentarioModel> findByCreadorAndGrupo(UserModel creador, GrupoModel grupo);
-    
-    @Query("SELECT p FROM PostModel p WHERE p.contenido LIKE %:searchTerm%")
+
+    @Query("SELECT c FROM ComentarioModel c WHERE c.contenido LIKE %:searchTerm%")
     List<ComentarioModel> searchByContent(@Param("searchTerm") String searchTerm);
-    
-    @Query("SELECT p FROM PostModel p WHERE p.fecha >= :startDate AND p.fecha <= :endDate")
-    List<ComentarioModel> findByDateRange(@Param("startDate") java.time.LocalDateTime startDate, 
-                                  @Param("endDate") java.time.LocalDateTime endDate);
+
+    @Query("SELECT c FROM ComentarioModel c WHERE c.fecha >= :startDate AND c.fecha <= :endDate")
+    List<ComentarioModel> findByDateRange(@Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate);
+
 }
