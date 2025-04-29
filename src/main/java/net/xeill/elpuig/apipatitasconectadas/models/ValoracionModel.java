@@ -2,6 +2,8 @@ package net.xeill.elpuig.apipatitasconectadas.models;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,7 +28,7 @@ public class ValoracionModel {
     private UserModel receptor;
 
     @Column(nullable = false)
-    @Size(message = "La puntuacion es obligatoria")
+    @Min(1) @Max(5) // Si es una puntuación de 1 a 5
     private String puntuacion;
 
     @Column(nullable = false)
