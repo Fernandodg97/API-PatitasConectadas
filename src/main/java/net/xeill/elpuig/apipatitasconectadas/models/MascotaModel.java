@@ -21,7 +21,7 @@ public class MascotaModel {
     private String nombre;
 
     // Género de la mascota (por ejemplo: "Macho" o "Hembra")
-    @Column(length = 5, nullable = false)
+    @Column(length = 10, nullable = false)
     private String genero;
 
     // Raza de la mascota
