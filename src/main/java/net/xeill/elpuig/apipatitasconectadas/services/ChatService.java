@@ -76,7 +76,7 @@ public class ChatService {
 
     // Método para eliminar la conversación entre dos usuarios
     public void eliminarConversacion(Long usuario1Id, Long usuario2Id) {
-        List<ChatModel> conversacion = chatRepository.findConversacionByUsuarios(usuario1Id, usuario2Id);
+        List<ChatModel> conversacion = chatRepository.findConversacion(usuario1Id, usuario2Id);
         
         if (conversacion != null && !conversacion.isEmpty()) {
             chatRepository.deleteAll(conversacion);

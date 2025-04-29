@@ -25,7 +25,4 @@ public interface ChatRepository extends JpaRepository<ChatModel, Long> {
     
     // Obtener todos los mensajes recibidos por un usuario
     List<ChatModel> findByReceptorId(Long receptorId);
-
-    // Método para obtener los mensajes entre dos usuarios
-    List<ChatModel> findConversacionByUsuarios(Long usuario1Id, Long usuario2Id);
 } 
