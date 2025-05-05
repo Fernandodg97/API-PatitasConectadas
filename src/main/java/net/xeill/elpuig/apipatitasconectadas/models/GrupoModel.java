@@ -3,7 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
-
+//@JsonManagedReference
+//@JsonBackReference
 @Entity
 @Table(name = "grupo")
 public class GrupoModel {

@@ -63,8 +63,8 @@ public class UsuarioGrupoController {
                         .body("No se encontró la relación usuario-grupo"));
     }
 
-    // POST para actualizar relación
-    @PostMapping("/{id}")
+    // Actualizar relación
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUsuarioGrupoById(@PathVariable Long id,
             @RequestBody UsuarioGrupoModel usuarioGrupo) {
         Long usuarioId = usuarioGrupo.getUsuario().getId();

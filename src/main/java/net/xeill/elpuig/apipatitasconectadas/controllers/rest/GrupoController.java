@@ -1,6 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.GrupoModelDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.GrupoModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.services.*;
 
@@ -33,14 +37,15 @@ public class GrupoController {
 
     // Petición GET que devuelve todos los grupos existentes
     @GetMapping
-    public ArrayList<GrupoModel> getGrupos() {
-        return this.grupoService.getGrupos();
+    public List<GrupoModelDtoResponse> getGrupos() {
+        return this.grupoService.getGrupos().stream().map(GrupoModelDtoResponse::new).toList();
     }
 
     // Petición POST para guardar un nuevo grupo y asignar al usuario como Admin
 @PostMapping
-public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo, @RequestParam Long usuarioId) {
+public ResponseEntity<?> saveGrupo(@RequestBody GrupoModelDtoRequest request, @RequestParam Long usuarioId) {
     try {
+        GrupoModel grupo = request.toDomain();  // Convertir DTO a entidad GrupoModel
         // Guardar el grupo
         GrupoModel savedGrupo = this.grupoService.saveGrupo(grupo);
 
@@ -66,7 +71,7 @@ public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo, @RequestParam 
         // Guardar el grupo actualizado con la relación de usuario
         this.grupoService.saveGrupo(savedGrupo);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedGrupo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GrupoModelDtoResponse(savedGrupo));
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error al guardar el grupo: " + e.getMessage());
@@ -81,7 +86,7 @@ public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo, @RequestParam 
     }
 
     // Petición POST para actualizar un grupo por su ID
-    @PostMapping(path = "/{id}")
+    @PutMapping(path = "/{id}")
     public GrupoModel updateGrupoById(@RequestBody GrupoModel request, @PathVariable("id") Long id) {
         // Se llama al servicio para actualizar el grupo correspondiente
         return this.grupoService.updateByID(request, id);
