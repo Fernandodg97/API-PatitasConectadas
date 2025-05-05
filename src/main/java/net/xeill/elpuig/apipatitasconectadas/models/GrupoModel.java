@@ -1,4 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.models;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +16,9 @@ public class GrupoModel {
 
     @Column(nullable = false)
     private String descripcion;
+
+    @OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioGrupoModel> usuarios = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -36,5 +42,13 @@ public class GrupoModel {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public List<UsuarioGrupoModel> getUsuarios() {
+        return usuarios;
+    }
+    
+    public void setUsuarios(List<UsuarioGrupoModel> usuarios) {
+        this.usuarios = usuarios;
     }
 } 

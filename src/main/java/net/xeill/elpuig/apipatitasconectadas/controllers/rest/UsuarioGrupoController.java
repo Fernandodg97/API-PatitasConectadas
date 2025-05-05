@@ -1,88 +1,122 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
-// package net.xeill.elpuig.apipatitasconectadas.controllers;
 
-// import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Optional;
+import java.util.List;
+import java.util.Optional;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.DeleteMapping;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PathVariable;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestBody;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RestController;
-// import net.xeill.elpuig.apipatitasconectadas.models.*;
-// import net.xeill.elpuig.apipatitasconectadas.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-// @RestController
-// @RequestMapping("/usuario-grupo")
-// public class UsuarioGrupoController {
+import net.xeill.elpuig.apipatitasconectadas.models.*;
+import net.xeill.elpuig.apipatitasconectadas.services.*;
 
-//     @Autowired
-//     private UsuarioGrupoService usuarioGrupoService;
+@RestController
+@RequestMapping("/usuario-grupo")
+public class UsuarioGrupoController {
 
-//     // Peticion GET para obtener todas las relaciones usuario-grupo
-//     @GetMapping
-//     public ArrayList<UsuarioGrupoModel> getUsuarioGrupos() {
-//         return this.usuarioGrupoService.getUsuarioGrupos();
-//     }
+    @Autowired
+    private UsuarioGrupoService usuarioGrupoService;
 
-//     // Peticion POST para guardar una relación usuario-grupo
-//     @PostMapping
-//     public ResponseEntity<?> saveUsuarioGrupo(@RequestBody UsuarioGrupoModel usuarioGrupo) {
-//          try {
-//             // Intentamos guardar la relación usuario-grupo
-//             UsuarioGrupoModel savedUsuarioGrupo = this.usuarioGrupoService.saveUsuarioGrupo(usuarioGrupo);
-//             return ResponseEntity.status(HttpStatus.CREATED).body(savedUsuarioGrupo);  // Devuelve la relación guardada con estado 201 (CREATED)
-//         } catch (Exception e) {
-//             // Si ocurre un error, devolvemos un mensaje con código de error 500 (Internal Server Error)
-//             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar la relación usuario-grupo: " + e.getMessage());
-//         }
-//     }
+    @Autowired
+    private UserService userService;
 
-//     @GetMapping(path = "/{id}")
-//     public Optional<UsuarioGrupoModel> getUsuarioGrupoById(@PathVariable("id") Long id) {
-//         return this.usuarioGrupoService.getById(id);
-//     }
+    @Autowired
+    private GrupoService grupoService;
 
-//     @PostMapping(path = "/{id}")
-//     public UsuarioGrupoModel updateUsuarioGrupoById(@RequestBody UsuarioGrupoModel request, @PathVariable("id") Long id) {
-//         return this.usuarioGrupoService.updateByID(request, id);
-//     }
+    // GET todas las relaciones
+    @GetMapping
+    public List<UsuarioGrupoModel> getUsuarioGrupos() {
+        return usuarioGrupoService.getUsuarioGrupos();
+    }
 
-//     @DeleteMapping(path = "/{id}")
-//     public String deleteById(@PathVariable("id") Long id) {
-//         boolean ok = this.usuarioGrupoService.deleteUsuarioGrupo(id);
+    // POST para crear una relación usuario-grupo
+    @PostMapping
+    public ResponseEntity<?> saveUsuarioGrupo(@RequestBody UsuarioGrupoModel usuarioGrupo) {
+        try {
+            Long usuarioId = usuarioGrupo.getUsuario().getId();
+            Long grupoId = usuarioGrupo.getGrupo().getId();
 
-//         if(ok) {
-//             return "Se ha eliminado la relación usuario-grupo con id: " + id;
-//         } else {
-//             return "No se ha podido eliminar la relación usuario-grupo con id: " + id;
-//         }
-//     }
-    
-//     // Peticion GET para obtener todos los grupos a los que pertenece un usuario
-//     @GetMapping(path = "/usuario/{usuario_id}")
-//     public List<UsuarioGrupoModel> getGruposByUsuarioId(@PathVariable("usuario_id") Long usuario_id) {
-//         return this.usuarioGrupoService.getGruposByUsuarioId(usuario_id);
-//     }
-    
-//     // Peticion GET para obtener todos los usuarios que pertenecen a un grupo
-//     @GetMapping(path = "/grupo/{grupo_id}")
-//     public List<UsuarioGrupoModel> getUsuariosByGrupoId(@PathVariable("grupo_id") Long grupo_id) {
-//         return this.usuarioGrupoService.getUsuariosByGrupoId(grupo_id);
-//     }
-    
-//     // Peticion GET para obtener la relación específica entre un usuario y un grupo
-//     @GetMapping(path = "/usuario-grupo")
-//     public UsuarioGrupoModel getUsuarioGrupoByUsuarioIdAndGrupoId(
-//             @RequestParam("usuario_id") Long usuario_id,
-//             @RequestParam("grupo_id") Long grupo_id) {
-//         return this.usuarioGrupoService.getUsuarioGrupoByUsuarioIdAndGrupoId(usuario_id, grupo_id);
-//     }
-// } 
+            Optional<UserModel> usuario = userService.getById(usuarioId);
+            Optional<GrupoModel> grupo = grupoService.getById(grupoId);
+
+            if (usuario.isEmpty() || grupo.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o Grupo no encontrado");
+            }
+
+            usuarioGrupo.setUsuario(usuario.get());
+            usuarioGrupo.setGrupo(grupo.get());
+
+            UsuarioGrupoModel saved = usuarioGrupoService.saveUsuarioGrupo(usuarioGrupo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar: " + e.getMessage());
+        }
+    }
+
+    // GET por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUsuarioGrupoById(@PathVariable Long id) {
+        return usuarioGrupoService.getById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontró la relación usuario-grupo"));
+    }
+
+    // POST para actualizar relación
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateUsuarioGrupoById(@PathVariable Long id,
+            @RequestBody UsuarioGrupoModel usuarioGrupo) {
+        Long usuarioId = usuarioGrupo.getUsuario().getId();
+        Long grupoId = usuarioGrupo.getGrupo().getId();
+
+        Optional<UserModel> usuario = userService.getById(usuarioId);
+        Optional<GrupoModel> grupo = grupoService.getById(grupoId);
+
+        if (usuario.isEmpty() || grupo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o Grupo no encontrado");
+        }
+
+        usuarioGrupo.setUsuario(usuario.get());
+        usuarioGrupo.setGrupo(grupo.get());
+
+        UsuarioGrupoModel updated = usuarioGrupoService.updateByID(usuarioGrupo, id);
+        return ResponseEntity.ok(updated);
+    }
+
+    // DELETE por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        boolean ok = usuarioGrupoService.deleteUsuarioGrupo(id);
+        if (ok) {
+            return ResponseEntity.ok("Eliminado correctamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado para eliminar");
+        }
+    }
+
+    // GET grupos por usuario
+    @GetMapping("/usuario/{usuario_id}")
+    public List<UsuarioGrupoModel> getGruposByUsuarioId(@PathVariable("usuario_id") Long usuarioId) {
+        return usuarioGrupoService.getGruposByUsuarioId(usuarioId);
+    }
+
+    // GET usuarios por grupo
+    @GetMapping("/grupo/{grupo_id}")
+    public List<UsuarioGrupoModel> getUsuariosByGrupoId(@PathVariable("grupo_id") Long grupoId) {
+        return usuarioGrupoService.getUsuariosByGrupoId(grupoId);
+    }
+
+    // GET relación específica
+    @GetMapping("/usuario-grupo")
+    public ResponseEntity<?> getUsuarioGrupoByUsuarioIdAndGrupoId(
+            @RequestParam("usuario_id") Long usuarioId,
+            @RequestParam("grupo_id") Long grupoId) {
+        UsuarioGrupoModel relation = usuarioGrupoService.getUsuarioGrupoByUsuarioIdAndGrupoId(usuarioId, grupoId);
+        if (relation != null) {
+            return ResponseEntity.ok(relation);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Relación no encontrada");
+        }
+    }
+}

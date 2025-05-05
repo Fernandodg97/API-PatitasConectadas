@@ -1,51 +1,55 @@
-// package net.xeill.elpuig.apipatitasconectadas.models;
-// import jakarta.persistence.*;
+package net.xeill.elpuig.apipatitasconectadas.models;
+import jakarta.persistence.*;
 
-// @Entity
-// @Table(name = "usuario_grupo")
-// public class UsuarioGrupoModel {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
-    
-//     @Column
-//     private Long grupo_id;
+@Entity
+@Table(name = "usuario_grupo")
+public class UsuarioGrupoModel {
 
-//     @Column(nullable = false)
-//     private Long usuario_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-//     @Column
-//     private String rol;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grupo_id", nullable = false)
+    private GrupoModel grupo;
 
-//     public Long getId() {
-//         return id;
-//     }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private UserModel usuario;
 
-//     public void setId(Long id) {
-//         this.id = id;
-//     }
+    @Column(nullable = false)
+    private String rol;
 
-//     public Long getGrupo_id() {
-//         return grupo_id;
-//     }
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
 
-//     public void setGrupo_id(Long grupo_id) {
-//         this.grupo_id = grupo_id;
-//     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-//     public Long getUsuario_id() {
-//         return usuario_id;
-//     }
+    public GrupoModel getGrupo() {
+        return grupo;
+    }
 
-//     public void setUsuario_id(Long usuario_id) {
-//         this.usuario_id = usuario_id;
-//     }
+    public void setGrupo(GrupoModel grupo) {
+        this.grupo = grupo;
+    }
 
-//     public String getRol() {
-//         return rol;
-//     }
+    public UserModel getUsuario() {
+        return usuario;
+    }
 
-//     public void setRol(String rol) {
-//         this.rol = rol;
-//     }
-// } 
+    public void setUsuario(UserModel usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+}

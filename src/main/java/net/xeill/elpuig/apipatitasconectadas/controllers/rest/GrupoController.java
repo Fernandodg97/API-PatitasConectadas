@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.xeill.elpuig.apipatitasconectadas.models.*;
@@ -24,26 +25,53 @@ public class GrupoController {
     @Autowired
     private GrupoService grupoService;
 
+    @Autowired
+    private UsuarioGrupoService usuarioGrupoService;
+
+    @Autowired
+    private UserService userService; 
+
     // Petición GET que devuelve todos los grupos existentes
     @GetMapping
     public ArrayList<GrupoModel> getGrupos() {
         return this.grupoService.getGrupos();
     }
 
-    // Petición POST para guardar un nuevo grupo
-    @PostMapping
-    public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo) {
-        try {
-            // Se intenta guardar el grupo recibido en el cuerpo de la petición
-            GrupoModel savedGrupo = this.grupoService.saveGrupo(grupo);
-            // Se devuelve el grupo guardado junto con el estado HTTP 201 (CREATED)
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedGrupo);
-        } catch (Exception e) {
-            // Si ocurre un error al guardar, se devuelve un mensaje de error con estado 500
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al guardar el grupo: " + e.getMessage());
+    // Petición POST para guardar un nuevo grupo y asignar al usuario como Admin
+@PostMapping
+public ResponseEntity<?> saveGrupo(@RequestBody GrupoModel grupo, @RequestParam Long usuarioId) {
+    try {
+        // Guardar el grupo
+        GrupoModel savedGrupo = this.grupoService.saveGrupo(grupo);
+
+        // Buscar el usuario en base al ID proporcionado 
+        Optional<UserModel> usuario = userService.getById(usuarioId);
+
+        if (!usuario.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
         }
+
+        // Asocia al usuario al grupo con el rol "Admin"
+        UsuarioGrupoModel usuarioGrupo = new UsuarioGrupoModel();
+        usuarioGrupo.setGrupo(savedGrupo);  // Asociamos la entidad Grupo
+        usuarioGrupo.setUsuario(usuario.get());  // Asociamos la entidad Usuario
+        usuarioGrupo.setRol("Admin");
+
+        // Guardar la relación usuario-grupo
+        this.usuarioGrupoService.saveUsuarioGrupo(usuarioGrupo);
+
+        // Agregar la relación en la lista de usuarios del grupo
+        savedGrupo.getUsuarios().add(usuarioGrupo);  // Asegurarse de que el grupo tenga esta relación
+
+        // Guardar el grupo actualizado con la relación de usuario
+        this.grupoService.saveGrupo(savedGrupo);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedGrupo);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al guardar el grupo: " + e.getMessage());
     }
+}
 
     // Petición GET para obtener un grupo por su ID
     @GetMapping(path = "/{id}")

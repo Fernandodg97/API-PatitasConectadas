@@ -1,6 +1,10 @@
 package net.xeill.elpuig.apipatitasconectadas.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -33,8 +37,10 @@ public class UserModel {
     @Column(length = 250, nullable = false)
     private String password;
 
-    // Getters y Setters
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioGrupoModel> grupos = new ArrayList<>();
 
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -73,5 +79,13 @@ public class UserModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<UsuarioGrupoModel> getGrupos() {
+        return grupos;
+    }
+    
+    public void setGrupos(List<UsuarioGrupoModel> grupos) {
+        this.grupos = grupos;
     }
 }
