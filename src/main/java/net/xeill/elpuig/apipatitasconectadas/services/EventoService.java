@@ -8,31 +8,53 @@ import org.springframework.stereotype.Service;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
+/**
+ * Servicio que gestiona las operaciones relacionadas con los eventos.
+ * Proporciona métodos para crear, leer, actualizar y eliminar eventos
+ * en el sistema.
+ */
 @Service
 public class EventoService {
 
     @Autowired
     EventoRepository eventoRepository;
 
-    // Método que me permite obtener todos los eventos
+    /**
+     * Obtiene todos los eventos existentes en el sistema.
+     * @return ArrayList con todos los eventos
+     */
     public ArrayList<EventoModel> getEventos() {
         // findAll() es un método que me permite obtener todos los registros de la tabla
         return (ArrayList<EventoModel>) eventoRepository.findAll();
     }
 
-    // Método que me permite guardar un evento
+    /**
+     * Guarda un nuevo evento o actualiza uno existente.
+     * @param evento Objeto EventoModel con los datos del evento a guardar
+     * @return El evento guardado con su ID asignado
+     */
     public EventoModel saveEvento(EventoModel evento) {
         // save() es un método que me permite guardar un registro en la tabla
         return eventoRepository.save(evento);
     }
 
-    // Método que me permite obtener un evento por su ID
+    /**
+     * Busca un evento por su ID.
+     * @param id ID del evento a buscar
+     * @return Optional con el evento si existe, o vacío si no se encuentra
+     */
     public Optional<EventoModel> getById(Long id) {
         // findById() es un método que me permite obtener un registro por su id
         return eventoRepository.findById(id);
     }
 
-    // Método que me permite actualizar un evento por su ID
+    /**
+     * Actualiza los datos de un evento existente.
+     * @param request Objeto EventoModel con los nuevos datos
+     * @param id ID del evento a actualizar
+     * @return El evento actualizado
+     * @throws RuntimeException si no se encuentra el evento con el ID especificado
+     */
     public EventoModel updateByID(EventoModel request, Long id) {
         Optional<EventoModel> optionalEvento = eventoRepository.findById(id);
 
@@ -48,7 +70,11 @@ public class EventoService {
         }
     }
 
-    // Método que me permite eliminar un evento por su ID
+    /**
+     * Elimina un evento por su ID.
+     * @param id ID del evento a eliminar
+     * @return true si el evento fue eliminado con éxito, false en caso contrario
+     */
     public Boolean deleteEvento(Long id) {
         try {
             eventoRepository.deleteById(id);

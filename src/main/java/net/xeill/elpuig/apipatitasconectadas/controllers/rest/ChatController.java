@@ -16,6 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con el chat entre usuarios.
+ * Proporciona endpoints para enviar, recibir y gestionar mensajes,
+ * así como para obtener conversaciones entre usuarios y marcar mensajes como vistos.
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
@@ -26,7 +33,11 @@ public class ChatController {
     @Autowired
     private UserService userService;
 
-    // Enviar un nuevo mensaje
+    /**
+     * Envía un nuevo mensaje de un usuario a otro
+     * @param chatDto Datos del mensaje en formato DTO
+     * @return ResponseEntity con el mensaje enviado o mensaje de error
+     */
     @PostMapping("/enviar")
     public ResponseEntity<?> enviarMensaje(@RequestBody ChatModelDtoRequest chatDto) {
         try {
@@ -47,7 +58,12 @@ public class ChatController {
         }
     }
 
-    // Obtener conversación entre dos usuarios
+    /**
+     * Obtiene la conversación completa entre dos usuarios específicos
+     * @param usuario1Id ID del primer usuario en la conversación
+     * @param usuario2Id ID del segundo usuario en la conversación
+     * @return ResponseEntity con lista de mensajes en formato DTO o mensaje de error
+     */
     @GetMapping("/conversacion/{usuario1Id}/{usuario2Id}")
     public ResponseEntity<?> obtenerConversacion(
             @PathVariable Long usuario1Id,
@@ -64,7 +80,12 @@ public class ChatController {
         }
     }
 
-    // Marcar mensajes como vistos
+    /**
+     * Marca como vistos todos los mensajes enviados por un usuario a otro
+     * @param usuarioId ID del usuario receptor de los mensajes
+     * @param otroUsuarioId ID del usuario emisor de los mensajes a marcar
+     * @return ResponseEntity con mensaje de confirmación o error
+     */
     @PutMapping("/marcar-vistos/{usuarioId}/{otroUsuarioId}")
     public ResponseEntity<?> marcarComoVistos(
             @PathVariable Long usuarioId,
@@ -77,7 +98,11 @@ public class ChatController {
         }
     }
 
-    // Obtener mensajes no vistos de un usuario
+    /**
+     * Obtiene todos los mensajes no vistos por un usuario específico
+     * @param usuarioId ID del usuario cuyos mensajes no vistos se quieren obtener
+     * @return ResponseEntity con lista de mensajes no vistos en formato DTO o mensaje de error
+     */
     @GetMapping("/no-vistos/{usuarioId}")
     public ResponseEntity<?> obtenerMensajesNoVistos(@PathVariable Long usuarioId) {
         try {
@@ -92,7 +117,11 @@ public class ChatController {
         }
     }
 
-    // Obtener todos los mensajes enviados por un usuario
+    /**
+     * Obtiene todos los mensajes enviados por un usuario específico
+     * @param usuarioId ID del usuario cuyos mensajes enviados se quieren obtener
+     * @return ResponseEntity con lista de mensajes enviados en formato DTO o mensaje de error
+     */
     @GetMapping("/enviados/{usuarioId}")
     public ResponseEntity<?> obtenerMensajesEnviados(@PathVariable Long usuarioId) {
         try {
@@ -107,7 +136,11 @@ public class ChatController {
         }
     }
 
-    // Obtener todos los mensajes recibidos por un usuario
+    /**
+     * Obtiene todos los mensajes recibidos por un usuario específico
+     * @param usuarioId ID del usuario cuyos mensajes recibidos se quieren obtener
+     * @return ResponseEntity con lista de mensajes recibidos en formato DTO o mensaje de error
+     */
     @GetMapping("/recibidos/{usuarioId}")
     public ResponseEntity<?> obtenerMensajesRecibidos(@PathVariable Long usuarioId) {
         try {
@@ -122,7 +155,12 @@ public class ChatController {
         }
     }
 
-    // Eliminar la conversación entre dos usuarios
+    /**
+     * Elimina toda la conversación entre dos usuarios específicos
+     * @param usuario1Id ID del primer usuario en la conversación
+     * @param usuario2Id ID del segundo usuario en la conversación
+     * @return ResponseEntity con mensaje de confirmación o error
+     */
     @DeleteMapping("/eliminar/{usuario1Id}/{usuario2Id}")
     public ResponseEntity<?> eliminarConversacion(
             @PathVariable Long usuario1Id,

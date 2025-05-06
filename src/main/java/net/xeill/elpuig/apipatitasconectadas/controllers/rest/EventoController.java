@@ -1,16 +1,28 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.EventoModel;
 import net.xeill.elpuig.apipatitasconectadas.services.EventoService;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con eventos.
+ * Proporciona endpoints para crear, leer, actualizar y eliminar eventos
+ * en el sistema.
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping("/eventos")
 public class EventoController {
@@ -18,60 +30,115 @@ public class EventoController {
     @Autowired
     private EventoService eventoService;
 
-    // Petición GET que devuelve todos los eventos existentes
+    /**
+     * Obtiene todos los eventos existentes en el sistema
+     * @return ResponseEntity con lista de eventos en formato DTO o mensaje de error
+     */
     @GetMapping
-    public ArrayList<EventoModel> getEventos() {
-        return this.eventoService.getEventos();
-    }
-
-    // Petición POST para guardar un nuevo evento
-    @PostMapping
-    public ResponseEntity<?> saveEvento(@RequestBody EventoModel evento) {
+    public ResponseEntity<?> getEventos() {
         try {
-            // Se intenta guardar el evento recibido en el cuerpo de la petición
-            EventoModel savedEvento = this.eventoService.saveEvento(evento);
-            // Se devuelve el evento guardado junto con el estado HTTP 201 (CREATED)
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedEvento);
+            ArrayList<EventoModel> eventos = this.eventoService.getEventos();
+            List<EventoModelDtoResponse> eventosDto = eventos.stream()
+                .map(EventoModelDtoResponse::new)
+                .collect(Collectors.toList());
+            return new ResponseEntity<>(eventosDto, HttpStatus.OK);
         } catch (Exception e) {
-            // Si ocurre un error al guardar, se devuelve un mensaje de error con estado 500
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al guardar el evento: " + e.getMessage());
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Petición GET para obtener un evento por su ID
+    /**
+     * Crea un nuevo evento en el sistema
+     * @param eventoDto Datos del evento en formato DTO
+     * @return ResponseEntity con el evento creado o mensaje de error
+     */
+    @PostMapping
+    public ResponseEntity<?> saveEvento(@RequestBody EventoModelDtoRequest eventoDto) {
+        try {
+            // Convertir DTO a modelo
+            EventoModel evento = eventoDto.toDomain();
+            
+            // Guardar evento
+            EventoModel savedEvento = this.eventoService.saveEvento(evento);
+            
+            // Convertir a DTO para la respuesta
+            EventoModelDtoResponse response = new EventoModelDtoResponse(savedEvento);
+            
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error al guardar el evento: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Obtiene un evento específico por su ID
+     * @param id ID del evento a buscar
+     * @return ResponseEntity con el evento encontrado o mensaje de error
+     */
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getEventoById(@PathVariable("id") Long id) {
-        // Se utiliza @PathVariable para extraer el ID de la URL
-        Optional<EventoModel> evento = this.eventoService.getById(id);
-        return evento.isPresent()
-            ? ResponseEntity.ok(evento.get())
-            : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Evento no encontrado con ID: " + id);
-    }
-
-    // Petición PUT para actualizar un evento por su ID
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> updateEventoById(@RequestBody EventoModel request, @PathVariable("id") Long id) {
         try {
-            EventoModel updatedEvento = this.eventoService.updateByID(request, id);
-            return ResponseEntity.ok(updatedEvento);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            Optional<EventoModel> evento = this.eventoService.getById(id);
+            
+            if (evento.isPresent()) {
+                EventoModelDtoResponse eventoDto = new EventoModelDtoResponse(evento.get());
+                return new ResponseEntity<>(eventoDto, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(Map.of("error", "Evento no encontrado con ID: " + id), 
+                    HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al actualizar el evento: " + e.getMessage());
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Petición DELETE para eliminar un evento por su ID
+    /**
+     * Actualiza un evento existente
+     * @param eventoDto Datos actualizados del evento
+     * @param id ID del evento a actualizar
+     * @return ResponseEntity con el evento actualizado o mensaje de error
+     */
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<?> updateEventoById(@RequestBody EventoModelDtoRequest eventoDto, @PathVariable("id") Long id) {
+        try {
+            // Convertir DTO a modelo
+            EventoModel evento = eventoDto.toDomain();
+            
+            // Actualizar evento
+            EventoModel updatedEvento = this.eventoService.updateByID(evento, id);
+            
+            // Convertir a DTO para la respuesta
+            EventoModelDtoResponse response = new EventoModelDtoResponse(updatedEvento);
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error al actualizar el evento: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Elimina un evento existente
+     * @param id ID del evento a eliminar
+     * @return ResponseEntity con mensaje de confirmación o error
+     */
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteEventoById(@PathVariable("id") Long id) {
-        boolean ok = this.eventoService.deleteEvento(id);
-        if (ok) {
-            return ResponseEntity.ok("Evento eliminado con ID: " + id);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("No se pudo eliminar el evento con ID: " + id);
+        try {
+            boolean deleted = this.eventoService.deleteEvento(id);
+            
+            if (deleted) {
+                return new ResponseEntity<>(Map.of("mensaje", "Evento eliminado con ID: " + id), 
+                    HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(Map.of("error", "No se pudo eliminar el evento con ID: " + id), 
+                    HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

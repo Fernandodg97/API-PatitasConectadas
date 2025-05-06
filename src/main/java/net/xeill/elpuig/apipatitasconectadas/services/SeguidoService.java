@@ -10,6 +10,11 @@ import net.xeill.elpuig.apipatitasconectadas.repositories.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio que gestiona las relaciones de seguimiento entre usuarios.
+ * Proporciona métodos para establecer, eliminar y consultar relaciones
+ * donde un usuario puede seguir a otro, similar a una red social.
+ */
 @Service
 public class SeguidoService {
 
@@ -18,7 +23,14 @@ public class SeguidoService {
     @Autowired
     private UserRepository userRepository;
 
-    // Seguir a un usuario
+    /**
+     * Establece una relación de seguimiento entre dos usuarios.
+     * @param usuarioId ID del usuario que seguirá
+     * @param usuarioASeguirId ID del usuario que será seguido
+     * @return El objeto SeguidoModel que representa la relación creada
+     * @throws RuntimeException si alguno de los usuarios no existe, si son el mismo usuario
+     *         o si ya existe la relación de seguimiento
+     */
     public SeguidoModel seguirUsuario(Long usuarioId, Long usuarioASeguirId) {
         if (usuarioId.equals(usuarioASeguirId)) {
             throw new RuntimeException("No puedes seguirte a ti mismo.");
@@ -45,7 +57,12 @@ public class SeguidoService {
         return seguidoRepository.save(seguido);
     }
 
-    // Dejar de seguir a un usuario
+    /**
+     * Elimina una relación de seguimiento entre dos usuarios.
+     * @param quienSigueId ID del usuario que sigue
+     * @param quienEsSeguidoId ID del usuario que es seguido
+     * @return true si la relación fue eliminada con éxito, false si no existía la relación
+     */
     public boolean dejarDeSeguir(Long quienSigueId, Long quienEsSeguidoId) {
         Optional<SeguidoModel> seguido = seguidoRepository.findByUsuarioQueSigueIdAndUsuarioQueEsSeguidoId(quienSigueId, quienEsSeguidoId);
         if (seguido.isPresent()) {
@@ -55,12 +72,21 @@ public class SeguidoService {
         return false;
     }
 
-    // Obtener todos los usuarios que sigue un usuario
+    /**
+     * Obtiene todos los usuarios a los que sigue un usuario específico.
+     * @param usuarioId ID del usuario cuyas relaciones de seguimiento se quieren consultar
+     * @return Lista de relaciones de seguimiento donde el usuario especificado es quien sigue
+     */
     public List<SeguidoModel> obtenerSeguidos(Long usuarioId) {
         return seguidoRepository.findByUsuarioQueSigueId(usuarioId);
     }
 
-    // Verificar si ya sigue a un usuario (opcional)
+    /**
+     * Verifica si existe una relación de seguimiento entre dos usuarios.
+     * @param quienSigueId ID del usuario que potencialmente sigue
+     * @param quienEsSeguidoId ID del usuario que potencialmente es seguido
+     * @return true si existe la relación de seguimiento, false en caso contrario
+     */
     public boolean yaSigue(Long quienSigueId, Long quienEsSeguidoId) {
         return seguidoRepository.findByUsuarioQueSigueIdAndUsuarioQueEsSeguidoId(quienSigueId, quienEsSeguidoId).isPresent();
     }

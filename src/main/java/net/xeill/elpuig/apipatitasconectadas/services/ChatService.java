@@ -13,6 +13,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio que gestiona las operaciones relacionadas con el chat entre usuarios.
+ * Proporciona métodos para enviar, recibir y gestionar mensajes,
+ * así como obtener conversaciones completas y marcar mensajes como vistos.
+ */
 @Service
 public class ChatService {
 
@@ -22,7 +27,14 @@ public class ChatService {
     @Autowired
     private UserRepository userRepository;
 
-    // Enviar un nuevo mensaje
+    /**
+     * Envía un nuevo mensaje de un usuario a otro.
+     * @param emisorId ID del usuario que envía el mensaje
+     * @param receptorId ID del usuario que recibe el mensaje
+     * @param contenido Texto del mensaje a enviar
+     * @return El mensaje creado con su ID asignado
+     * @throws RuntimeException si no se encuentra alguno de los usuarios
+     */
     @Transactional
     public ChatModel enviarMensaje(Long emisorId, Long receptorId, String contenido) {
         Optional<UserModel> emisor = userRepository.findById(emisorId);
@@ -42,12 +54,21 @@ public class ChatService {
         return chatRepository.save(mensaje);
     }
 
-    // Obtener conversación entre dos usuarios
+    /**
+     * Obtiene todos los mensajes intercambiados entre dos usuarios.
+     * @param usuario1Id ID del primer usuario en la conversación
+     * @param usuario2Id ID del segundo usuario en la conversación
+     * @return Lista de mensajes intercambiados entre los usuarios
+     */
     public List<ChatModel> obtenerConversacion(Long usuario1Id, Long usuario2Id) {
         return chatRepository.findConversacion(usuario1Id, usuario2Id);
     }
 
-    // Marcar mensajes como vistos
+    /**
+     * Marca como vistos todos los mensajes enviados por un usuario a otro.
+     * @param usuarioId ID del usuario receptor de los mensajes
+     * @param otroUsuarioId ID del usuario emisor de los mensajes a marcar como vistos
+     */
     @Transactional
     public void marcarComoVistos(Long usuarioId, Long otroUsuarioId) {
         List<ChatModel> mensajesNoVistos = chatRepository.findMensajesNoVistos(usuarioId);
@@ -59,22 +80,39 @@ public class ChatService {
         }
     }
 
-    // Obtener mensajes no vistos de un usuario
+    /**
+     * Obtiene todos los mensajes no vistos por un usuario específico.
+     * @param usuarioId ID del usuario cuyos mensajes no vistos se quieren obtener
+     * @return Lista de mensajes no vistos por el usuario
+     */
     public List<ChatModel> obtenerMensajesNoVistos(Long usuarioId) {
         return chatRepository.findMensajesNoVistos(usuarioId);
     }
 
-    // Obtener todos los mensajes enviados por un usuario
+    /**
+     * Obtiene todos los mensajes enviados por un usuario específico.
+     * @param usuarioId ID del usuario cuyos mensajes enviados se quieren obtener
+     * @return Lista de mensajes enviados por el usuario
+     */
     public List<ChatModel> obtenerMensajesEnviados(Long usuarioId) {
         return chatRepository.findByEmisorId(usuarioId);
     }
 
-    // Obtener todos los mensajes recibidos por un usuario
+    /**
+     * Obtiene todos los mensajes recibidos por un usuario específico.
+     * @param usuarioId ID del usuario cuyos mensajes recibidos se quieren obtener
+     * @return Lista de mensajes recibidos por el usuario
+     */
     public List<ChatModel> obtenerMensajesRecibidos(Long usuarioId) {
         return chatRepository.findByReceptorId(usuarioId);
     }
 
-    // Método para eliminar la conversación entre dos usuarios
+    /**
+     * Elimina todos los mensajes intercambiados entre dos usuarios.
+     * @param usuario1Id ID del primer usuario en la conversación
+     * @param usuario2Id ID del segundo usuario en la conversación
+     * @throws RuntimeException si no se encuentra conversación entre los usuarios
+     */
     public void eliminarConversacion(Long usuario1Id, Long usuario2Id) {
         List<ChatModel> conversacion = chatRepository.findConversacion(usuario1Id, usuario2Id);
         

@@ -10,6 +10,13 @@ import net.xeill.elpuig.apipatitasconectadas.controllers.dto.*;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.services.*;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con grupos.
+ * Proporciona endpoints para crear, leer, actualizar y eliminar grupos,
+ * y gestionar la asignación de administradores a los grupos.
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping("/grupos")
 public class GrupoController {

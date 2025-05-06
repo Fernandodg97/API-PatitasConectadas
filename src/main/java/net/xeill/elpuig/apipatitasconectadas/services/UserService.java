@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
+/**
+ * Servicio que gestiona las operaciones relacionadas con los usuarios.
+ * Proporciona métodos para crear, leer, actualizar y eliminar usuarios,
+ * así como para realizar búsquedas específicas.
+ */
 @Service
 public class UserService {
 
@@ -16,29 +21,50 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    //Metodo que me permite obtener todos los usuarios
+    /**
+     * Obtiene todos los usuarios registrados en el sistema.
+     * @return ArrayList con todos los usuarios
+     */
     public ArrayList<UserModel> getUsers() {
         //findAll() es un metodo que me permite obtener todos los registros de la tabla
         return (ArrayList<UserModel>) userRepository.findAll();
     }
 
+    /**
+     * Busca usuarios por apellido.
+     * @param apellido Apellido o inicio del apellido para filtrar usuarios
+     * @return Lista de usuarios que coinciden con el criterio de búsqueda
+     */
     public List<UserModel> getUsers(String apellido){
         return userRepository.findByApellidoStartsWith(apellido);
     }
 
-    //Metodo que me permite guardar un usuario
+    /**
+     * Guarda un nuevo usuario o actualiza uno existente.
+     * @param user Objeto UserModel con los datos del usuario a guardar
+     * @return El usuario guardado con su ID asignado
+     */
     public UserModel saveUser(UserModel user) {
         //save() es un metodo que me permite guardar un registro en la tabla
         return userRepository.save(user);
     }
 
-    //Metodo que me permite obtener un usuario por su id
+    /**
+     * Busca un usuario por su ID.
+     * @param id ID del usuario a buscar
+     * @return Optional con el usuario si existe, o vacío si no se encuentra
+     */
     public Optional<UserModel> getById(Long id) {
         //findById() es un metodo que me permite obtener un registro por su id
         return userRepository.findById(id);
     }
 
-    //Metodo que me permite actualiar un usuario por su id
+    /**
+     * Actualiza los datos de un usuario existente.
+     * @param request Objeto UserModel con los nuevos datos
+     * @param id ID del usuario a actualizar
+     * @return El usuario actualizado
+     */
     public UserModel updateByID(UserModel request, Long id) {
         UserModel user = userRepository.findById(id).get();
 
@@ -50,7 +76,11 @@ public class UserService {
         return user;
     }
 
-    //Metodo que me permite eliminar un usuario por su id
+    /**
+     * Elimina un usuario por su ID.
+     * @param id ID del usuario a eliminar
+     * @return true si el usuario fue eliminado con éxito, false en caso contrario
+     */
     public Boolean deleteUser (Long id){
         try{
             userRepository.deleteById(id);

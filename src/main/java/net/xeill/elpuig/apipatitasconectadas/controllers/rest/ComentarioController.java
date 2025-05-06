@@ -22,6 +22,13 @@ import net.xeill.elpuig.apipatitasconectadas.services.UserService;
 
 import jakarta.persistence.EntityNotFoundException;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con comentarios.
+ * Proporciona endpoints para crear, leer, actualizar y eliminar comentarios
+ * asociados a publicaciones (posts).
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping
 public class ComentarioController {
@@ -38,7 +45,11 @@ public class ComentarioController {
     @Autowired
     private ComentarioRepository comentarioRepository;
 
-    // Obtener todos los comentarios de un post
+    /**
+     * Obtiene todos los comentarios asociados a una publicación específica
+     * @param postId ID de la publicación cuyos comentarios se quieren obtener
+     * @return ResponseEntity con lista de comentarios en formato DTO o mensaje de error
+     */
     @GetMapping("/posts/{postId}/comentarios")
     public ResponseEntity<?> getComentariosByPostId(@PathVariable Long postId) {
         try {
@@ -52,7 +63,12 @@ public class ComentarioController {
         }
     }
 
-    // Crear un comentario en un post
+    /**
+     * Crea un nuevo comentario en una publicación específica
+     * @param postId ID de la publicación donde se creará el comentario
+     * @param comentarioDto Datos del comentario en formato DTO
+     * @return ResponseEntity con el comentario creado o mensaje de error
+     */
     @PostMapping("/posts/{postId}/comentarios")
     public ResponseEntity<?> crearComentario(
             @PathVariable Long postId,
@@ -73,7 +89,11 @@ public class ComentarioController {
         }
     }
 
-    // Obtener un comentario específico
+    /**
+     * Obtiene un comentario específico por su ID
+     * @param id ID del comentario a buscar
+     * @return ResponseEntity con el comentario encontrado o mensaje de error
+     */
     @GetMapping("/comentarios/{id}")
     public ResponseEntity<?> getComentarioById(@PathVariable Long id) {
         try {
@@ -88,7 +108,12 @@ public class ComentarioController {
         }
     }
 
-    // Actualizar un comentario
+    /**
+     * Actualiza un comentario existente
+     * @param id ID del comentario a actualizar
+     * @param comentarioDto Datos actualizados del comentario
+     * @return ResponseEntity con el comentario actualizado o mensaje de error
+     */
     @PutMapping("/comentarios/{id}")
     public ResponseEntity<?> actualizarComentario(
             @PathVariable Long id,
@@ -121,7 +146,11 @@ public class ComentarioController {
         }
     }
 
-    // Eliminar un comentario
+    /**
+     * Elimina un comentario existente
+     * @param id ID del comentario a eliminar
+     * @return ResponseEntity con mensaje de confirmación o error
+     */
     @DeleteMapping("/comentarios/{id}")
     public ResponseEntity<?> eliminarComentario(@PathVariable Long id) {
         try {

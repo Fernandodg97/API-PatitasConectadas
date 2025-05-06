@@ -17,6 +17,13 @@ import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 import net.xeill.elpuig.apipatitasconectadas.security.JwtUtil;
 import net.xeill.elpuig.apipatitasconectadas.services.AuthService;
 
+/**
+ * Controlador REST para gestionar operaciones de autenticación y registro.
+ * Proporciona endpoints para iniciar sesión, registrar nuevos usuarios
+ * y obtener información del usuario autenticado.
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -27,12 +34,22 @@ public class AuthController {
     @Autowired private PerfilRepository perfilRepository;
     @Autowired private MascotaRepository mascotaRepository;
 
+    /**
+     * Autentica a un usuario mediante email y contraseña
+     * @param body Mapa con las credenciales del usuario (email y password)
+     * @return ResponseEntity con token JWT o mensaje de error
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String token = authService.login(body.get("email"), body.get("password"));
         return ResponseEntity.ok(Map.of("token", token));
     }
 
+    /**
+     * Registra un nuevo usuario en el sistema
+     * @param body Mapa con los datos del usuario (email, password, nombre, apellido)
+     * @return ResponseEntity con datos del usuario creado o mensaje de error
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         try {
@@ -55,6 +72,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * Obtiene información del usuario autenticado
+     * @param authHeader Cabecera de autorización con el token JWT
+     * @return ResponseEntity con datos del usuario, su perfil y mascotas o mensaje de error
+     */
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@RequestHeader("Authorization") String authHeader) {
         try {

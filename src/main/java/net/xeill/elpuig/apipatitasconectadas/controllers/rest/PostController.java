@@ -5,8 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PostModelDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PostModelDtoResponse;
+import net.xeill.elpuig.apipatitasconectadas.models.GrupoModel;
 import net.xeill.elpuig.apipatitasconectadas.models.PostModel;
+import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
+import net.xeill.elpuig.apipatitasconectadas.services.GrupoService;
 import net.xeill.elpuig.apipatitasconectadas.services.PostService;
+import net.xeill.elpuig.apipatitasconectadas.services.UserService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
@@ -15,144 +21,251 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con publicaciones (posts).
+ * Proporciona endpoints para crear, leer, actualizar y eliminar publicaciones,
+ * así como para buscar publicaciones por usuario, grupo, contenido o rango de fechas.
+ * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
+ * consistente de la comunicación HTTP.
+ */
 @RestController
 @RequestMapping("/posts")
 public class PostController {
 
     @Autowired
     private PostService postService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private GrupoService grupoService;
 
-    // Petición GET para obtener publicaciones
-    // Permite filtrar por contenido o por rango de fechas opcionalmente
+    /**
+     * Obtiene publicaciones con posibilidad de filtrar por contenido o rango de fechas
+     * @param contenido Texto para filtrar por contenido (opcional)
+     * @param fechaInicio Fecha inicial para filtrar por rango (opcional)
+     * @param fechaFin Fecha final para filtrar por rango (opcional)
+     * @return ResponseEntity con lista de publicaciones en formato DTO o mensaje de error
+     */
     @GetMapping
-    public ResponseEntity<List<PostModel>> getPosts(
+    public ResponseEntity<?> getPosts(
             @RequestParam(required = false) String contenido,
             @RequestParam(required = false) LocalDateTime fechaInicio,
             @RequestParam(required = false) LocalDateTime fechaFin) {
 
-        // Si se proporciona contenido, se hace una búsqueda por contenido
-        if (contenido != null) {
-            return ResponseEntity.ok(postService.searchPostsByContent(contenido));
-        }
-
-        // Si se proporciona un rango de fechas, se filtran las publicaciones entre esas
-        // fechas
-        if (fechaInicio != null && fechaFin != null) {
-            return ResponseEntity.ok(postService.getPostsByDateRange(fechaInicio, fechaFin));
-        }
-
-        // Si no hay filtros, se devuelven todas las publicaciones
-        return ResponseEntity.ok(postService.getPosts());
-    }
-
-    // Petición POST para crear una nueva publicación
-    @PostMapping
-    public ResponseEntity<?> savePost(@RequestBody PostModel post) {
         try {
-            // Guarda el post y devuelve 201 (CREATED)
-            PostModel savedPost = postService.savePost(post);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
-        } catch (ValidationException e) {
-            // Maneja errores de validación
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            List<PostModel> posts;
+            
+            // Si se proporciona contenido, se hace una búsqueda por contenido
+            if (contenido != null) {
+                posts = postService.searchPostsByContent(contenido);
+            }
+            // Si se proporciona un rango de fechas, se filtran las publicaciones entre esas fechas
+            else if (fechaInicio != null && fechaFin != null) {
+                posts = postService.getPostsByDateRange(fechaInicio, fechaFin);
+            }
+            // Si no hay filtros, se devuelven todas las publicaciones
+            else {
+                posts = postService.getPosts();
+            }
+            
+            // Convertir a DTOs para la respuesta
+            List<PostModelDtoResponse> postsDto = posts.stream()
+                .map(PostModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(postsDto, HttpStatus.OK);
         } catch (Exception e) {
-            // Maneja cualquier otro error interno
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al crear el post: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Petición GET para obtener una publicación por su ID
+    /**
+     * Crea una nueva publicación en el sistema
+     * @param postDto Datos de la publicación en formato DTO
+     * @return ResponseEntity con la publicación creada o mensaje de error
+     */
+    @PostMapping
+    public ResponseEntity<?> savePost(@RequestBody PostModelDtoRequest postDto) {
+        try {
+            // Obtener el creador y grupo si existen
+            UserModel creador = null;
+            GrupoModel grupo = null;
+            
+            if (postDto.getCreadorId() != null) {
+                Optional<UserModel> optionalCreador = userService.getById(postDto.getCreadorId());
+                if (optionalCreador.isEmpty()) {
+                    throw new EntityNotFoundException("Usuario creador no encontrado con ID: " + postDto.getCreadorId());
+                }
+                creador = optionalCreador.get();
+            }
+            
+            if (postDto.getGrupoId() != null) {
+                grupo = grupoService.getById(postDto.getGrupoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + postDto.getGrupoId()));
+            }
+            
+            // Convertir DTO a modelo
+            PostModel post = postDto.toDomain(creador, grupo);
+            
+            // Guardar el post
+            PostModel savedPost = postService.savePost(post);
+            
+            // Convertir a DTO para la respuesta
+            PostModelDtoResponse response = new PostModelDtoResponse(savedPost);
+            
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error al crear el post: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Obtiene una publicación específica por su ID
+     * @param id ID de la publicación a buscar
+     * @return ResponseEntity con la publicación encontrada o mensaje de error
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostById(@PathVariable Long id) {
         try {
             PostModel post = postService.getById(id);
-            return ResponseEntity.ok(post);
+            PostModelDtoResponse postDto = new PostModelDtoResponse(post);
+            return new ResponseEntity<>(postDto, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            // Devuelve 404 si no se encuentra la publicación
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-    }
-
-    // Petición PUT para actualizar una publicación por su ID
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePost(@RequestBody PostModel request, @PathVariable Long id) {
-        try {
-            PostModel updatedPost = postService.updateById(request, id);
-            return ResponseEntity.ok(updatedPost);
-        } catch (EntityNotFoundException e) {
-            // Si no se encuentra el post
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (ValidationException e) {
-            // Si hay un error de validación
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            // Otros errores generales
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al actualizar el post: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Petición DELETE para eliminar una publicación por su ID
+    /**
+     * Actualiza una publicación existente
+     * @param postDto Datos actualizados de la publicación
+     * @param id ID de la publicación a actualizar
+     * @return ResponseEntity con la publicación actualizada o mensaje de error
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePost(@RequestBody PostModelDtoRequest postDto, @PathVariable Long id) {
+        try {
+            // Obtener el post existente
+            PostModel existingPost = postService.getById(id);
+            
+            // Obtener el creador y grupo si se proporcionan
+            UserModel creador = existingPost.getCreador();
+            GrupoModel grupo = existingPost.getGrupo();
+            
+            if (postDto.getCreadorId() != null) {
+                Optional<UserModel> optionalCreador = userService.getById(postDto.getCreadorId());
+                if (optionalCreador.isEmpty()) {
+                    throw new EntityNotFoundException("Usuario creador no encontrado con ID: " + postDto.getCreadorId());
+                }
+                creador = optionalCreador.get();
+            }
+            
+            if (postDto.getGrupoId() != null) {
+                grupo = grupoService.getById(postDto.getGrupoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + postDto.getGrupoId()));
+            }
+            
+            // Preparar el post para actualizar
+            PostModel postToUpdate = new PostModel();
+            postToUpdate.setId(id);
+            postToUpdate.setCreador(creador);
+            postToUpdate.setGrupo(grupo);
+            postToUpdate.setContenido(postDto.getContenido());
+            postToUpdate.setFecha(postDto.getFecha() != null ? postDto.getFecha() : existingPost.getFecha());
+            postToUpdate.setImg(postDto.getImg());
+            
+            // Actualizar el post
+            PostModel updatedPost = postService.updateById(postToUpdate, id);
+            
+            // Convertir a DTO para la respuesta
+            PostModelDtoResponse response = new PostModelDtoResponse(updatedPost);
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (ValidationException e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error al actualizar el post: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Elimina una publicación existente
+     * @param id ID de la publicación a eliminar
+     * @return ResponseEntity con mensaje de confirmación o error
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
             boolean deleted = postService.deletePost(id);
             if (deleted) {
-                // Si se elimina correctamente
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Post eliminado correctamente");
-                return ResponseEntity.ok(response);
+                return new ResponseEntity<>(Map.of("mensaje", "Post eliminado correctamente"), HttpStatus.OK);
             } else {
-                // Si no se puede eliminar (por ejemplo, no existe)
-                Map<String, String> response = new HashMap<>();
-                response.put("error", "No se pudo eliminar el post");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return new ResponseEntity<>(Map.of("error", "No se pudo eliminar el post"), 
+                    HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
-            // Error inesperado al eliminar
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Error al eliminar el post: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return new ResponseEntity<>(Map.of("error", "Error al eliminar el post: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Petición GET para obtener todas las publicaciones de un usuario específico
+    /**
+     * Obtiene todas las publicaciones realizadas por un usuario específico
+     * @param userId ID del usuario cuyas publicaciones se quieren obtener
+     * @return ResponseEntity con lista de publicaciones del usuario o mensaje de error
+     */
     @GetMapping("/usuarios/{userId}/posts")
     public ResponseEntity<?> getPostsByUser(@PathVariable Long userId) {
         try {
             List<PostModel> posts = postService.getPostsByUser(userId);
-            return ResponseEntity.ok(posts);
+            
+            // Convertir a DTOs para la respuesta
+            List<PostModelDtoResponse> postsDto = posts.stream()
+                .map(PostModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(postsDto, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            // Si no se encuentra el usuario
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // Petición GET para obtener todas las publicaciones de un grupo específico
+    /**
+     * Obtiene todas las publicaciones realizadas en un grupo específico
+     * @param grupoId ID del grupo cuyas publicaciones se quieren obtener
+     * @return ResponseEntity con lista de publicaciones del grupo o mensaje de error
+     */
     @GetMapping("/grupos/{grupoId}/posts")
     public ResponseEntity<?> getPostsByGrupo(@PathVariable Long grupoId) {
         try {
             List<PostModel> posts = postService.getPostsByGrupo(grupoId);
-            return ResponseEntity.ok(posts);
+            
+            // Convertir a DTOs para la respuesta
+            List<PostModelDtoResponse> postsDto = posts.stream()
+                .map(PostModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(postsDto, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            // Si no se encuentra el grupo
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }
