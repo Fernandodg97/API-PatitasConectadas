@@ -17,7 +17,6 @@ public class GrupoModelDtoRequest {
         return grupo;
     }
 
-
     public String getNombre() {
         return nombre;
     }

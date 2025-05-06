@@ -51,4 +51,9 @@ public class GrupoService {
             return false;
         }
     }
+
+    public boolean existsById(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'existsById'");
+    }
 } 

@@ -14,7 +14,6 @@ public class GrupoModelDtoResponse {
         this.id = grupo.getId();
     }
 
-
     public String getNombre() {
         return nombre;
     }
