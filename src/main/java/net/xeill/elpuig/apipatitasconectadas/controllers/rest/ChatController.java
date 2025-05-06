@@ -1,14 +1,20 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.ChatModelDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.ChatModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.ChatModel;
+import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import net.xeill.elpuig.apipatitasconectadas.services.ChatService;
+import net.xeill.elpuig.apipatitasconectadas.services.UserService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/chat")
@@ -16,19 +22,28 @@ public class ChatController {
 
     @Autowired
     private ChatService chatService;
+    
+    @Autowired
+    private UserService userService;
 
     // Enviar un nuevo mensaje
     @PostMapping("/enviar")
-    public ResponseEntity<?> enviarMensaje(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> enviarMensaje(@RequestBody ChatModelDtoRequest chatDto) {
         try {
-            Long emisorId = Long.valueOf(body.get("emisorId").toString());
-            Long receptorId = Long.valueOf(body.get("receptorId").toString());
-            String contenido = (String) body.get("contenido");
+            UserModel emisor = userService.getById(chatDto.getEmisorId())
+                .orElseThrow(() -> new RuntimeException("Usuario emisor no encontrado"));
+            UserModel receptor = userService.getById(chatDto.getReceptorId())
+                .orElseThrow(() -> new RuntimeException("Usuario receptor no encontrado"));
             
-            ChatModel mensaje = chatService.enviarMensaje(emisorId, receptorId, contenido);
-            return ResponseEntity.ok(mensaje);
+            ChatModel mensaje = chatService.enviarMensaje(
+                chatDto.getEmisorId(), 
+                chatDto.getReceptorId(), 
+                chatDto.getContenido()
+            );
+            
+            return new ResponseEntity<>(new ChatModelDtoResponse(mensaje), HttpStatus.CREATED);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -39,9 +54,13 @@ public class ChatController {
             @PathVariable Long usuario2Id) {
         try {
             List<ChatModel> conversacion = chatService.obtenerConversacion(usuario1Id, usuario2Id);
-            return ResponseEntity.ok(conversacion);
+            List<ChatModelDtoResponse> conversacionDto = conversacion.stream()
+                .map(ChatModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(conversacionDto, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -52,9 +71,9 @@ public class ChatController {
             @PathVariable Long otroUsuarioId) {
         try {
             chatService.marcarComoVistos(usuarioId, otroUsuarioId);
-            return ResponseEntity.ok(Map.of("message", "Mensajes marcados como vistos"));
+            return new ResponseEntity<>(Map.of("message", "Mensajes marcados como vistos"), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -63,9 +82,13 @@ public class ChatController {
     public ResponseEntity<?> obtenerMensajesNoVistos(@PathVariable Long usuarioId) {
         try {
             List<ChatModel> mensajes = chatService.obtenerMensajesNoVistos(usuarioId);
-            return ResponseEntity.ok(mensajes);
+            List<ChatModelDtoResponse> mensajesDto = mensajes.stream()
+                .map(ChatModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(mensajesDto, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -74,9 +97,13 @@ public class ChatController {
     public ResponseEntity<?> obtenerMensajesEnviados(@PathVariable Long usuarioId) {
         try {
             List<ChatModel> mensajes = chatService.obtenerMensajesEnviados(usuarioId);
-            return ResponseEntity.ok(mensajes);
+            List<ChatModelDtoResponse> mensajesDto = mensajes.stream()
+                .map(ChatModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(mensajesDto, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -85,9 +112,13 @@ public class ChatController {
     public ResponseEntity<?> obtenerMensajesRecibidos(@PathVariable Long usuarioId) {
         try {
             List<ChatModel> mensajes = chatService.obtenerMensajesRecibidos(usuarioId);
-            return ResponseEntity.ok(mensajes);
+            List<ChatModelDtoResponse> mensajesDto = mensajes.stream()
+                .map(ChatModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(mensajesDto, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -98,9 +129,9 @@ public class ChatController {
             @PathVariable Long usuario2Id) {
         try {
             chatService.eliminarConversacion(usuario1Id, usuario2Id);
-            return ResponseEntity.ok(Map.of("message", "Conversación eliminada"));
+            return new ResponseEntity<>(Map.of("message", "Conversación eliminada"), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 } 
