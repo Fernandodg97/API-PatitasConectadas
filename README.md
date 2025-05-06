@@ -1150,3 +1150,466 @@ Este módulo permite gestionar los perfiles de usuarios en el sistema. Cada perf
   "rol": "Admin"
 }
 ```
+
+## 11. Chat
+
+### `POST /chat/enviar`
+**Descripción:** Envía un nuevo mensaje de un usuario a otro.
+
+**Ejemplo Request:**
+```json
+{
+  "emisorId": 1,
+  "receptorId": 2,
+  "contenido": "Hola, ¿cómo estás?",
+  "visto": false
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "emisorId": 1,
+  "emisorNombre": "Juan Pérez",
+  "receptorId": 2,
+  "receptorNombre": "María López",
+  "contenido": "Hola, ¿cómo estás?",
+  "fechaHora": "2023-10-15T10:30:00",
+  "visto": false
+}
+```
+
+### `GET /chat/conversacion/{usuario1Id}/{usuario2Id}`
+**Descripción:** Obtiene la conversación completa entre dos usuarios.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "emisorId": 1,
+    "emisorNombre": "Juan Pérez",
+    "receptorId": 2,
+    "receptorNombre": "María López",
+    "contenido": "Hola, ¿cómo estás?",
+    "fechaHora": "2023-10-15T10:30:00",
+    "visto": true
+  },
+  {
+    "id": 2,
+    "emisorId": 2,
+    "emisorNombre": "María López",
+    "receptorId": 1,
+    "receptorNombre": "Juan Pérez",
+    "contenido": "Muy bien, ¿y tú?",
+    "fechaHora": "2023-10-15T10:35:00",
+    "visto": false
+  }
+]
+```
+
+### `PUT /chat/marcar-vistos/{usuarioId}/{otroUsuarioId}`
+**Descripción:** Marca como vistos todos los mensajes enviados de un usuario a otro.
+
+**Ejemplo Response:**
+```json
+{
+  "message": "Mensajes marcados como vistos"
+}
+```
+
+### `GET /chat/no-vistos/{usuarioId}`
+**Descripción:** Obtiene todos los mensajes no vistos por un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 3,
+    "emisorId": 2,
+    "emisorNombre": "María López",
+    "receptorId": 1,
+    "receptorNombre": "Juan Pérez",
+    "contenido": "¿Nos vemos mañana?",
+    "fechaHora": "2023-10-15T10:40:00",
+    "visto": false
+  }
+]
+```
+
+### `GET /chat/enviados/{usuarioId}`
+**Descripción:** Obtiene todos los mensajes enviados por un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "emisorId": 1,
+    "emisorNombre": "Juan Pérez",
+    "receptorId": 2,
+    "receptorNombre": "María López",
+    "contenido": "Hola, ¿cómo estás?",
+    "fechaHora": "2023-10-15T10:30:00",
+    "visto": true
+  }
+]
+```
+
+### `GET /chat/recibidos/{usuarioId}`
+**Descripción:** Obtiene todos los mensajes recibidos por un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 2,
+    "emisorId": 2,
+    "emisorNombre": "María López",
+    "receptorId": 1,
+    "receptorNombre": "Juan Pérez",
+    "contenido": "Muy bien, ¿y tú?",
+    "fechaHora": "2023-10-15T10:35:00",
+    "visto": false
+  },
+  {
+    "id": 3,
+    "emisorId": 2,
+    "emisorNombre": "María López",
+    "receptorId": 1,
+    "receptorNombre": "Juan Pérez",
+    "contenido": "¿Nos vemos mañana?",
+    "fechaHora": "2023-10-15T10:40:00",
+    "visto": false
+  }
+]
+```
+
+### `DELETE /chat/eliminar/{usuario1Id}/{usuario2Id}`
+**Descripción:** Elimina toda la conversación entre dos usuarios.
+
+**Ejemplo Response:**
+```json
+{
+  "message": "Conversación eliminada"
+}
+```
+
+## 12. Posts
+
+### `GET /posts`
+**Descripción:** Obtiene todas las publicaciones con posibilidad de filtrar por contenido o fechas.
+
+**Parámetros opcionales:**
+- `contenido`: Texto para filtrar publicaciones por contenido
+- `fechaInicio`: Fecha inicial para filtrar (formato ISO)
+- `fechaFin`: Fecha final para filtrar (formato ISO)
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los perros",
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "Mi perro aprendió un nuevo truco",
+    "fecha": "2023-10-10T14:30:00",
+    "img": "https://ejemplo.com/imagen1.jpg",
+    "comentarios": [
+      {
+        "id": 1,
+        "creadorId": 2,
+        "nombreCreador": "María",
+        "apellidoCreador": "López",
+        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+        "fecha": "2023-10-10T15:00:00"
+      }
+    ]
+  }
+]
+```
+
+### `POST /posts`
+**Descripción:** Crea una nueva publicación.
+
+**Ejemplo Request:**
+```json
+{
+  "grupoId": 1,
+  "creadorId": 1,
+  "contenido": "Hoy fuimos al parque con mi mascota",
+  "img": "https://ejemplo.com/imagen2.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 2,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los perros",
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "Hoy fuimos al parque con mi mascota",
+  "fecha": "2023-10-15T09:30:00",
+  "img": "https://ejemplo.com/imagen2.jpg",
+  "comentarios": []
+}
+```
+
+### `GET /posts/{id}`
+**Descripción:** Obtiene una publicación específica por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los perros",
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "Mi perro aprendió un nuevo truco",
+  "fecha": "2023-10-10T14:30:00",
+  "img": "https://ejemplo.com/imagen1.jpg",
+  "comentarios": [
+    {
+      "id": 1,
+      "creadorId": 2,
+      "nombreCreador": "María",
+      "apellidoCreador": "López",
+      "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+      "fecha": "2023-10-10T15:00:00"
+    }
+  ]
+}
+```
+
+### `PUT /posts/{id}`
+**Descripción:** Actualiza una publicación existente.
+
+**Ejemplo Request:**
+```json
+{
+  "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
+  "img": "https://ejemplo.com/imagen_actualizada.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los perros",
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
+  "fecha": "2023-10-10T14:30:00",
+  "img": "https://ejemplo.com/imagen_actualizada.jpg",
+  "comentarios": [
+    {
+      "id": 1,
+      "creadorId": 2,
+      "nombreCreador": "María",
+      "apellidoCreador": "López",
+      "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+      "fecha": "2023-10-10T15:00:00"
+    }
+  ]
+}
+```
+
+### `DELETE /posts/{id}`
+**Descripción:** Elimina una publicación existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Post eliminado correctamente"
+}
+```
+
+### `GET /posts/usuarios/{userId}/posts`
+**Descripción:** Obtiene todas las publicaciones de un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los perros",
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
+    "fecha": "2023-10-10T14:30:00",
+    "img": "https://ejemplo.com/imagen_actualizada.jpg",
+    "comentarios": [
+      {
+        "id": 1,
+        "creadorId": 2,
+        "nombreCreador": "María",
+        "apellidoCreador": "López",
+        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+        "fecha": "2023-10-10T15:00:00"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los perros",
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "Hoy fuimos al parque con mi mascota",
+    "fecha": "2023-10-15T09:30:00",
+    "img": "https://ejemplo.com/imagen2.jpg",
+    "comentarios": []
+  }
+]
+```
+
+### `GET /posts/grupos/{grupoId}/posts`
+**Descripción:** Obtiene todas las publicaciones de un grupo específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los perros",
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
+    "fecha": "2023-10-10T14:30:00",
+    "img": "https://ejemplo.com/imagen_actualizada.jpg",
+    "comentarios": [
+      {
+        "id": 1,
+        "creadorId": 2,
+        "nombreCreador": "María",
+        "apellidoCreador": "López",
+        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+        "fecha": "2023-10-10T15:00:00"
+      }
+    ]
+  }
+]
+```
+
+## 13. Comentarios
+
+### `GET /posts/{postId}/comentarios`
+**Descripción:** Obtiene todos los comentarios de una publicación específica.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "creadorId": 2,
+    "nombreCreador": "María",
+    "apellidoCreador": "López",
+    "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+    "fecha": "2023-10-10T15:00:00"
+  },
+  {
+    "id": 2,
+    "postId": 1,
+    "creadorId": 3,
+    "nombreCreador": "Carlos",
+    "apellidoCreador": "Gómez",
+    "contenido": "¡Increíble! Mi perro también aprendió ese truco hace poco",
+    "fecha": "2023-10-10T16:20:00"
+  }
+]
+```
+
+### `POST /posts/{postId}/comentarios`
+**Descripción:** Crea un nuevo comentario en una publicación específica.
+
+**Ejemplo Request:**
+```json
+{
+  "creadorId": 2,
+  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+  "img": "https://ejemplo.com/imagen_comentario.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 2,
+  "nombreCreador": "María",
+  "apellidoCreador": "López",
+  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+  "fecha": "2023-10-10T15:00:00",
+  "img": "https://ejemplo.com/imagen_comentario.jpg"
+}
+```
+
+### `GET /comentarios/{id}`
+**Descripción:** Obtiene un comentario específico por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 2,
+  "nombreCreador": "María",
+  "apellidoCreador": "López",
+  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
+  "fecha": "2023-10-10T15:00:00",
+  "img": "https://ejemplo.com/imagen_comentario.jpg"
+}
+```
+
+### `PUT /comentarios/{id}`
+**Descripción:** Actualiza un comentario existente.
+
+**Ejemplo Request:**
+```json
+{
+  "contenido": "¡Qué lindo! Me encantaría ver un video de ese truco"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 2,
+  "nombreCreador": "María",
+  "apellidoCreador": "López",
+  "contenido": "¡Qué lindo! Me encantaría ver un video de ese truco",
+  "fecha": "2023-10-10T15:00:00",
+  "img": "https://ejemplo.com/imagen_comentario.jpg"
+}
+```
+
+### `DELETE /comentarios/{id}`
+**Descripción:** Elimina un comentario existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Comentario eliminado correctamente"
+}
+```
