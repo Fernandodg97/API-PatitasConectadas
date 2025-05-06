@@ -67,6 +67,10 @@ Configure the webserver, if you installed pgadmin4-web:
 sudo /usr/pgadmin4/bin/setup-web.sh
 ```
 
+# Documentación de la API Patitas Conectadas
+
+Para la documentación completa de todas las rutas de la API con ejemplos JSON y explicaciones detalladas, consulte el archivo [API-DOCS.md](API-DOCS.md).
+
 # Documentación API - Módulo de Perfiles
 
 ## Descripción General

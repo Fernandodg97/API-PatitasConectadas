@@ -1,5 +1,22 @@
 # Documentación Completa de la API Patitas Conectadas
 
+Esta documentación contiene todas las rutas de la API con ejemplos JSON y explicaciones para cada controlador.
+
+## Índice
+1. [Autenticación (Auth)](#1-autenticación-auth)
+2. [Usuarios](#2-usuarios)
+3. [Mascotas](#3-mascotas)
+4. [Perfiles](#4-perfiles)
+5. [Valoraciones](#5-valoraciones)
+6. [Eventos](#6-eventos)
+7. [Grupos](#7-grupos)
+8. [Seguidos](#8-seguidos)
+9. [Notificaciones](#9-notificaciones)
+10. [Relaciones Usuario-Grupo](#10-relaciones-usuario-grupo)
+11. [Chat](#11-chat)
+12. [Posts](#12-posts)
+13. [Comentarios](#13-comentarios)
+
 ## 1. Autenticación (Auth)
 
 ### `POST /auth/login`
