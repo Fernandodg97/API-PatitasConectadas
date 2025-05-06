@@ -911,3 +911,242 @@ Este módulo permite gestionar los perfiles de usuarios en el sistema. Cada perf
 - Los errores devuelven un objeto JSON con una propiedad "error" que describe el problema.
 - Las fechas se envían en formato ISO 8601 (YYYY-MM-DDTHH:MM:SS) o simplemente YYYY-MM-DD para fechas sin hora.
 - Los IDs de recursos son números enteros (Long).
+
+## 9. Notificaciones
+
+### `GET /notificaciones`
+**Descripción:** Obtiene todas las notificaciones registradas en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "fecha": "2023-10-15T14:30:00"
+  },
+  {
+    "id": 2,
+    "fecha": "2023-10-16T10:15:00"
+  }
+]
+```
+
+### `GET /notificaciones/{id}`
+**Descripción:** Obtiene una notificación específica por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "fecha": "2023-10-15T14:30:00"
+}
+```
+
+### `POST /notificaciones`
+**Descripción:** Crea una nueva notificación en el sistema.
+
+**Ejemplo Request:**
+```json
+{
+  "fecha": "2023-10-17T09:00:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 3,
+  "fecha": "2023-10-17T09:00:00"
+}
+```
+
+### `PUT /notificaciones/{id}`
+**Descripción:** Actualiza una notificación existente.
+
+**Ejemplo Request:**
+```json
+{
+  "fecha": "2023-10-17T10:00:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 3,
+  "fecha": "2023-10-17T10:00:00"
+}
+```
+
+### `DELETE /notificaciones/{id}`
+**Descripción:** Elimina una notificación existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Notificación eliminada correctamente"
+}
+```
+
+## 10. Relaciones Usuario-Grupo
+
+### `GET /usuario-grupo`
+**Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "usuarioNombre": "Juan Pérez",
+    "grupoId": 1,
+    "grupoNombre": "Amantes de los perros",
+    "rol": "Admin"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "usuarioNombre": "María López",
+    "grupoId": 1,
+    "grupoNombre": "Amantes de los perros",
+    "rol": "Miembro"
+  }
+]
+```
+
+### `GET /usuario-grupo/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y grupo por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "usuarioNombre": "Juan Pérez",
+  "grupoId": 1,
+  "grupoNombre": "Amantes de los perros",
+  "rol": "Admin"
+}
+```
+
+### `POST /usuario-grupo`
+**Descripción:** Crea una nueva relación entre un usuario y un grupo.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 3,
+  "grupoId": 1,
+  "rol": "Miembro"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 3,
+  "usuarioId": 3,
+  "usuarioNombre": "Carlos Gómez",
+  "grupoId": 1,
+  "grupoNombre": "Amantes de los perros",
+  "rol": "Miembro"
+}
+```
+
+### `PUT /usuario-grupo/{id}`
+**Descripción:** Actualiza una relación existente entre usuario y grupo.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 3,
+  "grupoId": 1,
+  "rol": "Moderador"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 3,
+  "usuarioId": 3,
+  "usuarioNombre": "Carlos Gómez",
+  "grupoId": 1,
+  "grupoNombre": "Amantes de los perros",
+  "rol": "Moderador"
+}
+```
+
+### `DELETE /usuario-grupo/{id}`
+**Descripción:** Elimina una relación existente entre usuario y grupo.
+
+**Ejemplo Response:**
+```json
+"Eliminado correctamente"
+```
+
+### `GET /usuario-grupo/usuario/{usuario_id}`
+**Descripción:** Obtiene todos los grupos a los que pertenece un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "usuarioNombre": "Juan Pérez",
+    "grupoId": 1,
+    "grupoNombre": "Amantes de los perros",
+    "rol": "Admin"
+  },
+  {
+    "id": 4,
+    "usuarioId": 1,
+    "usuarioNombre": "Juan Pérez",
+    "grupoId": 2,
+    "grupoNombre": "Gatos para adopción",
+    "rol": "Miembro"
+  }
+]
+```
+
+### `GET /usuario-grupo/grupo/{grupo_id}`
+**Descripción:** Obtiene todos los usuarios que pertenecen a un grupo específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "usuarioNombre": "Juan Pérez",
+    "grupoId": 1,
+    "grupoNombre": "Amantes de los perros",
+    "rol": "Admin"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "usuarioNombre": "María López",
+    "grupoId": 1,
+    "grupoNombre": "Amantes de los perros",
+    "rol": "Miembro"
+  }
+]
+```
+
+### `GET /usuario-grupo/usuario-grupo?usuario_id={usuarioId}&grupo_id={grupoId}`
+**Descripción:** Obtiene una relación específica entre un usuario y un grupo por sus IDs.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "usuarioNombre": "Juan Pérez",
+  "grupoId": 1,
+  "grupoNombre": "Amantes de los perros",
+  "rol": "Admin"
+}
+```
