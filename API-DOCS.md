@@ -2,23 +2,25 @@
 
 Esta documentación contiene todas las rutas de la API con ejemplos JSON y explicaciones para cada controlador.
 
+También puedes acceder a la documentación interactiva de la API en la ruta `/swagger-ui/index.html#/` donde podrás probar los endpoints directamente.
+
 ## Índice
 1. [Autenticación (Auth)](#1-autenticación-auth)
-2. [Usuarios](#2-usuarios)
-3. [Mascotas](#3-mascotas)
-4. [Perfiles](#4-perfiles)
-5. [Valoraciones](#5-valoraciones)
-6. [Eventos](#6-eventos)
-7. [Grupos](#7-grupos)
-8. [Seguidos](#8-seguidos)
-9. [Notificaciones](#9-notificaciones)
-10. [Relaciones Usuario-Grupo](#10-relaciones-usuario-grupo)
-11. [Chat](#11-chat)
-12. [Posts](#12-posts)
-13. [Comentarios](#13-comentarios)
-14. [Usuario-Post](#14-usuario-post)
-15. [Usuario-Comentario](#15-usuario-comentario)
-16. [Usuario-Evento](#16-usuario-evento)
+2. [Chat](#2-chat)
+3. [Comentarios](#3-comentarios)
+4. [Eventos](#4-eventos)
+5. [Grupos](#5-grupos)
+6. [Mascotas](#6-mascotas)
+7. [Notificaciones](#7-notificaciones)
+8. [Perfiles](#8-perfiles)
+9. [Posts](#9-posts)
+10. [Seguidos](#10-seguidos)
+11. [Usuarios](#11-usuarios)
+12. [Usuario-Comentario](#12-usuario-comentario)
+13. [Usuario-Evento](#13-usuario-evento)
+14. [Usuario-Grupo](#14-usuario-grupo)
+15. [Usuario-Post](#15-usuario-post)
+16. [Valoraciones](#16-valoraciones)
 
 ## 1. Autenticación (Auth)
 
@@ -39,6 +41,10 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+
+**Notas:**
+- Si las credenciales son incorrectas, se devolverá un error 401 Unauthorized
+- El token debe ser incluido en el header Authorization para las siguientes peticiones
 
 ### `POST /auth/register`
 **Descripción:** Registra un nuevo usuario en el sistema.
@@ -94,927 +100,7 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 }
 ```
 
-## 2. Usuarios
-
-### `GET /usuarios`
-**Descripción:** Obtiene todos los usuarios registrados.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "email": "juan@ejemplo.com"
-  },
-  {
-    "id": 2,
-    "nombre": "María",
-    "apellido": "López",
-    "email": "maria@ejemplo.com"
-  }
-]
-```
-
-### `GET /usuarios/{id}`
-**Descripción:** Obtiene información de un usuario específico.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "email": "juan@ejemplo.com"
-}
-```
-
-### `POST /usuarios`
-**Descripción:** Crea un nuevo usuario.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Carlos",
-  "apellido": "Gómez",
-  "email": "carlos@ejemplo.com",
-  "password": "contraseña123"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "nombre": "Carlos",
-  "apellido": "Gómez",
-  "email": "carlos@ejemplo.com"
-}
-```
-
-### `PUT /usuarios/{id}`
-**Descripción:** Actualiza información de un usuario existente.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Carlos",
-  "apellido": "Gómez Rodríguez",
-  "email": "carlos@ejemplo.com",
-  "password": "contraseña123"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "nombre": "Carlos",
-  "apellido": "Gómez Rodríguez",
-  "email": "carlos@ejemplo.com"
-}
-```
-
-### `DELETE /usuarios/{id}`
-**Descripción:** Elimina un usuario del sistema.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Usuario con ID: 3 eliminado correctamente"
-}
-```
-
-## 3. Mascotas
-
-### `GET /usuarios/{usuarioId}/mascotas`
-**Descripción:** Obtiene todas las mascotas de un usuario.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "usuarioId": 1,
-    "nombre": "Toby",
-    "genero": "Macho",
-    "raza": "Labrador"
-  },
-  {
-    "id": 2,
-    "usuarioId": 1,
-    "nombre": "Luna",
-    "genero": "Hembra",
-    "raza": "Siames"
-  }
-]
-```
-
-### `GET /usuarios/{usuarioId}/mascotas/{mascotaId}`
-**Descripción:** Obtiene información de una mascota específica.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuarioId": 1,
-  "nombre": "Toby",
-  "genero": "Macho",
-  "raza": "Labrador"
-}
-```
-
-### `POST /usuarios/{usuarioId}/mascotas`
-**Descripción:** Añade una nueva mascota a un usuario.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Rocky",
-  "genero": "Macho",
-  "raza": "Bulldog"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "usuarioId": 1,
-  "nombre": "Rocky",
-  "genero": "Macho",
-  "raza": "Bulldog"
-}
-```
-
-### `PUT /usuarios/{usuarioId}/mascotas/{mascotaId}`
-**Descripción:** Actualiza información de una mascota.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Rocky",
-  "genero": "Macho",
-  "raza": "Bulldog Francés"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "usuarioId": 1,
-  "nombre": "Rocky",
-  "genero": "Macho",
-  "raza": "Bulldog Francés"
-}
-```
-
-### `DELETE /usuarios/{usuarioId}/mascotas/{mascotaId}`
-**Descripción:** Elimina una mascota de un usuario.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Mascota eliminada con ID: 3"
-}
-```
-
-## 4. Perfiles
-
-### `GET /perfiles`
-**Descripción:** Obtiene todos los perfiles existentes en el sistema.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "usuario_id": 123,
-    "descripcion": "Descripción del perfil",
-    "fecha_nacimiento": "1990-01-01",
-    "img": "url_imagen"
-  },
-  {
-    "id": 2,
-    "usuario_id": 124,
-    "descripcion": "Amante de los animales",
-    "fecha_nacimiento": "1995-05-15",
-    "img": "https://ejemplo.com/imagen.jpg"
-  }
-]
-```
-
-### `POST /perfiles`
-**Descripción:** Crea un nuevo perfil en el sistema.
-
-**Ejemplo Request:**
-```json
-{
-  "usuario_id": 123,
-  "descripcion": "Descripción del perfil",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "url_imagen"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuario_id": 123,
-  "descripcion": "Descripción del perfil",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "url_imagen"
-}
-```
-
-### `GET /usuarios/{id}/perfiles`
-**Descripción:** Obtiene el perfil asociado a un usuario específico.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuario_id": 123,
-  "descripcion": "Descripción del perfil",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "url_imagen"
-}
-```
-
-### `POST /usuarios/{id}/perfiles`
-**Descripción:** Actualiza la información de un perfil existente.
-
-**Ejemplo Request:**
-```json
-{
-  "descripcion": "Nueva descripción del perfil",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "nueva_url_imagen"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuario_id": 123,
-  "descripcion": "Nueva descripción del perfil",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "nueva_url_imagen"
-}
-```
-
-### `DELETE /usuarios/{id}/perfiles`
-**Descripción:** Elimina un perfil del sistema.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Perfil eliminado correctamente"
-}
-```
-
-## 5. Valoraciones
-
-### `GET /valoraciones`
-**Descripción:** Obtiene todas las valoraciones registradas.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "autorId": 1,
-    "autorNombre": "Juan Pérez",
-    "receptorId": 2,
-    "receptorNombre": "María López",
-    "puntuacion": "5",
-    "contenido": "Excelente cuidado de mi mascota",
-    "fecha": "2023-10-15T14:30:00"
-  }
-]
-```
-
-### `GET /valoraciones/{id}`
-**Descripción:** Obtiene una valoración específica.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "autorId": 1,
-  "autorNombre": "Juan Pérez",
-  "receptorId": 2,
-  "receptorNombre": "María López",
-  "puntuacion": "5",
-  "contenido": "Excelente cuidado de mi mascota",
-  "fecha": "2023-10-15T14:30:00"
-}
-```
-
-### `POST /valoraciones/usuarios/{autorId}/receptor/{receptorId}`
-**Descripción:** Crea una nueva valoración de un usuario a otro.
-
-**Ejemplo Request:**
-```json
-{
-  "puntuacion": "4",
-  "contenido": "Muy buen trato con mi gato"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "autorId": 2,
-  "autorNombre": "María López",
-  "receptorId": 1,
-  "receptorNombre": "Juan Pérez",
-  "puntuacion": "4",
-  "contenido": "Muy buen trato con mi gato",
-  "fecha": "2023-10-16T10:15:00"
-}
-```
-
-### `PUT /valoraciones/{id}`
-**Descripción:** Actualiza una valoración existente.
-
-**Ejemplo Request:**
-```json
-{
-  "puntuacion": "5",
-  "contenido": "Excelente trato con mi gato"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "autorId": 2,
-  "autorNombre": "María López",
-  "receptorId": 1,
-  "receptorNombre": "Juan Pérez",
-  "puntuacion": "5",
-  "contenido": "Excelente trato con mi gato",
-  "fecha": "2023-10-16T10:15:00"
-}
-```
-
-### `DELETE /valoraciones/{id}`
-**Descripción:** Elimina una valoración existente.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Valoración eliminada correctamente"
-}
-```
-
-### `GET /valoraciones/usuarios/{receptorId}/recibidas`
-**Descripción:** Obtiene todas las valoraciones recibidas por un usuario.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 2,
-    "autorId": 2,
-    "autorNombre": "María López",
-    "receptorId": 1,
-    "receptorNombre": "Juan Pérez",
-    "puntuacion": "5",
-    "contenido": "Excelente trato con mi gato",
-    "fecha": "2023-10-16T10:15:00"
-  }
-]
-```
-
-### `GET /valoraciones/usuarios/{autorId}/enviadas`
-**Descripción:** Obtiene todas las valoraciones emitidas por un usuario.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "autorId": 1,
-    "autorNombre": "Juan Pérez",
-    "receptorId": 2,
-    "receptorNombre": "María López",
-    "puntuacion": "5",
-    "contenido": "Excelente cuidado de mi mascota",
-    "fecha": "2023-10-15T14:30:00"
-  }
-]
-```
-
-## 6. Eventos
-
-### `GET /eventos`
-**Descripción:** Obtiene todos los eventos registrados.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "nombre": "Jornada de adopción",
-    "descripcion": "Ven a conocer a tus futuros compañeros",
-    "ubicacion": "Parque Central",
-    "fecha": "2023-11-20",
-    "creadorId": 1
-  }
-]
-```
-
-### `GET /eventos/{id}`
-**Descripción:** Obtiene información de un evento específico.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "nombre": "Jornada de adopción",
-  "descripcion": "Ven a conocer a tus futuros compañeros",
-  "ubicacion": "Parque Central",
-  "fecha": "2023-11-20",
-  "creadorId": 1
-}
-```
-
-### `POST /eventos`
-**Descripción:** Crea un nuevo evento.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Taller de adiestramiento",
-  "descripcion": "Aprende técnicas básicas de adiestramiento",
-  "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05",
-  "creadorId": 1
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "nombre": "Taller de adiestramiento",
-  "descripcion": "Aprende técnicas básicas de adiestramiento",
-  "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05",
-  "creadorId": 1
-}
-```
-
-### `PUT /eventos/{id}`
-**Descripción:** Actualiza información de un evento existente.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Taller de adiestramiento canino",
-  "descripcion": "Aprende técnicas básicas y avanzadas de adiestramiento",
-  "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05",
-  "creadorId": 1
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "nombre": "Taller de adiestramiento canino",
-  "descripcion": "Aprende técnicas básicas y avanzadas de adiestramiento",
-  "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05",
-  "creadorId": 1
-}
-```
-
-### `DELETE /eventos/{id}`
-**Descripción:** Elimina un evento existente.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Evento eliminado con ID: 2"
-}
-```
-
-## 7. Grupos
-
-### `GET /grupos`
-**Descripción:** Obtiene todos los grupos existentes.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "nombre": "Amantes de los perros",
-    "descripcion": "Grupo para compartir experiencias con perros"
-  }
-]
-```
-
-### `GET /grupos/{id}`
-**Descripción:** Obtiene información de un grupo específico.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "nombre": "Amantes de los perros",
-  "descripcion": "Grupo para compartir experiencias con perros"
-}
-```
-
-### `POST /grupos?usuarioId={usuarioId}`
-**Descripción:** Crea un nuevo grupo y asigna al usuario como administrador.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Gatos en adopción",
-  "descripcion": "Grupo para conectar gatos con familias adoptivas"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "nombre": "Gatos en adopción",
-  "descripcion": "Grupo para conectar gatos con familias adoptivas"
-}
-```
-
-### `PUT /grupos/{id}`
-**Descripción:** Actualiza información de un grupo existente.
-
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Gatos para adopción",
-  "descripcion": "Grupo para conectar gatos con familias adoptivas en Barcelona"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "nombre": "Gatos para adopción",
-  "descripcion": "Grupo para conectar gatos con familias adoptivas en Barcelona"
-}
-```
-
-### `DELETE /grupos/{id}`
-**Descripción:** Elimina un grupo existente.
-
-**Ejemplo Response:**
-```json
-"Grupo eliminado correctamente"
-```
-
-## 8. Seguidos
-
-### `GET /seguidos`
-**Descripción:** Obtiene todas las relaciones de seguimiento entre usuarios.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "seguidorId": 1,
-    "seguidorNombre": "Juan Pérez",
-    "seguidoId": 2,
-    "seguidoNombre": "María López"
-  }
-]
-```
-
-### `POST /seguidos`
-**Descripción:** Crea una nueva relación de seguimiento entre usuarios.
-
-**Ejemplo Request:**
-```json
-{
-  "seguidorId": 2,
-  "seguidoId": 3
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 2,
-  "seguidorId": 2,
-  "seguidorNombre": "María López",
-  "seguidoId": 3,
-  "seguidoNombre": "Carlos Gómez"
-}
-```
-
-### `GET /seguidos/usuario/{usuarioId}/seguidos`
-**Descripción:** Obtiene todos los usuarios seguidos por un usuario específico.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "seguidorId": 1,
-    "seguidorNombre": "Juan Pérez",
-    "seguidoId": 2,
-    "seguidoNombre": "María López"
-  }
-]
-```
-
-### `GET /seguidos/usuario/{usuarioId}/seguidores`
-**Descripción:** Obtiene todos los seguidores de un usuario específico.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 2,
-    "seguidorId": 2,
-    "seguidorNombre": "María López",
-    "seguidoId": 1,
-    "seguidoNombre": "Juan Pérez"
-  }
-]
-```
-
-### `DELETE /seguidos/{id}`
-**Descripción:** Elimina una relación de seguimiento entre usuarios.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Relación de seguimiento eliminada correctamente"
-}
-```
-
-## Consideraciones generales
-
-- Todas las solicitudes que modifican datos (POST, PUT, DELETE) requieren autenticación.
-- El token JWT debe incluirse en el header Authorization como "Bearer {token}".
-- Los errores devuelven un objeto JSON con una propiedad "error" que describe el problema.
-- Las fechas se envían en formato ISO 8601 (YYYY-MM-DDTHH:MM:SS) o simplemente YYYY-MM-DD para fechas sin hora.
-- Los IDs de recursos son números enteros (Long).
-
-## 9. Notificaciones
-
-### `GET /notificaciones`
-**Descripción:** Obtiene todas las notificaciones registradas en el sistema.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "fecha": "2023-10-15T14:30:00"
-  },
-  {
-    "id": 2,
-    "fecha": "2023-10-16T10:15:00"
-  }
-]
-```
-
-### `GET /notificaciones/{id}`
-**Descripción:** Obtiene una notificación específica por su ID.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "fecha": "2023-10-15T14:30:00"
-}
-```
-
-### `POST /notificaciones`
-**Descripción:** Crea una nueva notificación en el sistema.
-
-**Ejemplo Request:**
-```json
-{
-  "fecha": "2023-10-17T09:00:00"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "fecha": "2023-10-17T09:00:00"
-}
-```
-
-### `PUT /notificaciones/{id}`
-**Descripción:** Actualiza una notificación existente.
-
-**Ejemplo Request:**
-```json
-{
-  "fecha": "2023-10-17T10:00:00"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "fecha": "2023-10-17T10:00:00"
-}
-```
-
-### `DELETE /notificaciones/{id}`
-**Descripción:** Elimina una notificación existente.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Notificación eliminada correctamente"
-}
-```
-
-## 10. Relaciones Usuario-Grupo
-
-### `GET /usuario-grupo`
-**Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "usuarioId": 1,
-    "usuarioNombre": "Juan Pérez",
-    "grupoId": 1,
-    "grupoNombre": "Amantes de los perros",
-    "rol": "Admin"
-  },
-  {
-    "id": 2,
-    "usuarioId": 2,
-    "usuarioNombre": "María López",
-    "grupoId": 1,
-    "grupoNombre": "Amantes de los perros",
-    "rol": "Miembro"
-  }
-]
-```
-
-### `GET /usuario-grupo/{id}`
-**Descripción:** Obtiene una relación específica entre usuario y grupo por su ID.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuarioId": 1,
-  "usuarioNombre": "Juan Pérez",
-  "grupoId": 1,
-  "grupoNombre": "Amantes de los perros",
-  "rol": "Admin"
-}
-```
-
-### `POST /usuario-grupo`
-**Descripción:** Crea una nueva relación entre un usuario y un grupo.
-
-**Ejemplo Request:**
-```json
-{
-  "usuarioId": 3,
-  "grupoId": 1,
-  "rol": "Miembro"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "usuarioId": 3,
-  "usuarioNombre": "Carlos Gómez",
-  "grupoId": 1,
-  "grupoNombre": "Amantes de los perros",
-  "rol": "Miembro"
-}
-```
-
-### `PUT /usuario-grupo/{id}`
-**Descripción:** Actualiza una relación existente entre usuario y grupo.
-
-**Ejemplo Request:**
-```json
-{
-  "usuarioId": 3,
-  "grupoId": 1,
-  "rol": "Moderador"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 3,
-  "usuarioId": 3,
-  "usuarioNombre": "Carlos Gómez",
-  "grupoId": 1,
-  "grupoNombre": "Amantes de los perros",
-  "rol": "Moderador"
-}
-```
-
-### `DELETE /usuario-grupo/{id}`
-**Descripción:** Elimina una relación existente entre usuario y grupo.
-
-**Ejemplo Response:**
-```json
-"Eliminado correctamente"
-```
-
-### `GET /usuario-grupo/usuario/{usuario_id}`
-**Descripción:** Obtiene todos los grupos a los que pertenece un usuario específico.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "usuarioId": 1,
-    "usuarioNombre": "Juan Pérez",
-    "grupoId": 1,
-    "grupoNombre": "Amantes de los perros",
-    "rol": "Admin"
-  },
-  {
-    "id": 4,
-    "usuarioId": 1,
-    "usuarioNombre": "Juan Pérez",
-    "grupoId": 2,
-    "grupoNombre": "Gatos para adopción",
-    "rol": "Miembro"
-  }
-]
-```
-
-### `GET /usuario-grupo/grupo/{grupo_id}`
-**Descripción:** Obtiene todos los usuarios que pertenecen a un grupo específico.
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "usuarioId": 1,
-    "usuarioNombre": "Juan Pérez",
-    "grupoId": 1,
-    "grupoNombre": "Amantes de los perros",
-    "rol": "Admin"
-  },
-  {
-    "id": 2,
-    "usuarioId": 2,
-    "usuarioNombre": "María López",
-    "grupoId": 1,
-    "grupoNombre": "Amantes de los perros",
-    "rol": "Miembro"
-  }
-]
-```
-
-### `GET /usuario-grupo/usuario-grupo?usuario_id={usuarioId}&grupo_id={grupoId}`
-**Descripción:** Obtiene una relación específica entre un usuario y un grupo por sus IDs.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "usuarioId": 1,
-  "usuarioNombre": "Juan Pérez",
-  "grupoId": 1,
-  "grupoNombre": "Amantes de los perros",
-  "rol": "Admin"
-}
-```
-
-## 11. Chat
+## 2. Chat
 
 ### `POST /chat/enviar`
 **Descripción:** Envía un nuevo mensaje de un usuario a otro.
@@ -1024,8 +110,7 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 {
   "emisorId": 1,
   "receptorId": 2,
-  "contenido": "Hola, ¿cómo estás?",
-  "visto": false
+  "contenido": "¡Hola! ¿Cómo estás?"
 }
 ```
 
@@ -1034,17 +119,21 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 {
   "id": 1,
   "emisorId": 1,
-  "emisorNombre": "Juan Pérez",
   "receptorId": 2,
-  "receptorNombre": "María López",
-  "contenido": "Hola, ¿cómo estás?",
-  "fechaHora": "2023-10-15T10:30:00",
-  "visto": false
+  "visto": false,
+  "contenido": "¡Hola! ¿Cómo estás?",
+  "fechaHora": "2024-03-20T15:30:00",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00"
 }
 ```
 
+**Notas:**
+- Si el emisor o receptor no existen, se devolverá un error 400 Bad Request
+- El contenido del mensaje no puede exceder los 255 caracteres
+
 ### `GET /chat/conversacion/{usuario1Id}/{usuario2Id}`
-**Descripción:** Obtiene la conversación completa entre dos usuarios.
+**Descripción:** Obtiene la conversación completa entre dos usuarios específicos.
 
 **Ejemplo Response:**
 ```json
@@ -1052,28 +141,28 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "emisorId": 1,
-    "emisorNombre": "Juan Pérez",
     "receptorId": 2,
-    "receptorNombre": "María López",
-    "contenido": "Hola, ¿cómo estás?",
-    "fechaHora": "2023-10-15T10:30:00",
-    "visto": true
+    "visto": true,
+    "contenido": "¡Hola! ¿Cómo estás?",
+    "fechaHora": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
   },
   {
     "id": 2,
     "emisorId": 2,
-    "emisorNombre": "María López",
     "receptorId": 1,
-    "receptorNombre": "Juan Pérez",
-    "contenido": "Muy bien, ¿y tú?",
-    "fechaHora": "2023-10-15T10:35:00",
-    "visto": false
+    "visto": false,
+    "contenido": "¡Hola! Todo bien, gracias",
+    "fechaHora": "2024-03-20T15:31:00",
+    "createdAt": "2024-03-20T15:31:00",
+    "updatedAt": "2024-03-20T15:31:00"
   }
 ]
 ```
 
 ### `PUT /chat/marcar-vistos/{usuarioId}/{otroUsuarioId}`
-**Descripción:** Marca como vistos todos los mensajes enviados de un usuario a otro.
+**Descripción:** Marca como vistos todos los mensajes enviados por un usuario a otro.
 
 **Ejemplo Response:**
 ```json
@@ -1089,14 +178,14 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 ```json
 [
   {
-    "id": 3,
+    "id": 2,
     "emisorId": 2,
-    "emisorNombre": "María López",
     "receptorId": 1,
-    "receptorNombre": "Juan Pérez",
-    "contenido": "¿Nos vemos mañana?",
-    "fechaHora": "2023-10-15T10:40:00",
-    "visto": false
+    "visto": false,
+    "contenido": "¡Hola! Todo bien, gracias",
+    "fechaHora": "2024-03-20T15:31:00",
+    "createdAt": "2024-03-20T15:31:00",
+    "updatedAt": "2024-03-20T15:31:00"
   }
 ]
 ```
@@ -1110,12 +199,12 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "emisorId": 1,
-    "emisorNombre": "Juan Pérez",
     "receptorId": 2,
-    "receptorNombre": "María López",
-    "contenido": "Hola, ¿cómo estás?",
-    "fechaHora": "2023-10-15T10:30:00",
-    "visto": true
+    "visto": true,
+    "contenido": "¡Hola! ¿Cómo estás?",
+    "fechaHora": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
   }
 ]
 ```
@@ -1129,28 +218,18 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 2,
     "emisorId": 2,
-    "emisorNombre": "María López",
     "receptorId": 1,
-    "receptorNombre": "Juan Pérez",
-    "contenido": "Muy bien, ¿y tú?",
-    "fechaHora": "2023-10-15T10:35:00",
-    "visto": false
-  },
-  {
-    "id": 3,
-    "emisorId": 2,
-    "emisorNombre": "María López",
-    "receptorId": 1,
-    "receptorNombre": "Juan Pérez",
-    "contenido": "¿Nos vemos mañana?",
-    "fechaHora": "2023-10-15T10:40:00",
-    "visto": false
+    "visto": false,
+    "contenido": "¡Hola! Todo bien, gracias",
+    "fechaHora": "2024-03-20T15:31:00",
+    "createdAt": "2024-03-20T15:31:00",
+    "updatedAt": "2024-03-20T15:31:00"
   }
 ]
 ```
 
 ### `DELETE /chat/eliminar/{usuario1Id}/{usuario2Id}`
-**Descripción:** Elimina toda la conversación entre dos usuarios.
+**Descripción:** Elimina toda la conversación entre dos usuarios específicos.
 
 **Ejemplo Response:**
 ```json
@@ -1159,15 +238,649 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 }
 ```
 
-## 12. Posts
+## 3. Comentarios
+
+### `GET /posts/{postId}/comentarios`
+**Descripción:** Obtiene todos los comentarios asociados a una publicación específica.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "¡Qué lindo perro!",
+    "fecha": "2024-03-20T15:30:00",
+    "img": "https://ejemplo.com/imagen.jpg",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
+  }
+]
+```
+
+### `POST /posts/{postId}/comentarios`
+**Descripción:** Crea un nuevo comentario en una publicación específica.
+
+**Ejemplo Request:**
+```json
+{
+  "creadorId": 1,
+  "contenido": "¡Qué lindo perro!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "¡Qué lindo perro!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Si el post no existe, se devolverá un error 404 Not Found
+- El contenido del comentario no puede exceder los 1000 caracteres
+- La fecha es opcional, si no se proporciona se usará la fecha actual
+
+### `GET /comentarios/{id}`
+**Descripción:** Obtiene un comentario específico por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "¡Qué lindo perro!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00"
+}
+```
+
+### `PUT /comentarios/{id}`
+**Descripción:** Actualiza un comentario existente.
+
+**Ejemplo Request:**
+```json
+{
+  "contenido": "¡Qué lindo perro! Me encanta",
+  "fecha": "2024-03-20T15:35:00",
+  "img": "https://ejemplo.com/nueva-imagen.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "¡Qué lindo perro! Me encanta",
+  "fecha": "2024-03-20T15:35:00",
+  "img": "https://ejemplo.com/nueva-imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:35:00"
+}
+```
+
+### `DELETE /comentarios/{id}`
+**Descripción:** Elimina un comentario existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Comentario eliminado con éxito"
+}
+```
+
+## 4. Eventos
+
+### `GET /eventos`
+**Descripción:** Obtiene todos los eventos existentes en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Adopción de mascotas",
+    "descripcion": "Evento de adopción de mascotas en el parque central",
+    "ubicacion": "Parque Central, Barcelona",
+    "fecha": "2024-04-15",
+    "creadorId": 1
+  }
+]
+```
+
+### `POST /eventos`
+**Descripción:** Crea un nuevo evento en el sistema.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Adopción de mascotas",
+  "descripcion": "Evento de adopción de mascotas en el parque central",
+  "ubicacion": "Parque Central, Barcelona",
+  "fecha": "2024-04-15",
+  "creadorId": 1
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Adopción de mascotas",
+  "descripcion": "Evento de adopción de mascotas en el parque central",
+  "ubicacion": "Parque Central, Barcelona",
+  "fecha": "2024-04-15",
+  "creadorId": 1
+}
+```
+
+**Notas:**
+- El nombre del evento es obligatorio y no puede estar vacío
+- Si el creador no existe, se devolverá un error 400 Bad Request
+- Si el nombre está vacío, se devolverá un error 400 Bad Request
+
+### `GET /eventos/{id}`
+**Descripción:** Obtiene un evento específico por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Adopción de mascotas",
+  "descripcion": "Evento de adopción de mascotas en el parque central",
+  "ubicacion": "Parque Central, Barcelona",
+  "fecha": "2024-04-15",
+  "creadorId": 1
+}
+```
+
+**Notas:**
+- Si el evento no existe, se devolverá un error 404 Not Found
+
+### `PUT /eventos/{id}`
+**Descripción:** Actualiza un evento existente.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Gran evento de adopción de mascotas",
+  "descripcion": "Evento de adopción de mascotas en el parque central con más de 50 mascotas",
+  "ubicacion": "Parque Central, Barcelona",
+  "fecha": "2024-04-15",
+  "creadorId": 1
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Gran evento de adopción de mascotas",
+  "descripcion": "Evento de adopción de mascotas en el parque central con más de 50 mascotas",
+  "ubicacion": "Parque Central, Barcelona",
+  "fecha": "2024-04-15",
+  "creadorId": 1
+}
+```
+
+**Notas:**
+- Si el evento no existe, se devolverá un error 404 Not Found
+- El nombre del evento es obligatorio y no puede estar vacío
+- Si el creador no existe, se devolverá un error 400 Bad Request
+
+### `DELETE /eventos/{id}`
+**Descripción:** Elimina un evento existente.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el evento no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+## 5. Grupos
+
+### `GET /grupos`
+**Descripción:** Obtiene todos los grupos existentes en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Amantes de los Perros",
+    "descripcion": "Grupo para compartir experiencias sobre perros"
+  }
+]
+```
+
+### `POST /grupos?usuarioId={id}`
+**Descripción:** Crea un nuevo grupo y asigna al usuario como administrador.
+
+**Parámetros URL:**
+- usuarioId: ID del usuario que será administrador del grupo (requerido)
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Amantes de los Perros",
+  "descripcion": "Grupo para compartir experiencias sobre perros"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Amantes de los Perros",
+  "descripcion": "Grupo para compartir experiencias sobre perros"
+}
+```
+
+**Notas:**
+- El usuario especificado en usuarioId será automáticamente asignado como administrador del grupo
+- El nombre del grupo es obligatorio
+- Si el usuario no existe, se devolverá un error
+
+### `GET /grupos/{id}`
+**Descripción:** Obtiene un grupo específico por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Amantes de los Perros",
+  "descripcion": "Grupo para compartir experiencias sobre perros"
+}
+```
+
+### `PUT /grupos/{id}`
+**Descripción:** Actualiza un grupo existente.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Amantes de los Perros y Gatos",
+  "descripcion": "Grupo para compartir experiencias sobre perros y gatos"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Amantes de los Perros y Gatos",
+  "descripcion": "Grupo para compartir experiencias sobre perros y gatos"
+}
+```
+
+### `DELETE /grupos/{id}`
+**Descripción:** Elimina un grupo existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Grupo eliminado correctamente"
+}
+```
+
+## 6. Mascotas
+
+### `GET /usuarios/{usuarioId}/mascotas`
+**Descripción:** Obtiene todas las mascotas asociadas a un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "nombre": "Toby",
+    "genero": "Macho",
+    "raza": "Labrador"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 400 Bad Request
+- Si el usuario no tiene mascotas, se devolverá una lista vacía
+
+### `POST /usuarios/{usuarioId}/mascotas`
+**Descripción:** Crea una nueva mascota asociada a un usuario específico.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Toby",
+  "genero": "Macho",
+  "raza": "Labrador"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "nombre": "Toby",
+  "genero": "Macho",
+  "raza": "Labrador"
+}
+```
+
+**Notas:**
+- El nombre, género y raza son campos obligatorios
+- El género debe tener un máximo de 10 caracteres
+- El nombre y la raza deben tener un máximo de 50 caracteres
+- Si el usuario no existe, se devolverá un error 400 Bad Request
+
+### `GET /usuarios/{usuarioId}/mascotas/{mascotaId}`
+**Descripción:** Obtiene una mascota específica de un usuario por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "nombre": "Toby",
+  "genero": "Macho",
+  "raza": "Labrador"
+}
+```
+
+**Notas:**
+- Si la mascota no existe o no pertenece al usuario, se devolverá un error 404 Not Found
+
+### `PUT /usuarios/{usuarioId}/mascotas/{mascotaId}`
+**Descripción:** Actualiza una mascota específica de un usuario.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Toby",
+  "genero": "Macho",
+  "raza": "Labrador Retriever"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "nombre": "Toby",
+  "genero": "Macho",
+  "raza": "Labrador Retriever"
+}
+```
+
+**Notas:**
+- Si la mascota no existe o no pertenece al usuario, se devolverá un error 404 Not Found
+- El nombre, género y raza son campos obligatorios
+- El género debe tener un máximo de 10 caracteres
+- El nombre y la raza deben tener un máximo de 50 caracteres
+
+### `DELETE /usuarios/{usuarioId}/mascotas/{mascotaId}`
+**Descripción:** Elimina una mascota específica de un usuario.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Mascota eliminada con ID: 1"
+}
+```
+
+**Notas:**
+- Si la mascota no existe o no pertenece al usuario, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un mensaje de confirmación
+
+## 7. Notificaciones
+
+### `GET /notificaciones`
+**Descripción:** Obtiene todas las notificaciones existentes en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "fecha": "2024-03-20T15:30:00"
+  }
+]
+```
+
+**Notas:**
+- Si ocurre un error al obtener las notificaciones, se devolverá un error 500 Internal Server Error
+- Si no hay notificaciones, se devolverá una lista vacía
+
+### `GET /notificaciones/{id}`
+**Descripción:** Obtiene una notificación específica por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Si la notificación no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al obtener la notificación, se devolverá un error 500 Internal Server Error
+
+### `POST /notificaciones`
+**Descripción:** Crea una nueva notificación en el sistema.
+
+**Ejemplo Request:**
+```json
+{
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- La fecha es un campo obligatorio y debe ser una fecha válida
+- El ID se genera automáticamente por el sistema
+- La fecha debe estar en formato ISO 8601 (YYYY-MM-DDThh:mm:ss)
+- Si ocurre un error al crear la notificación, se devolverá un error 500 Internal Server Error con un mensaje descriptivo
+- La respuesta incluirá el ID generado automáticamente junto con la fecha proporcionada
+
+### `PUT /notificaciones/{id}`
+**Descripción:** Actualiza una notificación existente.
+
+**Ejemplo Request:**
+```json
+{
+  "fecha": "2024-03-20T16:30:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "fecha": "2024-03-20T16:30:00"
+}
+```
+
+**Notas:**
+- Si la notificación no existe, se devolverá un error 404 Not Found
+- La fecha es un campo obligatorio
+- Si ocurre un error al actualizar la notificación, se devolverá un error 500 Internal Server Error
+
+### `DELETE /notificaciones/{id}`
+**Descripción:** Elimina una notificación existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Notificación eliminada correctamente"
+}
+```
+
+**Notas:**
+- Si la notificación no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar la notificación, se devolverá un error 500 Internal Server Error
+
+## 8. Perfiles
+
+### `GET /perfiles`
+**Descripción:** Obtiene todos los perfiles existentes en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuario_id": 1,
+    "descripcion": "Amante de los animales",
+    "fecha_nacimiento": "1990-01-01",
+    "img": "https://ejemplo.com/imagen.jpg"
+  }
+]
+```
+
+**Notas:**
+- Si ocurre un error al obtener los perfiles, se devolverá un error 500 Internal Server Error
+- Si no hay perfiles, se devolverá una lista vacía
+
+### `POST /perfiles`
+**Descripción:** Crea un nuevo perfil en el sistema.
+
+**Ejemplo Request:**
+```json
+{
+  "usuario_id": 1,
+  "descripcion": "Amante de los animales",
+  "fecha_nacimiento": "1990-01-01",
+  "img": "https://ejemplo.com/imagen.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuario_id": 1,
+  "descripcion": "Amante de los animales",
+  "fecha_nacimiento": "1990-01-01",
+  "img": "https://ejemplo.com/imagen.jpg"
+}
+```
+
+**Notas:**
+- El usuario_id es obligatorio y debe corresponder a un usuario existente
+- La fecha_nacimiento debe estar en formato YYYY-MM-DD
+- La imagen debe ser una URL válida
+- Si ocurre un error al crear el perfil, se devolverá un error 500 Internal Server Error
+
+### `GET /usuarios/{id}/perfiles`
+**Descripción:** Obtiene el perfil asociado a un usuario específico.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuario_id": 1,
+  "descripcion": "Amante de los animales",
+  "fecha_nacimiento": "1990-01-01",
+  "img": "https://ejemplo.com/imagen.jpg"
+}
+```
+
+**Notas:**
+- Si el perfil no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al obtener el perfil, se devolverá un error 500 Internal Server Error
+
+### `PUT /usuarios/{id}/perfiles`
+**Descripción:** Actualiza el perfil de un usuario específico.
+
+**Ejemplo Request:**
+```json
+{
+  "usuario_id": 1,
+  "descripcion": "Amante de los animales y la naturaleza",
+  "fecha_nacimiento": "1990-01-01",
+  "img": "https://ejemplo.com/nueva-imagen.jpg"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuario_id": 1,
+  "descripcion": "Amante de los animales y la naturaleza",
+  "fecha_nacimiento": "1990-01-01",
+  "img": "https://ejemplo.com/nueva-imagen.jpg"
+}
+```
+
+**Notas:**
+- Si el perfil no existe, se devolverá un error 404 Not Found
+- El usuario_id es obligatorio y debe corresponder a un usuario existente
+- La fecha_nacimiento debe estar en formato YYYY-MM-DD
+- La imagen debe ser una URL válida
+- Si ocurre un error al actualizar el perfil, se devolverá un error 500 Internal Server Error
+
+### `DELETE /usuarios/{id}/perfiles`
+**Descripción:** Elimina el perfil de un usuario específico.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Se ha eliminado el perfil con id: 1"
+}
+```
+
+**Notas:**
+- Si el perfil no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar el perfil, se devolverá un error 500 Internal Server Error
+- Si la eliminación es exitosa, se devolverá un mensaje de confirmación
+
+## 9. Posts
 
 ### `GET /posts`
-**Descripción:** Obtiene todas las publicaciones con posibilidad de filtrar por contenido o fechas.
+**Descripción:** Obtiene todas las publicaciones con posibilidad de filtrar por contenido o rango de fechas.
 
-**Parámetros opcionales:**
-- `contenido`: Texto para filtrar publicaciones por contenido
-- `fechaInicio`: Fecha inicial para filtrar (formato ISO)
-- `fechaFin`: Fecha final para filtrar (formato ISO)
+**Parámetros Query (opcionales):**
+- contenido: Texto para filtrar por contenido
+- fechaInicio: Fecha inicial para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
+- fechaFin: Fecha final para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
 
 **Ejemplo Response:**
 ```json
@@ -1175,55 +888,70 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "grupoId": 1,
-    "nombreGrupo": "Amantes de los perros",
+    "nombreGrupo": "Amantes de los Perros",
     "creadorId": 1,
     "nombreCreador": "Juan",
     "apellidoCreador": "Pérez",
-    "contenido": "Mi perro aprendió un nuevo truco",
-    "fecha": "2023-10-10T14:30:00",
-    "img": "https://ejemplo.com/imagen1.jpg",
+    "contenido": "¡Hoy adopté un nuevo perrito!",
+    "fecha": "2024-03-20T15:30:00",
+    "img": "https://ejemplo.com/imagen.jpg",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00",
     "comentarios": [
       {
         "id": 1,
-        "creadorId": 2,
-        "nombreCreador": "María",
-        "apellidoCreador": "López",
-        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-        "fecha": "2023-10-10T15:00:00"
+        "contenido": "¡Felicidades!",
+        "fecha": "2024-03-20T15:35:00"
       }
     ]
   }
 ]
 ```
 
+**Notas:**
+- Si no se proporcionan filtros, se devuelven todas las publicaciones
+- Si se proporciona contenido, se buscan publicaciones que contengan ese texto
+- Si se proporcionan fechas, se filtran las publicaciones entre esas fechas
+- Las fechas deben estar en formato ISO 8601
+
 ### `POST /posts`
-**Descripción:** Crea una nueva publicación.
+**Descripción:** Crea una nueva publicación en el sistema.
 
 **Ejemplo Request:**
 ```json
 {
   "grupoId": 1,
   "creadorId": 1,
-  "contenido": "Hoy fuimos al parque con mi mascota",
-  "img": "https://ejemplo.com/imagen2.jpg"
+  "contenido": "¡Hoy adopté un nuevo perrito!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg"
 }
 ```
 
 **Ejemplo Response:**
 ```json
 {
-  "id": 2,
+  "id": 1,
   "grupoId": 1,
-  "nombreGrupo": "Amantes de los perros",
+  "nombreGrupo": "Amantes de los Perros",
   "creadorId": 1,
   "nombreCreador": "Juan",
   "apellidoCreador": "Pérez",
-  "contenido": "Hoy fuimos al parque con mi mascota",
-  "fecha": "2023-10-15T09:30:00",
-  "img": "https://ejemplo.com/imagen2.jpg",
+  "contenido": "¡Hoy adopté un nuevo perrito!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00",
   "comentarios": []
 }
 ```
+
+**Notas:**
+- El creadorId es obligatorio y debe corresponder a un usuario existente
+- El grupoId es opcional, pero si se proporciona debe corresponder a un grupo existente
+- El contenido no puede estar vacío y tiene un límite de 255 caracteres
+- La fecha es opcional, si no se proporciona se usará la fecha actual
+- La imagen debe ser una URL válida
 
 ### `GET /posts/{id}`
 **Descripción:** Obtiene una publicación específica por su ID.
@@ -1233,25 +961,27 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 {
   "id": 1,
   "grupoId": 1,
-  "nombreGrupo": "Amantes de los perros",
+  "nombreGrupo": "Amantes de los Perros",
   "creadorId": 1,
   "nombreCreador": "Juan",
   "apellidoCreador": "Pérez",
-  "contenido": "Mi perro aprendió un nuevo truco",
-  "fecha": "2023-10-10T14:30:00",
-  "img": "https://ejemplo.com/imagen1.jpg",
+  "contenido": "¡Hoy adopté un nuevo perrito!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "https://ejemplo.com/imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00",
   "comentarios": [
     {
       "id": 1,
-      "creadorId": 2,
-      "nombreCreador": "María",
-      "apellidoCreador": "López",
-      "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-      "fecha": "2023-10-10T15:00:00"
+      "contenido": "¡Felicidades!",
+      "fecha": "2024-03-20T15:35:00"
     }
   ]
 }
 ```
+
+**Notas:**
+- Si la publicación no existe, se devolverá un error 404 Not Found
 
 ### `PUT /posts/{id}`
 **Descripción:** Actualiza una publicación existente.
@@ -1259,8 +989,11 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 **Ejemplo Request:**
 ```json
 {
-  "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
-  "img": "https://ejemplo.com/imagen_actualizada.jpg"
+  "grupoId": 1,
+  "creadorId": 1,
+  "contenido": "¡Actualización: Mi perrito ya está adaptado!",
+  "fecha": "2024-03-20T16:30:00",
+  "img": "https://ejemplo.com/nueva-imagen.jpg"
 }
 ```
 
@@ -1269,25 +1002,31 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 {
   "id": 1,
   "grupoId": 1,
-  "nombreGrupo": "Amantes de los perros",
+  "nombreGrupo": "Amantes de los Perros",
   "creadorId": 1,
   "nombreCreador": "Juan",
   "apellidoCreador": "Pérez",
-  "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
-  "fecha": "2023-10-10T14:30:00",
-  "img": "https://ejemplo.com/imagen_actualizada.jpg",
+  "contenido": "¡Actualización: Mi perrito ya está adaptado!",
+  "fecha": "2024-03-20T16:30:00",
+  "img": "https://ejemplo.com/nueva-imagen.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T16:30:00",
   "comentarios": [
     {
       "id": 1,
-      "creadorId": 2,
-      "nombreCreador": "María",
-      "apellidoCreador": "López",
-      "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-      "fecha": "2023-10-10T15:00:00"
+      "contenido": "¡Felicidades!",
+      "fecha": "2024-03-20T15:35:00"
     }
   ]
 }
 ```
+
+**Notas:**
+- Si la publicación no existe, se devolverá un error 404 Not Found
+- El creadorId es obligatorio y debe corresponder a un usuario existente
+- El grupoId es opcional, pero si se proporciona debe corresponder a un grupo existente
+- El contenido no puede estar vacío y tiene un límite de 255 caracteres
+- La imagen debe ser una URL válida
 
 ### `DELETE /posts/{id}`
 **Descripción:** Elimina una publicación existente.
@@ -1299,8 +1038,12 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 }
 ```
 
-### `GET /posts/usuarios/{userId}/posts`
-**Descripción:** Obtiene todas las publicaciones de un usuario específico.
+**Notas:**
+- Si la publicación no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
+
+### `GET /usuarios/{userId}/posts`
+**Descripción:** Obtiene todas las publicaciones realizadas por un usuario específico.
 
 **Ejemplo Response:**
 ```json
@@ -1308,41 +1051,26 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "grupoId": 1,
-    "nombreGrupo": "Amantes de los perros",
+    "nombreGrupo": "Amantes de los Perros",
     "creadorId": 1,
     "nombreCreador": "Juan",
     "apellidoCreador": "Pérez",
-    "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
-    "fecha": "2023-10-10T14:30:00",
-    "img": "https://ejemplo.com/imagen_actualizada.jpg",
-    "comentarios": [
-      {
-        "id": 1,
-        "creadorId": 2,
-        "nombreCreador": "María",
-        "apellidoCreador": "López",
-        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-        "fecha": "2023-10-10T15:00:00"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "grupoId": 1,
-    "nombreGrupo": "Amantes de los perros",
-    "creadorId": 1,
-    "nombreCreador": "Juan",
-    "apellidoCreador": "Pérez",
-    "contenido": "Hoy fuimos al parque con mi mascota",
-    "fecha": "2023-10-15T09:30:00",
-    "img": "https://ejemplo.com/imagen2.jpg",
+    "contenido": "¡Hoy adopté un nuevo perrito!",
+    "fecha": "2024-03-20T15:30:00",
+    "img": "https://ejemplo.com/imagen.jpg",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00",
     "comentarios": []
   }
 ]
 ```
 
-### `GET /posts/grupos/{grupoId}/posts`
-**Descripción:** Obtiene todas las publicaciones de un grupo específico.
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene publicaciones, se devolverá una lista vacía
+
+### `GET /grupos/{grupoId}/posts`
+**Descripción:** Obtiene todas las publicaciones realizadas en un grupo específico.
 
 **Ejemplo Response:**
 ```json
@@ -1350,65 +1078,76 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "grupoId": 1,
-    "nombreGrupo": "Amantes de los perros",
+    "nombreGrupo": "Amantes de los Perros",
     "creadorId": 1,
     "nombreCreador": "Juan",
     "apellidoCreador": "Pérez",
-    "contenido": "Mi perro aprendió a dar la pata, estoy muy orgulloso",
-    "fecha": "2023-10-10T14:30:00",
-    "img": "https://ejemplo.com/imagen_actualizada.jpg",
-    "comentarios": [
-      {
-        "id": 1,
-        "creadorId": 2,
-        "nombreCreador": "María",
-        "apellidoCreador": "López",
-        "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-        "fecha": "2023-10-10T15:00:00"
-      }
-    ]
+    "contenido": "¡Hoy adopté un nuevo perrito!",
+    "fecha": "2024-03-20T15:30:00",
+    "img": "https://ejemplo.com/imagen.jpg",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00",
+    "comentarios": []
   }
 ]
 ```
 
-## 13. Comentarios
+**Notas:**
+- Si el grupo no existe, se devolverá un error 404 Not Found
+- Si el grupo no tiene publicaciones, se devolverá una lista vacía
 
-### `GET /posts/{postId}/comentarios`
-**Descripción:** Obtiene todos los comentarios de una publicación específica.
+## 10. Seguidos
+
+### `GET /usuarios/{usuarioId}/seguidos`
+**Descripción:** Obtiene todos los usuarios que sigue un usuario específico.
 
 **Ejemplo Response:**
 ```json
 [
   {
     "id": 1,
-    "postId": 1,
-    "creadorId": 2,
-    "nombreCreador": "María",
-    "apellidoCreador": "López",
-    "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-    "fecha": "2023-10-10T15:00:00"
+    "usuarioQueSigueId": 1,
+    "usuarioQueEsSeguidoId": 2
   },
   {
     "id": 2,
-    "postId": 1,
-    "creadorId": 3,
-    "nombreCreador": "Carlos",
-    "apellidoCreador": "Gómez",
-    "contenido": "¡Increíble! Mi perro también aprendió ese truco hace poco",
-    "fecha": "2023-10-10T16:20:00"
+    "usuarioQueSigueId": 1,
+    "usuarioQueEsSeguidoId": 3
   }
 ]
 ```
 
-### `POST /posts/{postId}/comentarios`
-**Descripción:** Crea un nuevo comentario en una publicación específica.
+**Notas:**
+- Si el usuario no existe, se devolverá un error 500 Internal Server Error
+- Si el usuario no sigue a nadie, se devolverá una lista vacía
+
+### `POST /usuarios/{usuarioId}/seguidos/{usuarioASeguirId}`
+**Descripción:** Crea una relación de seguimiento entre dos usuarios.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioQueSigueId": 1,
+  "usuarioQueEsSeguidoId": 2
+}
+```
+
+**Notas:**
+- No se puede seguir al mismo usuario (usuarioId = usuarioASeguirId)
+- El usuario que sigue debe existir
+- El usuario a seguir debe existir
+- No se puede seguir a un usuario que ya se está siguiendo
+- Si alguna de estas validaciones falla, se devolverá un error 400 Bad Request con un mensaje descriptivo
+
+### `POST /usuarios/{usuarioId}/seguidos`
+**Descripción:** Crea una relación de seguimiento utilizando un DTO.
 
 **Ejemplo Request:**
 ```json
 {
-  "creadorId": 2,
-  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-  "img": "https://ejemplo.com/imagen_comentario.jpg"
+  "usuarioQueSigueId": 1,
+  "usuarioQueEsSeguidoId": 2
 }
 ```
 
@@ -1416,40 +1155,70 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 ```json
 {
   "id": 1,
-  "postId": 1,
-  "creadorId": 2,
-  "nombreCreador": "María",
-  "apellidoCreador": "López",
-  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-  "fecha": "2023-10-10T15:00:00",
-  "img": "https://ejemplo.com/imagen_comentario.jpg"
+  "usuarioQueSigueId": 1,
+  "usuarioQueEsSeguidoId": 2
 }
 ```
 
-### `GET /comentarios/{id}`
-**Descripción:** Obtiene un comentario específico por su ID.
+**Notas:**
+- El usuarioId de la ruta tiene prioridad sobre el usuarioQueSigueId del DTO
+- No se puede seguir al mismo usuario
+- El usuario que sigue debe existir
+- El usuario a seguir debe existir
+- No se puede seguir a un usuario que ya se está siguiendo
+- Si alguna de estas validaciones falla, se devolverá un error 400 Bad Request con un mensaje descriptivo
+
+### `DELETE /usuarios/{usuarioId}/seguidos/{usuarioASeguirId}`
+**Descripción:** Elimina una relación de seguimiento entre dos usuarios.
 
 **Ejemplo Response:**
 ```json
 {
-  "id": 1,
-  "postId": 1,
-  "creadorId": 2,
-  "nombreCreador": "María",
-  "apellidoCreador": "López",
-  "contenido": "¡Qué lindo! ¿Qué truco aprendió?",
-  "fecha": "2023-10-10T15:00:00",
-  "img": "https://ejemplo.com/imagen_comentario.jpg"
+  "mensaje": "Has dejado de seguir al usuario con ID: 2"
 }
 ```
 
-### `PUT /comentarios/{id}`
-**Descripción:** Actualiza un comentario existente.
+**Notas:**
+- Si la relación de seguimiento no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
+
+## 11. Usuarios
+
+### `GET /usuarios`
+**Descripción:** Obtiene todos los usuarios registrados en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com"
+  },
+  {
+    "id": 2,
+    "nombre": "María",
+    "apellido": "García",
+    "email": "maria@ejemplo.com"
+  }
+]
+```
+
+**Notas:**
+- Si ocurre un error al obtener los usuarios, se devolverá un error 400 Bad Request
+- La contraseña no se incluye en la respuesta por seguridad
+
+### `POST /usuarios`
+**Descripción:** Crea un nuevo usuario en el sistema.
 
 **Ejemplo Request:**
 ```json
 {
-  "contenido": "¡Qué lindo! Me encantaría ver un video de ese truco"
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@ejemplo.com",
+  "password": "contraseña123"
 }
 ```
 
@@ -1457,30 +1226,89 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 ```json
 {
   "id": 1,
-  "postId": 1,
-  "creadorId": 2,
-  "nombreCreador": "María",
-  "apellidoCreador": "López",
-  "contenido": "¡Qué lindo! Me encantaría ver un video de ese truco",
-  "fecha": "2023-10-10T15:00:00",
-  "img": "https://ejemplo.com/imagen_comentario.jpg"
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@ejemplo.com"
 }
 ```
 
-### `DELETE /comentarios/{id}`
-**Descripción:** Elimina un comentario existente.
+**Notas:**
+- Todos los campos son obligatorios
+- El nombre y apellido tienen un límite de 50 caracteres
+- El email tiene un límite de 50 caracteres y debe ser único
+- La contraseña tiene un límite de 250 caracteres
+- La contraseña no se devuelve en la respuesta por seguridad
+- Si ocurre un error al crear el usuario, se devolverá un error 500 Internal Server Error
+
+### `GET /usuarios/{id}`
+**Descripción:** Obtiene un usuario específico por su ID.
 
 **Ejemplo Response:**
 ```json
 {
-  "mensaje": "Comentario eliminado correctamente"
+  "id": 1,
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@ejemplo.com"
 }
 ```
 
-## 14. Usuario-Post
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- La contraseña no se incluye en la respuesta por seguridad
+- Si ocurre un error al obtener el usuario, se devolverá un error 400 Bad Request
 
-### `GET /usuario-post`
-**Descripción:** Obtiene todas las relaciones entre usuarios y posts.
+### `PUT /usuarios/{id}`
+**Descripción:** Actualiza un usuario existente.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Juan Carlos",
+  "apellido": "Pérez García",
+  "email": "juancarlos@ejemplo.com",
+  "password": "nuevaContraseña123"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Juan Carlos",
+  "apellido": "Pérez García",
+  "email": "juancarlos@ejemplo.com"
+}
+```
+
+**Notas:**
+- Todos los campos son obligatorios
+- El nombre y apellido tienen un límite de 50 caracteres
+- El email tiene un límite de 50 caracteres y debe ser único
+- La contraseña tiene un límite de 250 caracteres
+- La contraseña no se devuelve en la respuesta por seguridad
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al actualizar el usuario, se devolverá un error 500 Internal Server Error
+
+### `DELETE /usuarios/{id}`
+**Descripción:** Elimina un usuario existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Usuario con ID: 1 eliminado correctamente"
+}
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar el usuario, se devolverá un error 400 Bad Request
+- La eliminación de un usuario también eliminará todas sus relaciones con grupos y eventos
+
+## 12. Usuario-Comentario
+
+### `GET /usuario-comentario`
+**Descripción:** Obtiene todas las relaciones entre usuarios y comentarios.
 
 **Ejemplo Response:**
 ```json
@@ -1488,33 +1316,43 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "usuarioId": 1,
-    "postId": 1,
-    "fecha": "2023-10-15T14:30:00"
+    "comentarioId": 1,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
   },
   {
     "id": 2,
     "usuarioId": 2,
-    "postId": 1,
-    "fecha": "2023-10-15T15:00:00"
+    "comentarioId": 1,
+    "like": false,
+    "fecha": "2024-03-20T15:35:00"
   }
 ]
 ```
 
-### `GET /usuario-post/{id}`
-**Descripción:** Obtiene una relación específica entre usuario y post por su ID.
+**Notas:**
+- La fecha se genera automáticamente al crear la relación
+- El campo 'like' indica si el usuario dio like (true) o dislike (false) al comentario
+
+### `GET /usuario-comentario/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y comentario por su ID.
 
 **Ejemplo Response:**
 ```json
 {
   "id": 1,
   "usuarioId": 1,
-  "postId": 1,
-  "fecha": "2023-10-15T14:30:00"
+  "comentarioId": 1,
+  "like": true,
+  "fecha": "2024-03-20T15:30:00"
 }
 ```
 
-### `GET /usuario-post/usuario/{usuarioId}`
-**Descripción:** Obtiene todas las relaciones de un usuario específico.
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+
+### `GET /usuario-comentario/usuario/{usuarioId}`
+**Descripción:** Obtiene todas las relaciones de un usuario específico con comentarios.
 
 **Ejemplo Response:**
 ```json
@@ -1522,20 +1360,26 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "usuarioId": 1,
-    "postId": 1,
-    "fecha": "2023-10-15T14:30:00"
+    "comentarioId": 1,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
   },
   {
     "id": 3,
     "usuarioId": 1,
-    "postId": 2,
-    "fecha": "2023-10-16T10:00:00"
+    "comentarioId": 2,
+    "like": false,
+    "fecha": "2024-03-20T16:00:00"
   }
 ]
 ```
 
-### `GET /usuario-post/post/{postId}`
-**Descripción:** Obtiene todas las relaciones de un post específico.
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene relaciones con comentarios, se devolverá una lista vacía
+
+### `GET /usuario-comentario/comentario/{comentarioId}`
+**Descripción:** Obtiene todas las relaciones de un comentario específico con usuarios.
 
 **Ejemplo Response:**
 ```json
@@ -1543,26 +1387,33 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   {
     "id": 1,
     "usuarioId": 1,
-    "postId": 1,
-    "fecha": "2023-10-15T14:30:00"
+    "comentarioId": 1,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
   },
   {
     "id": 2,
     "usuarioId": 2,
-    "postId": 1,
-    "fecha": "2023-10-15T15:00:00"
+    "comentarioId": 1,
+    "like": false,
+    "fecha": "2024-03-20T15:35:00"
   }
 ]
 ```
 
-### `POST /usuario-post`
-**Descripción:** Crea una nueva relación entre un usuario y un post.
+**Notas:**
+- Si el comentario no existe, se devolverá un error 404 Not Found
+- Si el comentario no tiene relaciones con usuarios, se devolverá una lista vacía
+
+### `POST /usuario-comentario`
+**Descripción:** Crea una nueva relación entre un usuario y un comentario.
 
 **Ejemplo Request:**
 ```json
 {
   "usuarioId": 1,
-  "postId": 1
+  "comentarioId": 1,
+  "like": true
 }
 ```
 
@@ -1571,147 +1422,56 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 {
   "id": 1,
   "usuarioId": 1,
-  "postId": 1,
-  "fecha": "2023-10-15T14:30:00"
+  "comentarioId": 1,
+  "like": true,
+  "fecha": "2024-03-20T15:30:00"
 }
 ```
 
-### `DELETE /usuario-post/{id}`
-**Descripción:** Elimina una relación específica entre usuario y post.
+**Notas:**
+- Todos los campos son obligatorios
+- No se puede crear una relación duplicada entre el mismo usuario y comentario
+- El usuario y el comentario deben existir
+- La fecha se genera automáticamente
+- Si alguna validación falla, se devolverá un error 400 Bad Request
+
+### `DELETE /usuario-comentario/{id}`
+**Descripción:** Elimina una relación específica entre usuario y comentario.
 
 **Ejemplo Response:**
-```json
-{
-  "mensaje": "Relación usuario-post eliminada correctamente"
-}
+```
+Status: 204 No Content
 ```
 
-### `DELETE /usuario-post/usuario/{usuarioId}`
-**Descripción:** Elimina todas las relaciones de un usuario específico.
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-comentario/usuario/{usuarioId}`
+**Descripción:** Elimina todas las relaciones de un usuario específico con comentarios.
 
 **Ejemplo Response:**
-```json
-{
-  "mensaje": "Todas las relaciones del usuario han sido eliminadas"
-}
+```
+Status: 204 No Content
 ```
 
-### `DELETE /usuario-post/post/{postId}`
-**Descripción:** Elimina todas las relaciones de un post específico.
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-comentario/comentario/{comentarioId}`
+**Descripción:** Elimina todas las relaciones de un comentario específico con usuarios.
 
 **Ejemplo Response:**
-```json
-{
-  "mensaje": "Todas las relaciones del post han sido eliminadas"
-}
+```
+Status: 204 No Content
 ```
 
-## 15. Usuario-Comentario
+**Notas:**
+- Si el comentario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-### GET /usuario-comentario
-Obtiene todas las relaciones entre usuarios y comentarios.
-
-**Respuesta**
-```json
-[
-    {
-        "id": 1,
-        "usuarioId": 1,
-        "comentarioId": 1,
-        "like": true,
-        "fecha": "2024-03-20T10:30:00"
-    }
-]
-```
-
-### GET /usuario-comentario/{id}
-Obtiene una relación específica entre usuario y comentario.
-
-**Respuesta**
-```json
-{
-    "id": 1,
-    "usuarioId": 1,
-    "comentarioId": 1,
-    "like": true,
-    "fecha": "2024-03-20T10:30:00"
-}
-```
-
-### GET /usuario-comentario/usuario/{usuarioId}
-Obtiene todas las relaciones de un usuario específico.
-
-**Respuesta**
-```json
-[
-    {
-        "id": 1,
-        "usuarioId": 1,
-        "comentarioId": 1,
-        "like": true,
-        "fecha": "2024-03-20T10:30:00"
-    }
-]
-```
-
-### GET /usuario-comentario/comentario/{comentarioId}
-Obtiene todas las relaciones de un comentario específico.
-
-**Respuesta**
-```json
-[
-    {
-        "id": 1,
-        "usuarioId": 1,
-        "comentarioId": 1,
-        "like": true,
-        "fecha": "2024-03-20T10:30:00"
-    }
-]
-```
-
-### POST /usuario-comentario
-Crea una nueva relación entre usuario y comentario.
-
-**Solicitud**
-```json
-{
-    "usuarioId": 1,
-    "comentarioId": 1,
-    "like": true
-}
-```
-
-**Respuesta**
-```json
-{
-    "id": 1,
-    "usuarioId": 1,
-    "comentarioId": 1,
-    "like": true,
-    "fecha": "2024-03-20T10:30:00"
-}
-```
-
-### DELETE /usuario-comentario/{id}
-Elimina una relación específica entre usuario y comentario.
-
-**Respuesta**
-- 204 No Content
-
-### DELETE /usuario-comentario/usuario/{usuarioId}
-Elimina todas las relaciones de un usuario específico.
-
-**Respuesta**
-- 204 No Content
-
-### DELETE /usuario-comentario/comentario/{comentarioId}
-Elimina todas las relaciones de un comentario específico.
-
-**Respuesta**
-- 204 No Content
-
-## 16. Usuario-Evento
+## 13. Usuario-Evento
 
 ### `GET /usuario-evento`
 **Descripción:** Obtiene todas las relaciones entre usuarios y eventos.
@@ -1723,18 +1483,20 @@ Elimina todas las relaciones de un comentario específico.
     "id": 1,
     "usuarioId": 1,
     "eventoId": 1,
-    "rol": "CREADOR",
-    "fecha": "2024-03-20T10:30:00"
+    "rol": "CREADOR"
   },
   {
     "id": 2,
     "usuarioId": 2,
     "eventoId": 1,
-    "rol": "ASISTENTE",
-    "fecha": "2024-03-20T11:00:00"
+    "rol": "ASISTENTE"
   }
 ]
 ```
+
+**Notas:**
+- El campo 'rol' puede ser "CREADOR" o "ASISTENTE"
+- Cada usuario puede tener un solo rol por evento
 
 ### `GET /usuario-evento/{id}`
 **Descripción:** Obtiene una relación específica entre usuario y evento por su ID.
@@ -1745,13 +1507,15 @@ Elimina todas las relaciones de un comentario específico.
   "id": 1,
   "usuarioId": 1,
   "eventoId": 1,
-  "rol": "CREADOR",
-  "fecha": "2024-03-20T10:30:00"
+  "rol": "CREADOR"
 }
 ```
 
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+
 ### `GET /usuario-evento/usuario/{usuarioId}`
-**Descripción:** Obtiene todas las relaciones de un usuario específico.
+**Descripción:** Obtiene todas las relaciones de un usuario específico con eventos.
 
 **Ejemplo Response:**
 ```json
@@ -1760,21 +1524,23 @@ Elimina todas las relaciones de un comentario específico.
     "id": 1,
     "usuarioId": 1,
     "eventoId": 1,
-    "rol": "CREADOR",
-    "fecha": "2024-03-20T10:30:00"
+    "rol": "CREADOR"
   },
   {
     "id": 3,
     "usuarioId": 1,
     "eventoId": 2,
-    "rol": "ASISTENTE",
-    "fecha": "2024-03-21T09:00:00"
+    "rol": "ASISTENTE"
   }
 ]
 ```
 
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene relaciones con eventos, se devolverá una lista vacía
+
 ### `GET /usuario-evento/evento/{eventoId}`
-**Descripción:** Obtiene todas las relaciones de un evento específico.
+**Descripción:** Obtiene todas las relaciones de un evento específico con usuarios.
 
 **Ejemplo Response:**
 ```json
@@ -1783,18 +1549,20 @@ Elimina todas las relaciones de un comentario específico.
     "id": 1,
     "usuarioId": 1,
     "eventoId": 1,
-    "rol": "CREADOR",
-    "fecha": "2024-03-20T10:30:00"
+    "rol": "CREADOR"
   },
   {
     "id": 2,
     "usuarioId": 2,
     "eventoId": 1,
-    "rol": "ASISTENTE",
-    "fecha": "2024-03-20T11:00:00"
+    "rol": "ASISTENTE"
   }
 ]
 ```
+
+**Notas:**
+- Si el evento no existe, se devolverá un error 404 Not Found
+- Si el evento no tiene relaciones con usuarios, se devolverá una lista vacía
 
 ### `POST /usuario-evento`
 **Descripción:** Crea una nueva relación entre un usuario y un evento.
@@ -1814,31 +1582,624 @@ Elimina todas las relaciones de un comentario específico.
   "id": 1,
   "usuarioId": 1,
   "eventoId": 1,
-  "rol": "CREADOR",
-  "fecha": "2024-03-20T10:30:00"
+  "rol": "CREADOR"
 }
 ```
+
+**Notas:**
+- Todos los campos son obligatorios
+- El rol debe ser "CREADOR" o "ASISTENTE"
+- No se puede crear una relación duplicada entre el mismo usuario y evento
+- El usuario y el evento deben existir
+- Si alguna validación falla, se devolverá un error 400 Bad Request
 
 ### `DELETE /usuario-evento/{id}`
 **Descripción:** Elimina una relación específica entre usuario y evento.
 
 **Ejemplo Response:**
-- 204 No Content
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
 ### `DELETE /usuario-evento/usuario/{usuarioId}`
-**Descripción:** Elimina todas las relaciones de un usuario específico.
+**Descripción:** Elimina todas las relaciones de un usuario específico con eventos.
 
 **Ejemplo Response:**
-- 204 No Content
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
 ### `DELETE /usuario-evento/evento/{eventoId}`
-**Descripción:** Elimina todas las relaciones de un evento específico.
+**Descripción:** Elimina todas las relaciones de un evento específico con usuarios.
 
 **Ejemplo Response:**
-- 204 No Content
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el evento no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
 ### `DELETE /usuario-evento/usuario/{usuarioId}/evento/{eventoId}`
 **Descripción:** Elimina una relación específica entre un usuario y un evento.
 
 **Ejemplo Response:**
-- 204 No Content
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+## 14. Usuario-Grupo
+
+### `GET /usuario-grupo`
+**Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "usuarioId": 1,
+    "nombreUsuario": "Juan",
+    "apellidoUsuario": "Pérez",
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": 2,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "usuarioId": 2,
+    "nombreUsuario": "María",
+    "apellidoUsuario": "García",
+    "rol": "MIEMBRO"
+  }
+]
+```
+
+**Notas:**
+- El campo 'rol' puede ser "ADMINISTRADOR" o "MIEMBRO"
+- Cada usuario puede tener un solo rol por grupo
+
+### `POST /usuario-grupo`
+**Descripción:** Crea una nueva relación entre un usuario y un grupo.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "grupoId": 1,
+  "rol": "ADMINISTRADOR"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "usuarioId": 1,
+  "nombreUsuario": "Juan",
+  "apellidoUsuario": "Pérez",
+  "rol": "ADMINISTRADOR"
+}
+```
+
+**Notas:**
+- Todos los campos son obligatorios
+- El rol debe ser "ADMINISTRADOR" o "MIEMBRO"
+- No se puede crear una relación duplicada entre el mismo usuario y grupo
+- El usuario y el grupo deben existir
+- Si alguna validación falla, se devolverá un error 400 Bad Request
+
+### `GET /usuario-grupo/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y grupo por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "usuarioId": 1,
+  "nombreUsuario": "Juan",
+  "apellidoUsuario": "Pérez",
+  "rol": "ADMINISTRADOR"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+
+### `PUT /usuario-grupo/{id}`
+**Descripción:** Actualiza una relación existente entre usuario y grupo.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "grupoId": 1,
+  "rol": "MIEMBRO"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "usuarioId": 1,
+  "nombreUsuario": "Juan",
+  "apellidoUsuario": "Pérez",
+  "rol": "MIEMBRO"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Todos los campos son obligatorios
+- El rol debe ser "ADMINISTRADOR" o "MIEMBRO"
+- El usuario y el grupo deben existir
+
+### `DELETE /usuario-grupo/{id}`
+**Descripción:** Elimina una relación específica entre usuario y grupo.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Eliminado correctamente"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
+
+### `GET /usuario-grupo/usuario/{usuario_id}`
+**Descripción:** Obtiene todos los grupos a los que pertenece un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "usuarioId": 1,
+    "nombreUsuario": "Juan",
+    "apellidoUsuario": "Pérez",
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": 3,
+    "grupoId": 2,
+    "nombreGrupo": "Amantes de los Gatos",
+    "usuarioId": 1,
+    "nombreUsuario": "Juan",
+    "apellidoUsuario": "Pérez",
+    "rol": "MIEMBRO"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene grupos, se devolverá una lista vacía
+
+### `GET /usuario-grupo/grupo/{grupo_id}`
+**Descripción:** Obtiene todos los usuarios que pertenecen a un grupo específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "usuarioId": 1,
+    "nombreUsuario": "Juan",
+    "apellidoUsuario": "Pérez",
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": 2,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "usuarioId": 2,
+    "nombreUsuario": "María",
+    "apellidoUsuario": "García",
+    "rol": "MIEMBRO"
+  }
+]
+```
+
+**Notas:**
+- Si el grupo no existe, se devolverá un error 404 Not Found
+- Si el grupo no tiene usuarios, se devolverá una lista vacía
+
+### `GET /usuario-grupo/relacion/{usuarioId}/{grupoId}`
+**Descripción:** Obtiene una relación específica entre un usuario y un grupo.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "usuarioId": 1,
+  "nombreUsuario": "Juan",
+  "apellidoUsuario": "Pérez",
+  "rol": "ADMINISTRADOR"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si el usuario o el grupo no existen, se devolverá un error 404 Not Found
+
+## 15. Usuario-Post
+
+### `GET /usuario-post`
+**Descripción:** Obtiene todas las relaciones entre usuarios y posts.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "usuarioId": 1,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 2,
+    "postId": 2,
+    "usuarioId": 1,
+    "fecha": "2024-03-20T16:00:00"
+  }
+]
+```
+
+**Notas:**
+- La fecha se genera automáticamente al crear la relación
+- Si no hay relaciones, se devolverá una lista vacía
+
+### `GET /usuario-post/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y post por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "usuarioId": 1,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+
+### `GET /usuario-post/usuario/{usuarioId}`
+**Descripción:** Obtiene todas las relaciones de un usuario específico con posts.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "usuarioId": 1,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 2,
+    "postId": 2,
+    "usuarioId": 1,
+    "fecha": "2024-03-20T16:00:00"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene relaciones con posts, se devolverá una lista vacía
+
+### `GET /usuario-post/post/{postId}`
+**Descripción:** Obtiene todas las relaciones de un post específico con usuarios.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "usuarioId": 1,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 3,
+    "postId": 1,
+    "usuarioId": 2,
+    "fecha": "2024-03-20T15:35:00"
+  }
+]
+```
+
+**Notas:**
+- Si el post no existe, se devolverá un error 404 Not Found
+- Si el post no tiene relaciones con usuarios, se devolverá una lista vacía
+
+### `POST /usuario-post`
+**Descripción:** Crea una nueva relación entre un usuario y un post.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "postId": 1
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "usuarioId": 1,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Todos los campos son obligatorios
+- No se puede crear una relación duplicada entre el mismo usuario y post
+- El usuario y el post deben existir
+- La fecha se genera automáticamente
+- Si alguna validación falla, se devolverá un error 400 Bad Request
+
+### `DELETE /usuario-post/{id}`
+**Descripción:** Elimina una relación específica entre usuario y post.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-post/usuario/{usuarioId}`
+**Descripción:** Elimina todas las relaciones de un usuario específico con posts.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-post/post/{postId}`
+**Descripción:** Elimina todas las relaciones de un post específico con usuarios.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el post no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+## 16. Valoraciones
+
+### `GET /valoraciones`
+**Descripción:** Obtiene todas las valoraciones existentes en el sistema.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "autorId": 1,
+    "nombreAutor": "Juan",
+    "apellidoAutor": "Pérez",
+    "receptorId": 2,
+    "nombreReceptor": "María",
+    "apellidoReceptor": "García",
+    "puntuacion": "5",
+    "contenido": "Excelente servicio",
+    "fecha": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
+  }
+]
+```
+
+**Notas:**
+- Si ocurre un error al obtener las valoraciones, se devolverá un error 400 Bad Request
+- Si no hay valoraciones, se devolverá una lista vacía
+
+### `GET /valoraciones/{id}`
+**Descripción:** Obtiene una valoración específica por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "autorId": 1,
+  "nombreAutor": "Juan",
+  "apellidoAutor": "Pérez",
+  "receptorId": 2,
+  "nombreReceptor": "María",
+  "apellidoReceptor": "García",
+  "puntuacion": "5",
+  "contenido": "Excelente servicio",
+  "fecha": "2024-03-20T15:30:00",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Si la valoración no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al obtener la valoración, se devolverá un error 400 Bad Request
+
+### `POST /valoraciones/usuarios/{autorId}/receptor/{receptorId}`
+**Descripción:** Crea una nueva valoración de un usuario hacia otro.
+
+**Ejemplo Request:**
+```json
+{
+  "puntuacion": "5",
+  "contenido": "Excelente servicio",
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "autorId": 1,
+  "nombreAutor": "Juan",
+  "apellidoAutor": "Pérez",
+  "receptorId": 2,
+  "nombreReceptor": "María",
+  "apellidoReceptor": "García",
+  "puntuacion": "5",
+  "contenido": "Excelente servicio",
+  "fecha": "2024-03-20T15:30:00",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- El autor y el receptor son obligatorios y deben existir
+- La puntuación debe ser un valor entre 1 y 5
+- El contenido es obligatorio
+- La fecha es opcional, si no se proporciona se usará la fecha actual
+- Si ocurre un error al crear la valoración, se devolverá un error 400 Bad Request
+
+### `PUT /valoraciones/{id}`
+**Descripción:** Actualiza una valoración existente.
+
+**Ejemplo Request:**
+```json
+{
+  "puntuacion": "4",
+  "contenido": "Buen servicio, pero podría mejorar",
+  "fecha": "2024-03-20T16:30:00"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "autorId": 1,
+  "nombreAutor": "Juan",
+  "apellidoAutor": "Pérez",
+  "receptorId": 2,
+  "nombreReceptor": "María",
+  "apellidoReceptor": "García",
+  "puntuacion": "4",
+  "contenido": "Buen servicio, pero podría mejorar",
+  "fecha": "2024-03-20T16:30:00",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T16:30:00"
+}
+```
+
+**Notas:**
+- Si la valoración no existe, se devolverá un error 404 Not Found
+- La puntuación debe ser un valor entre 1 y 5
+- El contenido es obligatorio
+- Si ocurre un error al actualizar la valoración, se devolverá un error 400 Bad Request
+
+### `DELETE /valoraciones/{id}`
+**Descripción:** Elimina una valoración existente.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Valoración eliminada correctamente"
+}
+```
+
+**Notas:**
+- Si la valoración no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar la valoración, se devolverá un error 400 Bad Request
+
+### `GET /valoraciones/usuarios/{receptorId}/recibidas`
+**Descripción:** Obtiene todas las valoraciones recibidas por un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "autorId": 1,
+    "nombreAutor": "Juan",
+    "apellidoAutor": "Pérez",
+    "receptorId": 2,
+    "nombreReceptor": "María",
+    "apellidoReceptor": "García",
+    "puntuacion": "5",
+    "contenido": "Excelente servicio",
+    "fecha": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 400 Bad Request
+- Si el usuario no tiene valoraciones recibidas, se devolverá una lista vacía
+
+### `GET /valoraciones/usuarios/{autorId}/enviadas`
+**Descripción:** Obtiene todas las valoraciones emitidas por un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "autorId": 1,
+    "nombreAutor": "Juan",
+    "apellidoAutor": "Pérez",
+    "receptorId": 2,
+    "nombreReceptor": "María",
+    "apellidoReceptor": "García",
+    "puntuacion": "5",
+    "contenido": "Excelente servicio",
+    "fecha": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 400 Bad Request
+- Si el usuario no tiene valoraciones emitidas, se devolverá una lista vacía

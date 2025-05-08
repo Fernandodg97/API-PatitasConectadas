@@ -2,6 +2,8 @@
 
 Esta documentación contiene todas las rutas de la API con ejemplos JSON y explicaciones para cada controlador.
 
+También puedes acceder a la documentación interactiva de la API en la ruta `/swagger-ui/index.html#/` donde podrás probar los endpoints directamente.
+
 ## Índice
 1. [Autenticación (Auth)](#1-autenticación-auth)
 2. [Chat](#2-chat)
