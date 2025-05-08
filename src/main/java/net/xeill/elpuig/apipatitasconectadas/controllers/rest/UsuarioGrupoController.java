@@ -203,10 +203,10 @@ public class UsuarioGrupoController {
      * @param grupoId ID del grupo en la relación
      * @return ResponseEntity con la relación encontrada o mensaje de error
      */
-    @GetMapping("/usuario-grupo")
+    @GetMapping("/relacion/{usuarioId}/{grupoId}")
     public ResponseEntity<?> getUsuarioGrupoByUsuarioIdAndGrupoId(
-            @RequestParam("usuario_id") Long usuarioId,
-            @RequestParam("grupo_id") Long grupoId) {
+            @PathVariable("usuarioId") Long usuarioId,
+            @PathVariable("grupoId") Long grupoId) {
         try {
             UsuarioGrupoModel relation = usuarioGrupoService.getUsuarioGrupoByUsuarioIdAndGrupoId(usuarioId, grupoId);
             if (relation != null) {
