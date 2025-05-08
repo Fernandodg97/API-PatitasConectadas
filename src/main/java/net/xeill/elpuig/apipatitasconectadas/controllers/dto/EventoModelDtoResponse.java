@@ -10,6 +10,7 @@ public class EventoModelDtoResponse {
     private String descripcion;
     private String ubicacion;
     private Date fecha;
+    private Long creadorId;
     
     public EventoModelDtoResponse(EventoModel evento) {
         this.id = evento.getId();
@@ -17,6 +18,7 @@ public class EventoModelDtoResponse {
         this.descripcion = evento.getDescripcion();
         this.ubicacion = evento.getUbicacion();
         this.fecha = evento.getFecha();
+        this.creadorId = evento.getCreador().getId();
     }
     
     public Long getId() {
@@ -57,5 +59,13 @@ public class EventoModelDtoResponse {
     
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public Long getCreadorId() {
+        return creadorId;
+    }
+
+    public void setCreadorId(Long creadorId) {
+        this.creadorId = creadorId;
     }
 } 

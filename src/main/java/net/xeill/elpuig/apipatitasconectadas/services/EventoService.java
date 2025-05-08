@@ -1,6 +1,6 @@
 package net.xeill.elpuig.apipatitasconectadas.services;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,25 @@ import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 public class EventoService {
 
     @Autowired
-    EventoRepository eventoRepository;
+    private EventoRepository eventoRepository;
 
     /**
      * Obtiene todos los eventos existentes en el sistema.
      * @return ArrayList con todos los eventos
      */
-    public ArrayList<EventoModel> getEventos() {
+    public List<EventoModel> getAllEventos() {
         // findAll() es un método que me permite obtener todos los registros de la tabla
-        return (ArrayList<EventoModel>) eventoRepository.findAll();
+        return eventoRepository.findAll();
+    }
+
+    /**
+     * Busca un evento por su ID.
+     * @param id ID del evento a buscar
+     * @return Optional con el evento si existe, o vacío si no se encuentra
+     */
+    public EventoModel getEventoById(Long id) {
+        // findById() es un método que me permite obtener un registro por su id
+        return eventoRepository.findById(id).orElse(null);
     }
 
     /**
@@ -36,16 +46,6 @@ public class EventoService {
     public EventoModel saveEvento(EventoModel evento) {
         // save() es un método que me permite guardar un registro en la tabla
         return eventoRepository.save(evento);
-    }
-
-    /**
-     * Busca un evento por su ID.
-     * @param id ID del evento a buscar
-     * @return Optional con el evento si existe, o vacío si no se encuentra
-     */
-    public Optional<EventoModel> getById(Long id) {
-        // findById() es un método que me permite obtener un registro por su id
-        return eventoRepository.findById(id);
     }
 
     /**
@@ -75,12 +75,7 @@ public class EventoService {
      * @param id ID del evento a eliminar
      * @return true si el evento fue eliminado con éxito, false en caso contrario
      */
-    public Boolean deleteEvento(Long id) {
-        try {
-            eventoRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public void deleteEvento(Long id) {
+        eventoRepository.deleteById(id);
     }
 }

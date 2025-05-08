@@ -1,8 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
 import net.xeill.elpuig.apipatitasconectadas.models.PerfilModel;
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.AuthDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.AuthDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 import net.xeill.elpuig.apipatitasconectadas.security.JwtUtil;
 import net.xeill.elpuig.apipatitasconectadas.services.AuthService;
@@ -36,36 +37,39 @@ public class AuthController {
 
     /**
      * Autentica a un usuario mediante email y contraseña
-     * @param body Mapa con las credenciales del usuario (email y password)
+     * @param request DTO con las credenciales del usuario
      * @return ResponseEntity con token JWT o mensaje de error
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String token = authService.login(body.get("email"), body.get("password"));
-        return ResponseEntity.ok(Map.of("token", token));
+    public ResponseEntity<AuthDtoResponse> login(@RequestBody AuthDtoRequest request) {
+        String token = authService.login(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(new AuthDtoResponse(token));
     }
 
     /**
      * Registra un nuevo usuario en el sistema
-     * @param body Mapa con los datos del usuario (email, password, nombre, apellido)
+     * @param request DTO con los datos del usuario
      * @return ResponseEntity con datos del usuario creado o mensaje de error
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> register(@RequestBody AuthDtoRequest request) {
         try {
-            // Verificar que todos los campos requeridos estén presentes
-            String email = body.get("email");
-            String password = body.get("password");
-            String nombre = body.get("nombre");
-            String apellido = body.get("apellido");
+            Map<String, Object> result = authService.register(
+                request.getEmail(), 
+                request.getPassword(), 
+                request.getNombre(), 
+                request.getApellido()
+            );
             
-            if (email == null || password == null || nombre == null || apellido == null) {
-                return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Todos los campos son obligatorios: email, password, nombre, apellido"));
-            }
+            UserModel user = (UserModel) result.get("user");
+            AuthDtoResponse response = new AuthDtoResponse(
+                user.getId(),
+                user.getNombre(),
+                user.getApellido(),
+                user.getEmail()
+            );
             
-            Map<String, Object> result = authService.register(email, password, nombre, apellido);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
@@ -83,28 +87,20 @@ public class AuthController {
             String token = authHeader.replace("Bearer ", "");
             String email = jwtUtil.extractUsername(token);
             
-            // Obtener el usuario
             UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             
-            // Crear un objeto con la información que queremos devolver
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", user.getId());
-            response.put("nombre", user.getNombre());
-            response.put("apellido", user.getApellido());
-            response.put("email", user.getEmail());
-            
-            // Buscar el perfil del usuario si existe
             Optional<PerfilModel> perfil = perfilRepository.findById(user.getId());
-            if (perfil.isPresent()) {
-                response.put("perfil", perfil.get());
-            }
-            
-            // Buscar las mascotas del usuario
             List<MascotaModel> mascotas = mascotaRepository.findByUsuarioId(user.getId());
-            if (!mascotas.isEmpty()) {
-                response.put("mascotas", mascotas);
-            }
+            
+            AuthDtoResponse response = new AuthDtoResponse(
+                user.getId(),
+                user.getNombre(),
+                user.getApellido(),
+                user.getEmail(),
+                perfil.orElse(null),
+                mascotas
+            );
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {

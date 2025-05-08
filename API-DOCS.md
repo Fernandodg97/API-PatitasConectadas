@@ -16,6 +16,9 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
 11. [Chat](#11-chat)
 12. [Posts](#12-posts)
 13. [Comentarios](#13-comentarios)
+14. [Usuario-Post](#14-usuario-post)
+15. [Usuario-Comentario](#15-usuario-comentario)
+16. [Usuario-Evento](#16-usuario-evento)
 
 ## 1. Autenticación (Auth)
 
@@ -523,7 +526,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
     "nombre": "Jornada de adopción",
     "descripcion": "Ven a conocer a tus futuros compañeros",
     "ubicacion": "Parque Central",
-    "fecha": "2023-11-20"
+    "fecha": "2023-11-20",
+    "creadorId": 1
   }
 ]
 ```
@@ -538,7 +542,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "nombre": "Jornada de adopción",
   "descripcion": "Ven a conocer a tus futuros compañeros",
   "ubicacion": "Parque Central",
-  "fecha": "2023-11-20"
+  "fecha": "2023-11-20",
+  "creadorId": 1
 }
 ```
 
@@ -551,7 +556,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "nombre": "Taller de adiestramiento",
   "descripcion": "Aprende técnicas básicas de adiestramiento",
   "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05"
+  "fecha": "2023-12-05",
+  "creadorId": 1
 }
 ```
 
@@ -562,7 +568,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "nombre": "Taller de adiestramiento",
   "descripcion": "Aprende técnicas básicas de adiestramiento",
   "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05"
+  "fecha": "2023-12-05",
+  "creadorId": 1
 }
 ```
 
@@ -575,7 +582,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "nombre": "Taller de adiestramiento canino",
   "descripcion": "Aprende técnicas básicas y avanzadas de adiestramiento",
   "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05"
+  "fecha": "2023-12-05",
+  "creadorId": 1
 }
 ```
 
@@ -586,7 +594,8 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "nombre": "Taller de adiestramiento canino",
   "descripcion": "Aprende técnicas básicas y avanzadas de adiestramiento",
   "ubicacion": "Centro comunitario",
-  "fecha": "2023-12-05"
+  "fecha": "2023-12-05",
+  "creadorId": 1
 }
 ```
 
@@ -1467,3 +1476,369 @@ Esta documentación contiene todas las rutas de la API con ejemplos JSON y expli
   "mensaje": "Comentario eliminado correctamente"
 }
 ```
+
+## 14. Usuario-Post
+
+### `GET /usuario-post`
+**Descripción:** Obtiene todas las relaciones entre usuarios y posts.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "postId": 1,
+    "fecha": "2023-10-15T14:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "postId": 1,
+    "fecha": "2023-10-15T15:00:00"
+  }
+]
+```
+
+### `GET /usuario-post/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y post por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "postId": 1,
+  "fecha": "2023-10-15T14:30:00"
+}
+```
+
+### `GET /usuario-post/usuario/{usuarioId}`
+**Descripción:** Obtiene todas las relaciones de un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "postId": 1,
+    "fecha": "2023-10-15T14:30:00"
+  },
+  {
+    "id": 3,
+    "usuarioId": 1,
+    "postId": 2,
+    "fecha": "2023-10-16T10:00:00"
+  }
+]
+```
+
+### `GET /usuario-post/post/{postId}`
+**Descripción:** Obtiene todas las relaciones de un post específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "postId": 1,
+    "fecha": "2023-10-15T14:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "postId": 1,
+    "fecha": "2023-10-15T15:00:00"
+  }
+]
+```
+
+### `POST /usuario-post`
+**Descripción:** Crea una nueva relación entre un usuario y un post.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "postId": 1
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "postId": 1,
+  "fecha": "2023-10-15T14:30:00"
+}
+```
+
+### `DELETE /usuario-post/{id}`
+**Descripción:** Elimina una relación específica entre usuario y post.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Relación usuario-post eliminada correctamente"
+}
+```
+
+### `DELETE /usuario-post/usuario/{usuarioId}`
+**Descripción:** Elimina todas las relaciones de un usuario específico.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Todas las relaciones del usuario han sido eliminadas"
+}
+```
+
+### `DELETE /usuario-post/post/{postId}`
+**Descripción:** Elimina todas las relaciones de un post específico.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Todas las relaciones del post han sido eliminadas"
+}
+```
+
+## 15. Usuario-Comentario
+
+### GET /usuario-comentario
+Obtiene todas las relaciones entre usuarios y comentarios.
+
+**Respuesta**
+```json
+[
+    {
+        "id": 1,
+        "usuarioId": 1,
+        "comentarioId": 1,
+        "like": true,
+        "fecha": "2024-03-20T10:30:00"
+    }
+]
+```
+
+### GET /usuario-comentario/{id}
+Obtiene una relación específica entre usuario y comentario.
+
+**Respuesta**
+```json
+{
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "like": true,
+    "fecha": "2024-03-20T10:30:00"
+}
+```
+
+### GET /usuario-comentario/usuario/{usuarioId}
+Obtiene todas las relaciones de un usuario específico.
+
+**Respuesta**
+```json
+[
+    {
+        "id": 1,
+        "usuarioId": 1,
+        "comentarioId": 1,
+        "like": true,
+        "fecha": "2024-03-20T10:30:00"
+    }
+]
+```
+
+### GET /usuario-comentario/comentario/{comentarioId}
+Obtiene todas las relaciones de un comentario específico.
+
+**Respuesta**
+```json
+[
+    {
+        "id": 1,
+        "usuarioId": 1,
+        "comentarioId": 1,
+        "like": true,
+        "fecha": "2024-03-20T10:30:00"
+    }
+]
+```
+
+### POST /usuario-comentario
+Crea una nueva relación entre usuario y comentario.
+
+**Solicitud**
+```json
+{
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "like": true
+}
+```
+
+**Respuesta**
+```json
+{
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "like": true,
+    "fecha": "2024-03-20T10:30:00"
+}
+```
+
+### DELETE /usuario-comentario/{id}
+Elimina una relación específica entre usuario y comentario.
+
+**Respuesta**
+- 204 No Content
+
+### DELETE /usuario-comentario/usuario/{usuarioId}
+Elimina todas las relaciones de un usuario específico.
+
+**Respuesta**
+- 204 No Content
+
+### DELETE /usuario-comentario/comentario/{comentarioId}
+Elimina todas las relaciones de un comentario específico.
+
+**Respuesta**
+- 204 No Content
+
+## 16. Usuario-Evento
+
+### `GET /usuario-evento`
+**Descripción:** Obtiene todas las relaciones entre usuarios y eventos.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "eventoId": 1,
+    "rol": "CREADOR",
+    "fecha": "2024-03-20T10:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "eventoId": 1,
+    "rol": "ASISTENTE",
+    "fecha": "2024-03-20T11:00:00"
+  }
+]
+```
+
+### `GET /usuario-evento/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y evento por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "eventoId": 1,
+  "rol": "CREADOR",
+  "fecha": "2024-03-20T10:30:00"
+}
+```
+
+### `GET /usuario-evento/usuario/{usuarioId}`
+**Descripción:** Obtiene todas las relaciones de un usuario específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "eventoId": 1,
+    "rol": "CREADOR",
+    "fecha": "2024-03-20T10:30:00"
+  },
+  {
+    "id": 3,
+    "usuarioId": 1,
+    "eventoId": 2,
+    "rol": "ASISTENTE",
+    "fecha": "2024-03-21T09:00:00"
+  }
+]
+```
+
+### `GET /usuario-evento/evento/{eventoId}`
+**Descripción:** Obtiene todas las relaciones de un evento específico.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "eventoId": 1,
+    "rol": "CREADOR",
+    "fecha": "2024-03-20T10:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "eventoId": 1,
+    "rol": "ASISTENTE",
+    "fecha": "2024-03-20T11:00:00"
+  }
+]
+```
+
+### `POST /usuario-evento`
+**Descripción:** Crea una nueva relación entre un usuario y un evento.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "eventoId": 1,
+  "rol": "CREADOR"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "eventoId": 1,
+  "rol": "CREADOR",
+  "fecha": "2024-03-20T10:30:00"
+}
+```
+
+### `DELETE /usuario-evento/{id}`
+**Descripción:** Elimina una relación específica entre usuario y evento.
+
+**Ejemplo Response:**
+- 204 No Content
+
+### `DELETE /usuario-evento/usuario/{usuarioId}`
+**Descripción:** Elimina todas las relaciones de un usuario específico.
+
+**Ejemplo Response:**
+- 204 No Content
+
+### `DELETE /usuario-evento/evento/{eventoId}`
+**Descripción:** Elimina todas las relaciones de un evento específico.
+
+**Ejemplo Response:**
+- 204 No Content
+
+### `DELETE /usuario-evento/usuario/{usuarioId}/evento/{eventoId}`
+**Descripción:** Elimina una relación específica entre un usuario y un evento.
+
+**Ejemplo Response:**
+- 204 No Content

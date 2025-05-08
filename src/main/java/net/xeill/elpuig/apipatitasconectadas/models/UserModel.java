@@ -40,6 +40,9 @@ public class UserModel {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UsuarioGrupoModel> grupos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioEventoModel> eventos = new ArrayList<>();
+
     // Getters y Setters
     public Long getId() {
         return id;
@@ -87,5 +90,13 @@ public class UserModel {
     
     public void setGrupos(List<UsuarioGrupoModel> grupos) {
         this.grupos = grupos;
+    }
+
+    public List<UsuarioEventoModel> getEventos() {
+        return eventos;
+    }
+
+    public void setEventos(List<UsuarioEventoModel> eventos) {
+        this.eventos = eventos;
     }
 }

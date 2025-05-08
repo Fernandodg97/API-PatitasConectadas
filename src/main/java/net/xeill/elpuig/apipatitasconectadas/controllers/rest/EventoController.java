@@ -1,20 +1,17 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoRequest;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoResponse;
+import net.xeill.elpuig.apipatitasconectadas.models.EventoModel;
+import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
+import net.xeill.elpuig.apipatitasconectadas.services.EventoService;
+import net.xeill.elpuig.apipatitasconectadas.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoRequest;
-import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoResponse;
-import net.xeill.elpuig.apipatitasconectadas.models.EventoModel;
-import net.xeill.elpuig.apipatitasconectadas.services.EventoService;
 
 /**
  * Controlador REST para gestionar operaciones relacionadas con eventos.
@@ -30,115 +27,97 @@ public class EventoController {
     @Autowired
     private EventoService eventoService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * Obtiene todos los eventos existentes en el sistema
-     * @return ResponseEntity con lista de eventos en formato DTO o mensaje de error
+     * @return ResponseEntity con lista de eventos en formato DTO
      */
     @GetMapping
-    public ResponseEntity<?> getEventos() {
-        try {
-            ArrayList<EventoModel> eventos = this.eventoService.getEventos();
-            List<EventoModelDtoResponse> eventosDto = eventos.stream()
+    public ResponseEntity<List<EventoModelDtoResponse>> getAllEventos() {
+        List<EventoModel> eventos = eventoService.getAllEventos();
+        List<EventoModelDtoResponse> eventosDto = eventos.stream()
                 .map(EventoModelDtoResponse::new)
                 .collect(Collectors.toList());
-            return new ResponseEntity<>(eventosDto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(eventosDto);
     }
 
     /**
-     * Crea un nuevo evento en el sistema
+     * Crea un nuevo evento en el sistema y asigna al usuario como Creador
      * @param eventoDto Datos del evento en formato DTO
-     * @return ResponseEntity con el evento creado o mensaje de error
+     * @return ResponseEntity con el evento creado
      */
     @PostMapping
-    public ResponseEntity<?> saveEvento(@RequestBody EventoModelDtoRequest eventoDto) {
-        try {
-            // Convertir DTO a modelo
-            EventoModel evento = eventoDto.toDomain();
-            
-            // Guardar evento
-            EventoModel savedEvento = this.eventoService.saveEvento(evento);
-            
-            // Convertir a DTO para la respuesta
-            EventoModelDtoResponse response = new EventoModelDtoResponse(savedEvento);
-            
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", "Error al guardar el evento: " + e.getMessage()), 
-                HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<EventoModelDtoResponse> saveEvento(@RequestBody EventoModelDtoRequest eventoDto) {
+        if (eventoDto.getNombre() == null || eventoDto.getNombre().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
+
+        UserModel creador = userService.getUserById(eventoDto.getCreadorId());
+        if (creador == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        EventoModel evento = eventoDto.toDomain(creador);
+        EventoModel savedEvento = eventoService.saveEvento(evento);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new EventoModelDtoResponse(savedEvento));
     }
 
     /**
      * Obtiene un evento específico por su ID
      * @param id ID del evento a buscar
-     * @return ResponseEntity con el evento encontrado o mensaje de error
+     * @return ResponseEntity con el evento encontrado
      */
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> getEventoById(@PathVariable("id") Long id) {
-        try {
-            Optional<EventoModel> evento = this.eventoService.getById(id);
-            
-            if (evento.isPresent()) {
-                EventoModelDtoResponse eventoDto = new EventoModelDtoResponse(evento.get());
-                return new ResponseEntity<>(eventoDto, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(Map.of("error", "Evento no encontrado con ID: " + id), 
-                    HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+    @GetMapping("/{id}")
+    public ResponseEntity<EventoModelDtoResponse> getEventoById(@PathVariable Long id) {
+        EventoModel evento = eventoService.getEventoById(id);
+        if (evento != null) {
+            return ResponseEntity.ok(new EventoModelDtoResponse(evento));
         }
+        return ResponseEntity.notFound().build();
     }
 
     /**
      * Actualiza un evento existente
-     * @param eventoDto Datos actualizados del evento
      * @param id ID del evento a actualizar
-     * @return ResponseEntity con el evento actualizado o mensaje de error
+     * @param eventoDto Datos actualizados del evento
+     * @return ResponseEntity con el evento actualizado
      */
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> updateEventoById(@RequestBody EventoModelDtoRequest eventoDto, @PathVariable("id") Long id) {
-        try {
-            // Convertir DTO a modelo
-            EventoModel evento = eventoDto.toDomain();
-            
-            // Actualizar evento
-            EventoModel updatedEvento = this.eventoService.updateByID(evento, id);
-            
-            // Convertir a DTO para la respuesta
-            EventoModelDtoResponse response = new EventoModelDtoResponse(updatedEvento);
-            
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", "Error al actualizar el evento: " + e.getMessage()), 
-                HttpStatus.INTERNAL_SERVER_ERROR);
+    @PutMapping("/{id}")
+    public ResponseEntity<EventoModelDtoResponse> updateEvento(@PathVariable Long id, @RequestBody EventoModelDtoRequest eventoDto) {
+        EventoModel existingEvento = eventoService.getEventoById(id);
+        if (existingEvento == null) {
+            return ResponseEntity.notFound().build();
         }
+
+        if (eventoDto.getNombre() == null || eventoDto.getNombre().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        UserModel creador = userService.getUserById(eventoDto.getCreadorId());
+        if (creador == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        EventoModel evento = eventoDto.toDomain(creador);
+        evento.setId(id);
+        EventoModel updatedEvento = eventoService.saveEvento(evento);
+        return ResponseEntity.ok(new EventoModelDtoResponse(updatedEvento));
     }
 
     /**
      * Elimina un evento existente
      * @param id ID del evento a eliminar
-     * @return ResponseEntity con mensaje de confirmación o error
+     * @return ResponseEntity con mensaje de confirmación
      */
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deleteEventoById(@PathVariable("id") Long id) {
-        try {
-            boolean deleted = this.eventoService.deleteEvento(id);
-            
-            if (deleted) {
-                return new ResponseEntity<>(Map.of("mensaje", "Evento eliminado con ID: " + id), 
-                    HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(Map.of("error", "No se pudo eliminar el evento con ID: " + id), 
-                    HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvento(@PathVariable Long id) {
+        EventoModel evento = eventoService.getEventoById(id);
+        if (evento != null) {
+            eventoService.deleteEvento(id);
+            return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }
