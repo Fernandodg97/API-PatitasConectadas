@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "usuario_comentario")
+@Table(name = "usuario_interaccion")
 public class UsuarioComentarioModel {
     
     @Id
@@ -14,8 +14,12 @@ public class UsuarioComentarioModel {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comentario_id", nullable = false)
+    @JoinColumn(name = "comentario_id")
     private ComentarioModel comentario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private PostModel post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -43,6 +47,14 @@ public class UsuarioComentarioModel {
 
     public void setComentario(ComentarioModel comentario) {
         this.comentario = comentario;
+    }
+
+    public PostModel getPost() {
+        return post;
+    }
+
+    public void setPost(PostModel post) {
+        this.post = post;
     }
 
     public UserModel getUsuario() {

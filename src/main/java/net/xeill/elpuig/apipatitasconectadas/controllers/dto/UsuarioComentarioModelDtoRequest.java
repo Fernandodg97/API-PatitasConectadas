@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 
 public class UsuarioComentarioModelDtoRequest {
     
-    @NotNull(message = "El ID del comentario es obligatorio")
     private Long comentarioId;
+    private Long postId;
     
     @NotNull(message = "El ID del usuario es obligatorio")
     private Long usuarioId;
@@ -20,6 +20,14 @@ public class UsuarioComentarioModelDtoRequest {
 
     public void setComentarioId(Long comentarioId) {
         this.comentarioId = comentarioId;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public Long getUsuarioId() {

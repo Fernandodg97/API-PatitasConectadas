@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controlador REST para gestionar las relaciones entre usuarios y comentarios.
+ * Controlador REST para gestionar las relaciones entre usuarios y comentarios/posts.
  * Proporciona endpoints para crear, consultar y eliminar las relaciones
- * entre usuarios y comentarios en el sistema.
+ * entre usuarios y comentarios/posts en el sistema.
  * Todas las respuestas son encapsuladas en objetos ResponseEntity para un manejo
  * consistente de la comunicación HTTP.
  */
 @RestController
-@RequestMapping("/usuario-comentario")
+@RequestMapping("/usuario-interaccion")
 public class UsuarioComentarioController {
 
     @Autowired
     private UsuarioComentarioService usuarioComentarioService;
 
     /**
-     * Obtiene todas las relaciones usuario-comentario existentes
+     * Obtiene todas las relaciones usuario-interacción existentes
      * @return ResponseEntity con lista de relaciones en formato DTO
      */
     @GetMapping
@@ -33,7 +33,7 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Obtiene una relación usuario-comentario específica por su ID
+     * Obtiene una relación usuario-interacción específica por su ID
      * @param id ID de la relación a buscar
      * @return ResponseEntity con la relación encontrada
      */
@@ -43,7 +43,7 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Obtiene todas las relaciones usuario-comentario de un usuario específico
+     * Obtiene todas las relaciones usuario-interacción de un usuario específico
      * @param usuarioId ID del usuario cuyas relaciones se quieren obtener
      * @return ResponseEntity con lista de relaciones del usuario
      */
@@ -53,7 +53,7 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Obtiene todas las relaciones usuario-comentario de un comentario específico
+     * Obtiene todas las relaciones usuario-interacción de un comentario específico
      * @param comentarioId ID del comentario cuyas relaciones se quieren obtener
      * @return ResponseEntity con lista de relaciones del comentario
      */
@@ -63,7 +63,17 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Crea una nueva relación usuario-comentario
+     * Obtiene todas las relaciones usuario-interacción de un post específico
+     * @param postId ID del post cuyas relaciones se quieren obtener
+     * @return ResponseEntity con lista de relaciones del post
+     */
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<UsuarioComentarioModelDtoResponse>> getUsuarioComentariosByPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(usuarioComentarioService.getUsuarioComentariosByPost(postId));
+    }
+
+    /**
+     * Crea una nueva relación usuario-interacción
      * @param request Datos de la relación en formato DTO
      * @return ResponseEntity con la relación creada
      */
@@ -73,7 +83,7 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Elimina una relación usuario-comentario específica
+     * Elimina una relación usuario-interacción específica
      * @param id ID de la relación a eliminar
      * @return ResponseEntity sin contenido (204 No Content)
      */
@@ -84,7 +94,7 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Elimina todas las relaciones usuario-comentario de un usuario específico
+     * Elimina todas las relaciones usuario-interacción de un usuario específico
      * @param usuarioId ID del usuario cuyas relaciones se quieren eliminar
      * @return ResponseEntity sin contenido (204 No Content)
      */
@@ -95,13 +105,24 @@ public class UsuarioComentarioController {
     }
 
     /**
-     * Elimina todas las relaciones usuario-comentario de un comentario específico
+     * Elimina todas las relaciones usuario-interacción de un comentario específico
      * @param comentarioId ID del comentario cuyas relaciones se quieren eliminar
      * @return ResponseEntity sin contenido (204 No Content)
      */
     @DeleteMapping("/comentario/{comentarioId}")
     public ResponseEntity<Void> deleteUsuarioComentariosByComentario(@PathVariable Long comentarioId) {
         usuarioComentarioService.deleteUsuarioComentariosByComentario(comentarioId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Elimina todas las relaciones usuario-interacción de un post específico
+     * @param postId ID del post cuyas relaciones se quieren eliminar
+     * @return ResponseEntity sin contenido (204 No Content)
+     */
+    @DeleteMapping("/post/{postId}")
+    public ResponseEntity<Void> deleteUsuarioComentariosByPost(@PathVariable Long postId) {
+        usuarioComentarioService.deleteUsuarioComentariosByPost(postId);
         return ResponseEntity.noContent().build();
     }
 } 

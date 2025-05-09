@@ -21,6 +21,7 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 14. [Usuario-Grupo](#14-usuario-grupo)
 15. [Usuario-Post](#15-usuario-post)
 16. [Valoraciones](#16-valoraciones)
+17. [Usuario-Interacción](#17-usuario-interacción)
 
 ## 1. Autenticación (Auth)
 
@@ -2312,3 +2313,231 @@ Status: 204 No Content
 **Notas:**
 - Si el usuario no existe, se devolverá un error 400 Bad Request
 - Si el usuario no tiene valoraciones emitidas, se devolverá una lista vacía
+
+## 17. Usuario-Interacción
+
+### `GET /usuario-interaccion`
+**Descripción:** Obtiene todas las relaciones entre usuarios y comentarios/posts.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "postId": null,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "comentarioId": null,
+    "postId": 1,
+    "like": false,
+    "fecha": "2024-03-20T15:35:00"
+  }
+]
+```
+
+**Notas:**
+- La fecha se genera automáticamente al crear la relación
+- El campo 'like' indica si el usuario dio like (true) o dislike (false)
+- Cada interacción debe estar asociada a un comentario O un post, nunca a ambos
+
+### `GET /usuario-interaccion/{id}`
+**Descripción:** Obtiene una relación específica entre usuario y comentario/post por su ID.
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "comentarioId": 1,
+  "postId": null,
+  "like": true,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+
+### `GET /usuario-interaccion/usuario/{usuarioId}`
+**Descripción:** Obtiene todas las relaciones de un usuario específico con comentarios y posts.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "postId": null,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 3,
+    "usuarioId": 1,
+    "comentarioId": null,
+    "postId": 2,
+    "like": false,
+    "fecha": "2024-03-20T16:00:00"
+  }
+]
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el usuario no tiene relaciones, se devolverá una lista vacía
+
+### `GET /usuario-interaccion/comentario/{comentarioId}`
+**Descripción:** Obtiene todas las relaciones de un comentario específico con usuarios.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": 1,
+    "postId": null,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "comentarioId": 1,
+    "postId": null,
+    "like": false,
+    "fecha": "2024-03-20T15:35:00"
+  }
+]
+```
+
+**Notas:**
+- Si el comentario no existe, se devolverá un error 404 Not Found
+- Si el comentario no tiene relaciones, se devolverá una lista vacía
+
+### `GET /usuario-interaccion/post/{postId}`
+**Descripción:** Obtiene todas las relaciones de un post específico con usuarios.
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "usuarioId": 1,
+    "comentarioId": null,
+    "postId": 1,
+    "like": true,
+    "fecha": "2024-03-20T15:30:00"
+  },
+  {
+    "id": 2,
+    "usuarioId": 2,
+    "comentarioId": null,
+    "postId": 1,
+    "like": false,
+    "fecha": "2024-03-20T15:35:00"
+  }
+]
+```
+
+**Notas:**
+- Si el post no existe, se devolverá un error 404 Not Found
+- Si el post no tiene relaciones, se devolverá una lista vacía
+
+### `POST /usuario-interaccion`
+**Descripción:** Crea una nueva relación entre un usuario y un comentario o post.
+
+**Ejemplo Request:**
+```json
+{
+  "usuarioId": 1,
+  "comentarioId": 1,
+  "postId": null,
+  "like": true
+}
+```
+o
+```json
+{
+  "usuarioId": 1,
+  "comentarioId": null,
+  "postId": 1,
+  "like": true
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "usuarioId": 1,
+  "comentarioId": 1,
+  "postId": null,
+  "like": true,
+  "fecha": "2024-03-20T15:30:00"
+}
+```
+
+**Notas:**
+- El usuarioId es obligatorio
+- Debe especificarse comentarioId O postId, pero no ambos
+- El campo like es obligatorio
+- No se puede crear una relación duplicada entre el mismo usuario y comentario/post
+- El usuario, comentario (si se especifica) y post (si se especifica) deben existir
+- La fecha se genera automáticamente
+- Si alguna validación falla, se devolverá un error 400 Bad Request
+
+### `DELETE /usuario-interaccion/{id}`
+**Descripción:** Elimina una relación específica entre usuario y comentario/post.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si la relación no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-interaccion/usuario/{usuarioId}`
+**Descripción:** Elimina todas las relaciones de un usuario específico con comentarios y posts.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-interaccion/comentario/{comentarioId}`
+**Descripción:** Elimina todas las relaciones de un comentario específico con usuarios.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el comentario no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### `DELETE /usuario-interaccion/post/{postId}`
+**Descripción:** Elimina todas las relaciones de un post específico con usuarios.
+
+**Ejemplo Response:**
+```
+Status: 204 No Content
+```
+
+**Notas:**
+- Si el post no existe, se devolverá un error 404 Not Found
+- Si la eliminación es exitosa, se devolverá un status 204 sin contenido

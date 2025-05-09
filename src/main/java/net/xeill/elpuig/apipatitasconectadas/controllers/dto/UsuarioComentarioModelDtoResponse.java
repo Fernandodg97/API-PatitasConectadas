@@ -6,6 +6,7 @@ public class UsuarioComentarioModelDtoResponse {
     
     private Long id;
     private Long comentarioId;
+    private Long postId;
     private Long usuarioId;
     private boolean like;
     private LocalDateTime fecha;
@@ -15,9 +16,10 @@ public class UsuarioComentarioModelDtoResponse {
     }
 
     // Constructor con todos los campos
-    public UsuarioComentarioModelDtoResponse(Long id, Long comentarioId, Long usuarioId, boolean like, LocalDateTime fecha) {
+    public UsuarioComentarioModelDtoResponse(Long id, Long comentarioId, Long postId, Long usuarioId, boolean like, LocalDateTime fecha) {
         this.id = id;
         this.comentarioId = comentarioId;
+        this.postId = postId;
         this.usuarioId = usuarioId;
         this.like = like;
         this.fecha = fecha;
@@ -38,6 +40,14 @@ public class UsuarioComentarioModelDtoResponse {
 
     public void setComentarioId(Long comentarioId) {
         this.comentarioId = comentarioId;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public Long getUsuarioId() {
