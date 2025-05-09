@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoRequest;
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.EventoModelDtoResponse;
+import net.xeill.elpuig.apipatitasconectadas.controllers.dto.UsuarioEventoModelDtoRequest;
 import net.xeill.elpuig.apipatitasconectadas.models.EventoModel;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
+import net.xeill.elpuig.apipatitasconectadas.models.UsuarioEventoModel;
 import net.xeill.elpuig.apipatitasconectadas.services.EventoService;
 import net.xeill.elpuig.apipatitasconectadas.services.UserService;
+import net.xeill.elpuig.apipatitasconectadas.services.UsuarioEventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,9 @@ public class EventoController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UsuarioEventoService usuarioEventoService;
+
     /**
      * Obtiene todos los eventos existentes en el sistema
      * @return ResponseEntity con lista de eventos en formato DTO
@@ -49,19 +55,40 @@ public class EventoController {
      * @return ResponseEntity con el evento creado
      */
     @PostMapping
-    public ResponseEntity<EventoModelDtoResponse> saveEvento(@RequestBody EventoModelDtoRequest eventoDto) {
-        if (eventoDto.getNombre() == null || eventoDto.getNombre().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<?> saveEvento(@RequestBody EventoModelDtoRequest eventoDto, 
+                                      @RequestParam Long usuarioId) {
+        try {
+            // Validación básica de los datos de entrada
+            if (eventoDto.getNombre() == null || eventoDto.getNombre().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("El nombre del evento es obligatorio");
+            }
 
-        UserModel creador = userService.getUserById(eventoDto.getCreadorId());
-        if (creador == null) {
-            return ResponseEntity.badRequest().build();
-        }
+            // Obtener el usuario
+            UserModel usuario = userService.getUserById(usuarioId);
+            if (usuario == null) {
+                return ResponseEntity.badRequest().body("Usuario no encontrado");
+            }
 
-        EventoModel evento = eventoDto.toDomain(creador);
-        EventoModel savedEvento = eventoService.saveEvento(evento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new EventoModelDtoResponse(savedEvento));
+            // Convertir DTO a modelo y guardar el evento
+            EventoModel evento = eventoDto.toDomain();
+            EventoModel savedEvento = eventoService.saveEvento(evento);
+
+            // Crear la relación usuario-evento
+            UsuarioEventoModel usuarioEvento = new UsuarioEventoModel();
+            usuarioEvento.setEvento(savedEvento);
+            usuarioEvento.setUsuario(usuario);
+            usuarioEvento.setRol("CREADOR");
+            usuarioEventoService.saveUsuarioEvento(usuarioEvento);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new EventoModelDtoResponse(savedEvento));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al crear el evento: " + e.getMessage());
+        }
     }
 
     /**
@@ -95,12 +122,7 @@ public class EventoController {
             return ResponseEntity.badRequest().build();
         }
 
-        UserModel creador = userService.getUserById(eventoDto.getCreadorId());
-        if (creador == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        EventoModel evento = eventoDto.toDomain(creador);
+        EventoModel evento = eventoDto.toDomain();
         evento.setId(id);
         EventoModel updatedEvento = eventoService.saveEvento(evento);
         return ResponseEntity.ok(new EventoModelDtoResponse(updatedEvento));

@@ -26,10 +26,6 @@ public class EventoModel {
     @Column(nullable = false)
     private Date fecha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creador_id", nullable = false)
-    private UserModel creador;
-
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UsuarioEventoModel> usuarios = new ArrayList<>();
 
@@ -72,14 +68,6 @@ public class EventoModel {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
-    }
-
-    public UserModel getCreador() {
-        return creador;
-    }
-
-    public void setCreador(UserModel creador) {
-        this.creador = creador;
     }
 
     public List<UsuarioEventoModel> getUsuarios() {

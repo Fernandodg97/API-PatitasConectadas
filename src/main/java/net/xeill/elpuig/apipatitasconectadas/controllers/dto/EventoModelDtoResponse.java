@@ -2,6 +2,7 @@ package net.xeill.elpuig.apipatitasconectadas.controllers.dto;
 
 import java.sql.Date;
 import net.xeill.elpuig.apipatitasconectadas.models.EventoModel;
+import net.xeill.elpuig.apipatitasconectadas.models.UsuarioEventoModel;
 
 public class EventoModelDtoResponse {
     
@@ -18,7 +19,13 @@ public class EventoModelDtoResponse {
         this.descripcion = evento.getDescripcion();
         this.ubicacion = evento.getUbicacion();
         this.fecha = evento.getFecha();
-        this.creadorId = evento.getCreador().getId();
+        
+        // Obtener el ID del creador desde la relación usuario_evento
+        this.creadorId = evento.getUsuarios().stream()
+            .filter(ue -> "CREADOR".equals(ue.getRol()))
+            .map(ue -> ue.getUsuario().getId())
+            .findFirst()
+            .orElse(null);
     }
     
     public Long getId() {

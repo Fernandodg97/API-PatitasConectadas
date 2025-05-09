@@ -41,9 +41,9 @@ public class AuthController {
      * @return ResponseEntity con token JWT o mensaje de error
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthDtoResponse> login(@RequestBody AuthDtoRequest request) {
+    public ResponseEntity<?> login(@RequestBody AuthDtoRequest request) {
         String token = authService.login(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok(new AuthDtoResponse(token));
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     /**

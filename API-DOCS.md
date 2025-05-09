@@ -371,8 +371,11 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 ]
 ```
 
-### `POST /eventos`
+### `POST /eventos?usuarioId={id}`
 **Descripción:** Crea un nuevo evento en el sistema.
+
+**Parámetros URL:**
+- usuarioId: ID del usuario que será creador del evento (requerido)
 
 **Ejemplo Request:**
 ```json
@@ -380,8 +383,7 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
   "nombre": "Adopción de mascotas",
   "descripcion": "Evento de adopción de mascotas en el parque central",
   "ubicacion": "Parque Central, Barcelona",
-  "fecha": "2024-04-15",
-  "creadorId": 1
+  "fecha": "2024-04-15"
 }
 ```
 
@@ -399,8 +401,9 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 
 **Notas:**
 - El nombre del evento es obligatorio y no puede estar vacío
-- Si el creador no existe, se devolverá un error 400 Bad Request
+- Si el usuario no existe, se devolverá un error 400 Bad Request
 - Si el nombre está vacío, se devolverá un error 400 Bad Request
+- El usuario especificado en usuarioId será automáticamente asignado como creador del evento en la tabla usuario_evento
 
 ### `GET /eventos/{id}`
 **Descripción:** Obtiene un evento específico por su ID.
@@ -429,8 +432,7 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
   "nombre": "Gran evento de adopción de mascotas",
   "descripcion": "Evento de adopción de mascotas en el parque central con más de 50 mascotas",
   "ubicacion": "Parque Central, Barcelona",
-  "fecha": "2024-04-15",
-  "creadorId": 1
+  "fecha": "2024-04-15"
 }
 ```
 
@@ -449,7 +451,6 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 **Notas:**
 - Si el evento no existe, se devolverá un error 404 Not Found
 - El nombre del evento es obligatorio y no puede estar vacío
-- Si el creador no existe, se devolverá un error 400 Bad Request
 
 ### `DELETE /eventos/{id}`
 **Descripción:** Elimina un evento existente.
@@ -462,6 +463,7 @@ Status: 204 No Content
 **Notas:**
 - Si el evento no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+- La eliminación del evento también eliminará todas sus relaciones con usuarios en la tabla usuario_evento
 
 ## 5. Grupos
 
@@ -1497,6 +1499,7 @@ Status: 204 No Content
 **Notas:**
 - El campo 'rol' puede ser "CREADOR" o "ASISTENTE"
 - Cada usuario puede tener un solo rol por evento
+- La relación se crea automáticamente al crear un evento, asignando al usuario como "CREADOR"
 
 ### `GET /usuario-evento/{id}`
 **Descripción:** Obtiene una relación específica entre usuario y evento por su ID.
@@ -1572,7 +1575,7 @@ Status: 204 No Content
 {
   "usuarioId": 1,
   "eventoId": 1,
-  "rol": "CREADOR"
+  "rol": "ASISTENTE"
 }
 ```
 
@@ -1582,7 +1585,7 @@ Status: 204 No Content
   "id": 1,
   "usuarioId": 1,
   "eventoId": 1,
-  "rol": "CREADOR"
+  "rol": "ASISTENTE"
 }
 ```
 
