@@ -70,6 +70,13 @@ public class UsuarioGrupoController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o Grupo no encontrado");
             }
 
+            // Verificar si ya existe una relación entre el usuario y el grupo
+            UsuarioGrupoModel existingRelation = usuarioGrupoService.getUsuarioGrupoByUsuarioIdAndGrupoId(usuarioId, grupoId);
+            if (existingRelation != null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("El usuario ya tiene un rol asignado en este grupo. Use el endpoint PUT para actualizar el rol.");
+            }
+
             // Crear el modelo a partir del DTO
             UsuarioGrupoModel usuarioGrupo = new UsuarioGrupoModel();
             usuarioGrupo.setUsuario(usuario.get());

@@ -105,12 +105,22 @@ public class UsuarioEventoController {
      * @see UsuarioEventoModelDtoResponse
      */
     @PostMapping
-    public ResponseEntity<UsuarioEventoModelDtoResponse> createUsuarioEvento(@RequestBody UsuarioEventoModelDtoRequest request) {
+    public ResponseEntity<?> createUsuarioEvento(@RequestBody UsuarioEventoModelDtoRequest request) {
         UserModel usuario = userService.getUserById(request.getUsuarioId());
         EventoModel evento = eventoService.getEventoById(request.getEventoId());
 
         if (usuario == null || evento == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Usuario o Evento no encontrado");
+        }
+
+        // Verificar si ya existe una relación entre el usuario y el evento
+        List<UsuarioEventoModel> existingRelations = usuarioEventoService.getUsuarioEventosByUsuarioId(request.getUsuarioId());
+        boolean alreadyHasRole = existingRelations.stream()
+                .anyMatch(rel -> rel.getEvento().getId().equals(request.getEventoId()));
+
+        if (alreadyHasRole) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("El usuario ya tiene un rol asignado en este evento. Use el endpoint PUT para actualizar el rol.");
         }
 
         UsuarioEventoModel usuarioEvento = request.toDomain(evento, usuario);
@@ -120,7 +130,7 @@ public class UsuarioEventoController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new UsuarioEventoModelDtoResponse(savedUsuarioEvento));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().body("Error al crear la relación usuario-evento");
     }
 
     /**
