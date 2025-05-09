@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Configuración
-USUARIO="fernando"
+USUARIO="mouad"
 BASEDATOS="patitasconectadas"
 FECHA=$(date +"%Y%m%d_%H%M%S")
-ARCHIVO="patitasconectadas_fer_$FECHA.sql"
+ARCHIVO="patitasconectadas_mouad_$FECHA.sql"
 
 # Exportar la base de datos
 echo "Iniciando respaldo de la base de datos..."
