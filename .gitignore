@@ -33,5 +33,4 @@ build/
 .vscode/
 
 ### Uploads ###
-uploads/*
-!uploads/
+/uploads/*
