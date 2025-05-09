@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PostModelDtoRequest;
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PostModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.GrupoModel;
 import net.xeill.elpuig.apipatitasconectadas.models.PostModel;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
+import net.xeill.elpuig.apipatitasconectadas.services.FileStorageService;
 import net.xeill.elpuig.apipatitasconectadas.services.GrupoService;
 import net.xeill.elpuig.apipatitasconectadas.services.PostService;
 import net.xeill.elpuig.apipatitasconectadas.services.UserService;
@@ -17,6 +19,7 @@ import net.xeill.elpuig.apipatitasconectadas.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,9 @@ public class PostController {
     
     @Autowired
     private GrupoService grupoService;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
 
     /**
      * Obtiene publicaciones con posibilidad de filtrar por contenido o rango de fechas
@@ -86,31 +92,46 @@ public class PostController {
 
     /**
      * Crea una nueva publicación en el sistema
-     * @param postDto Datos de la publicación en formato DTO
+     * @param contenido Contenido de la publicación
+     * @param creadorId ID del creador de la publicación
+     * @param grupoId ID del grupo asociado a la publicación (opcional)
+     * @param imagen Imagen asociada a la publicación (opcional)
      * @return ResponseEntity con la publicación creada o mensaje de error
      */
-    @PostMapping
-    public ResponseEntity<?> savePost(@RequestBody PostModelDtoRequest postDto) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<?> savePost(
+            @RequestParam("contenido") String contenido,
+            @RequestParam("creadorId") Long creadorId,
+            @RequestParam(value = "grupoId", required = false) Long grupoId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
             // Obtener el creador y grupo si existen
             UserModel creador = null;
             GrupoModel grupo = null;
             
-            if (postDto.getCreadorId() != null) {
-                Optional<UserModel> optionalCreador = userService.getById(postDto.getCreadorId());
-                if (optionalCreador.isEmpty()) {
-                    throw new EntityNotFoundException("Usuario creador no encontrado con ID: " + postDto.getCreadorId());
-                }
-                creador = optionalCreador.get();
+            Optional<UserModel> optionalCreador = userService.getById(creadorId);
+            if (optionalCreador.isEmpty()) {
+                throw new EntityNotFoundException("Usuario creador no encontrado con ID: " + creadorId);
+            }
+            creador = optionalCreador.get();
+            
+            if (grupoId != null) {
+                grupo = grupoService.getById(grupoId)
+                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + grupoId));
             }
             
-            if (postDto.getGrupoId() != null) {
-                grupo = grupoService.getById(postDto.getGrupoId())
-                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + postDto.getGrupoId()));
-            }
+            // Crear el post
+            PostModel post = new PostModel();
+            post.setGrupo(grupo);
+            post.setCreador(creador);
+            post.setContenido(contenido);
+            post.setFecha(LocalDateTime.now());
             
-            // Convertir DTO a modelo
-            PostModel post = postDto.toDomain(creador, grupo);
+            // Manejar la imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                String imagenPath = fileStorageService.storeFile(imagen);
+                post.setImg(imagenPath);
+            }
             
             // Guardar el post
             PostModel savedPost = postService.savePost(post);
@@ -123,6 +144,9 @@ public class PostController {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>(Map.of("error", "Error al procesar la imagen: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", "Error al crear el post: " + e.getMessage()), 
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -149,41 +173,49 @@ public class PostController {
 
     /**
      * Actualiza una publicación existente
-     * @param postDto Datos actualizados de la publicación
      * @param id ID de la publicación a actualizar
+     * @param contenido Contenido actualizado de la publicación
+     * @param grupoId ID del grupo asociado a la publicación (opcional)
+     * @param imagen Imagen actualizada de la publicación (opcional)
      * @return ResponseEntity con la publicación actualizada o mensaje de error
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePost(@RequestBody PostModelDtoRequest postDto, @PathVariable Long id) {
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updatePost(
+            @PathVariable Long id,
+            @RequestParam("contenido") String contenido,
+            @RequestParam(value = "grupoId", required = false) Long grupoId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
             // Obtener el post existente
             PostModel existingPost = postService.getById(id);
             
-            // Obtener el creador y grupo si se proporcionan
-            UserModel creador = existingPost.getCreador();
+            // Obtener el grupo si se proporciona
             GrupoModel grupo = existingPost.getGrupo();
-            
-            if (postDto.getCreadorId() != null) {
-                Optional<UserModel> optionalCreador = userService.getById(postDto.getCreadorId());
-                if (optionalCreador.isEmpty()) {
-                    throw new EntityNotFoundException("Usuario creador no encontrado con ID: " + postDto.getCreadorId());
-                }
-                creador = optionalCreador.get();
-            }
-            
-            if (postDto.getGrupoId() != null) {
-                grupo = grupoService.getById(postDto.getGrupoId())
-                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + postDto.getGrupoId()));
+            if (grupoId != null) {
+                grupo = grupoService.getById(grupoId)
+                    .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + grupoId));
             }
             
             // Preparar el post para actualizar
             PostModel postToUpdate = new PostModel();
             postToUpdate.setId(id);
-            postToUpdate.setCreador(creador);
+            postToUpdate.setCreador(existingPost.getCreador());
             postToUpdate.setGrupo(grupo);
-            postToUpdate.setContenido(postDto.getContenido());
-            postToUpdate.setFecha(postDto.getFecha() != null ? postDto.getFecha() : existingPost.getFecha());
-            postToUpdate.setImg(postDto.getImg());
+            postToUpdate.setContenido(contenido);
+            postToUpdate.setFecha(existingPost.getFecha());
+            
+            // Manejar la imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                // Eliminar la imagen anterior si existe
+                if (existingPost.getImg() != null) {
+                    fileStorageService.deleteFile(existingPost.getImg());
+                }
+                // Guardar la nueva imagen
+                String imagenPath = fileStorageService.storeFile(imagen);
+                postToUpdate.setImg(imagenPath);
+            } else {
+                postToUpdate.setImg(existingPost.getImg());
+            }
             
             // Actualizar el post
             PostModel updatedPost = postService.updateById(postToUpdate, id);
@@ -196,6 +228,9 @@ public class PostController {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (ValidationException e) {
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity<>(Map.of("error", "Error al procesar la imagen: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", "Error al actualizar el post: " + e.getMessage()), 
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -210,6 +245,12 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
+            // Obtener el post para eliminar su imagen si existe
+            PostModel post = postService.getById(id);
+            if (post.getImg() != null) {
+                fileStorageService.deleteFile(post.getImg());
+            }
+            
             boolean deleted = postService.deletePost(id);
             if (deleted) {
                 return new ResponseEntity<>(Map.of("mensaje", "Post eliminado correctamente"), HttpStatus.OK);

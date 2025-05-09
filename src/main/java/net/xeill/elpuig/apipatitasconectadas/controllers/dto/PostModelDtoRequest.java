@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import net.xeill.elpuig.apipatitasconectadas.models.PostModel;
 import net.xeill.elpuig.apipatitasconectadas.models.GrupoModel;
 import net.xeill.elpuig.apipatitasconectadas.models.UserModel;
+import org.springframework.web.multipart.MultipartFile;
 
 public class PostModelDtoRequest {
     
@@ -15,7 +16,7 @@ public class PostModelDtoRequest {
     
     private LocalDateTime fecha;
     
-    private String img;
+    private MultipartFile imagen;
     
     public PostModel toDomain(UserModel creador, GrupoModel grupo) {
         PostModel post = new PostModel();
@@ -23,7 +24,6 @@ public class PostModelDtoRequest {
         post.setCreador(creador);
         post.setContenido(this.contenido);
         post.setFecha(this.fecha != null ? this.fecha : LocalDateTime.now());
-        post.setImg(this.img);
         return post;
     }
     
@@ -59,11 +59,11 @@ public class PostModelDtoRequest {
         this.fecha = fecha;
     }
     
-    public String getImg() {
-        return img;
+    public MultipartFile getImagen() {
+        return imagen;
     }
     
-    public void setImg(String img) {
-        this.img = img;
+    public void setImagen(MultipartFile imagen) {
+        this.imagen = imagen;
     }
 } 

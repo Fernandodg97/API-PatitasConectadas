@@ -1098,7 +1098,113 @@ Status: 204 No Content
 - Si el grupo no existe, se devolverá un error 404 Not Found
 - Si el grupo no tiene publicaciones, se devolverá una lista vacía
 
-## 10. Seguidos
+## 10. Manejo de Imágenes
+
+### `POST /posts`
+**Descripción:** Crea una nueva publicación con imagen.
+
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- contenido: Texto de la publicación (requerido)
+- creadorId: ID del usuario creador (requerido)
+- grupoId: ID del grupo (opcional)
+- imagen: Archivo de imagen (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+contenido: "¡Hoy adopté un nuevo perrito!"
+creadorId: 1
+grupoId: 1
+imagen: [archivo de imagen]
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "¡Hoy adopté un nuevo perrito!",
+  "fecha": "2024-03-20T15:30:00",
+  "img": "/uploads/posts/2024/03/imagen-123456.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T15:30:00",
+  "comentarios": []
+}
+```
+
+**Notas:**
+- La imagen debe ser un archivo de tipo imagen (jpg, jpeg, png, gif)
+- El tamaño máximo de la imagen es 10MB
+- La imagen se almacenará en el directorio `uploads/posts/YYYY/MM/`
+- El nombre del archivo se generará automáticamente usando UUID
+- La URL de la imagen será accesible a través de `/uploads/posts/YYYY/MM/nombre-archivo`
+
+### `PUT /posts/{id}`
+**Descripción:** Actualiza una publicación existente, incluyendo la imagen.
+
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- contenido: Texto de la publicación (requerido)
+- creadorId: ID del usuario creador (requerido)
+- grupoId: ID del grupo (opcional)
+- imagen: Archivo de imagen (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+contenido: "¡Actualización: Mi perrito ya está adaptado!"
+creadorId: 1
+grupoId: 1
+imagen: [nuevo archivo de imagen]
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "grupoId": 1,
+  "nombreGrupo": "Amantes de los Perros",
+  "creadorId": 1,
+  "nombreCreador": "Juan",
+  "apellidoCreador": "Pérez",
+  "contenido": "¡Actualización: Mi perrito ya está adaptado!",
+  "fecha": "2024-03-20T16:30:00",
+  "img": "/uploads/posts/2024/03/nueva-imagen-789012.jpg",
+  "createdAt": "2024-03-20T15:30:00",
+  "updatedAt": "2024-03-20T16:30:00",
+  "comentarios": []
+}
+```
+
+**Notas:**
+- Si se proporciona una nueva imagen, la imagen anterior será eliminada
+- La imagen debe ser un archivo de tipo imagen (jpg, jpeg, png, gif)
+- El tamaño máximo de la imagen es 10MB
+- La imagen se almacenará en el directorio `uploads/posts/YYYY/MM/`
+- El nombre del archivo se generará automáticamente usando UUID
+- La URL de la imagen será accesible a través de `/uploads/posts/YYYY/MM/nombre-archivo`
+
+### `DELETE /posts/{id}`
+**Descripción:** Elimina una publicación y su imagen asociada.
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Post eliminado correctamente"
+}
+```
+
+**Notas:**
+- Al eliminar un post, también se eliminará la imagen asociada del sistema de archivos
+- Si la publicación no existe, se devolverá un error 404 Not Found
+- Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
+
+## 11. Seguidos
 
 ### `GET /usuarios/{usuarioId}/seguidos`
 **Descripción:** Obtiene todos los usuarios que sigue un usuario específico.
@@ -1184,7 +1290,7 @@ Status: 204 No Content
 - Si la relación de seguimiento no existe, se devolverá un error 404 Not Found
 - Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
 
-## 11. Usuarios
+## 12. Usuarios
 
 ### `GET /usuarios`
 **Descripción:** Obtiene todos los usuarios registrados en el sistema.
@@ -1307,7 +1413,7 @@ Status: 204 No Content
 - Si ocurre un error al eliminar el usuario, se devolverá un error 400 Bad Request
 - La eliminación de un usuario también eliminará todas sus relaciones con grupos y eventos
 
-## 12. Usuario-Comentario
+## 13. Usuario-Comentario
 
 ### `GET /usuario-comentario`
 **Descripción:** Obtiene todas las relaciones entre usuarios y comentarios.
@@ -1473,7 +1579,7 @@ Status: 204 No Content
 - Si el comentario no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-## 13. Usuario-Evento
+## 14. Usuario-Evento
 
 ### `GET /usuario-evento`
 **Descripción:** Obtiene todas las relaciones entre usuarios y eventos.
@@ -1644,7 +1750,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-## 14. Usuario-Grupo
+## 15. Usuario-Grupo
 
 ### `GET /usuario-grupo`
 **Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
@@ -1855,7 +1961,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si el usuario o el grupo no existen, se devolverá un error 404 Not Found
 
-## 15. Usuario-Post
+## 16. Usuario-Post
 
 ### `GET /usuario-post`
 **Descripción:** Obtiene todas las relaciones entre usuarios y posts.
@@ -2012,7 +2118,7 @@ Status: 204 No Content
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-## 16. Valoraciones
+## 17. Valoraciones
 
 ### `GET /valoraciones`
 **Descripción:** Obtiene todas las valoraciones existentes en el sistema.

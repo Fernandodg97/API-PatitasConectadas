@@ -71,6 +71,8 @@ sudo /usr/pgadmin4/bin/setup-web.sh
 
 Para la documentación completa de todas las rutas de la API con ejemplos JSON y explicaciones detalladas, consulte el archivo [API-DOCS.md](API-DOCS.md).
 
+Para información sobre el manejo de archivos e imágenes en el sistema, incluyendo configuración, endpoints y ejemplos de uso, consulte el archivo [FileStorage.md](FileStorage.md).
+
 # Documentación API - Módulo de Perfiles
 
 ## Descripción General
@@ -123,22 +125,50 @@ Este módulo permite gestionar los perfiles de usuarios en el sistema. Cada perf
 - **Método**: GET
 - **URL**: `/usuarios/{id}/perfiles`
 - **Descripción**: Obtiene el perfil asociado a un usuario específico
-- **Parámetros URL**:
-  - `id`: ID del usuario
 
 ### 4. Actualizar perfil
 - **Método**: POST
 - **URL**: `/usuarios/{id}/perfiles`
 - **Descripción**: Actualiza la información de un perfil existente
-- **Parámetros URL**:
-  - `id`: ID del usuario
 
 ### 5. Eliminar perfil
 - **Método**: DELETE
 - **URL**: `/usuarios/{id}/perfiles`
 - **Descripción**: Elimina un perfil del sistema
-- **Parámetros URL**:
-  - `id`: ID del usuario
+
+## Manejo de Imágenes
+
+### 1. Crear Post con Imagen
+- **Método**: POST
+- **URL**: `/posts`
+- **Content-Type**: multipart/form-data
+- **Parámetros**:
+  - contenido: string (requerido)
+  - creadorId: number (requerido)
+  - grupoId: number (opcional)
+  - imagen: file (opcional)
+- **Notas**:
+  - Tipos de archivo permitidos: jpg, jpeg, png, gif
+  - Tamaño máximo: 10MB
+  - Las imágenes se almacenan en `uploads/posts/YYYY/MM/`
+  - Las URLs son accesibles vía `/uploads/posts/YYYY/MM/nombre-archivo`
+
+### 2. Actualizar Post con Imagen
+- **Método**: PUT
+- **URL**: `/posts/{id}`
+- **Content-Type**: multipart/form-data
+- **Parámetros**:
+  - contenido: string (requerido)
+  - grupoId: number (opcional)
+  - imagen: file (opcional)
+- **Notas**:
+  - Al actualizar con nueva imagen, la anterior se elimina automáticamente
+  - Mismos requisitos de formato y tamaño que en la creación
+
+### 3. Eliminar Post con Imagen
+- **Método**: DELETE
+- **URL**: `/posts/{id}`
+- **Descripción**: Elimina el post y su imagen asociada del sistema
 
 ## Modelo de Datos
 
@@ -158,8 +188,17 @@ Este módulo permite gestionar los perfiles de usuarios en el sistema. Cada perf
 2. El campo `img` debe contener la URL completa de la imagen
 3. El `usuario_id` debe corresponder a un usuario existente en el sistema
 4. Todos los endpoints requieren autenticación
+5. Para el manejo de imágenes:
+   - Se validan los tipos MIME de los archivos
+   - Se generan nombres únicos para evitar colisiones
+   - Se organizan los archivos por año/mes
+   - Se eliminan las imágenes antiguas al actualizar o eliminar posts
 
 ## Manejo de Errores
 - Los errores 500 indican problemas del servidor
 - Los errores 404 indican que el recurso no fue encontrado
 - Los errores 400 indican que la petición es inválida
+- Para imágenes:
+  - Error 400 si el archivo está vacío
+  - Error 400 si el tipo de archivo no está permitido
+  - Error 400 si el tamaño excede el límite
