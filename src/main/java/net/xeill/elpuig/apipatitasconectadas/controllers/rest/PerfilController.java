@@ -2,22 +2,24 @@ package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.io.IOException;
+import java.util.Map;
+import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PerfilModelDtoRequest;
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.PerfilModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.PerfilModel;
+import net.xeill.elpuig.apipatitasconectadas.services.FileStorageService;
 import net.xeill.elpuig.apipatitasconectadas.services.PerfilService;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 
 /**
  * Controlador REST para gestionar operaciones relacionadas con perfiles de usuarios.
@@ -30,6 +32,9 @@ public class PerfilController {
 
     @Autowired
     private PerfilService perfilService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     /**
      * Obtiene todos los perfiles existentes en el sistema
@@ -50,25 +55,49 @@ public class PerfilController {
     }
 
     /**
-     * Crea un nuevo perfil en el sistema
-     * @param perfilDto Datos del perfil en formato DTO
+     * Crea un nuevo perfil en el sistema con imagen opcional
+     * @param descripcion Descripción del perfil
+     * @param fechaNacimiento Fecha de nacimiento del usuario
+     * @param usuarioId ID del usuario al que pertenece el perfil
+     * @param imagen Imagen del perfil (opcional)
      * @return ResponseEntity con el perfil creado o mensaje de error
      */
-    @PostMapping(path = "/perfiles")
-    public ResponseEntity<?> savePerfil(@RequestBody PerfilModelDtoRequest perfilDto) {
+    @PostMapping(path = "/perfiles", consumes = "multipart/form-data")
+    public ResponseEntity<?> savePerfil(
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("fechaNacimiento") String fechaNacimiento,
+            @RequestParam("usuarioId") Long usuarioId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
-            // Convierte el DTO a modelo
-            PerfilModel perfil = perfilDto.toDomain();
+            // Crear el perfil
+            PerfilModel perfil = new PerfilModel();
+            perfil.setDescripcion(descripcion);
+            perfil.setFecha_nacimiento(Date.valueOf(fechaNacimiento));
+            perfil.setUsuario_id(usuarioId);
             
-            // Intenta guardar el perfil recibido en el cuerpo de la petición
-            PerfilModel savedPerfil = this.perfilService.savePerfil(perfil);
+            // Manejar la imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                String imagenPath = fileStorageService.storeFile(imagen);
+                perfil.setImg(imagenPath);
+            }
             
-            // Devuelve el perfil guardado con estado HTTP 201 (CREATED)
-            return ResponseEntity.status(HttpStatus.CREATED).body(new PerfilModelDtoResponse(savedPerfil));
-        } catch (Exception e) {
-            // En caso de error, devuelve estado HTTP 500 (INTERNAL SERVER ERROR) con el mensaje del error
+            // Guardar el perfil
+            PerfilModel savedPerfil = perfilService.savePerfil(perfil);
+            
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new PerfilModelDtoResponse(savedPerfil));
+        } catch (ValidationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error al guardar el perfil: " + e.getMessage());
+                    .body(Map.of("error", "Error al procesar la imagen: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al guardar el perfil: " + e.getMessage()));
         }
     }
 
@@ -96,25 +125,65 @@ public class PerfilController {
     }
 
     /**
-     * Actualiza el perfil de un usuario específico
-     * @param perfilDto Datos actualizados del perfil
+     * Actualiza el perfil de un usuario específico con imagen opcional
+     * @param descripcion Descripción actualizada del perfil
+     * @param fechaNacimiento Fecha de nacimiento actualizada
      * @param id ID del usuario cuyo perfil se actualizará
+     * @param imagen Nueva imagen del perfil (opcional)
      * @return ResponseEntity con el perfil actualizado o mensaje de error
      */
-    @PutMapping(path = "/usuarios/{id}/perfiles")
-    public ResponseEntity<?> updatePerfilById(@RequestBody PerfilModelDtoRequest perfilDto, @PathVariable("id") Long id) {
+    @PutMapping(path = "/usuarios/{id}/perfiles", consumes = "multipart/form-data")
+    public ResponseEntity<?> updatePerfilById(
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("fechaNacimiento") String fechaNacimiento,
+            @PathVariable("id") Long id,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
-            // Convierte el DTO a modelo
-            PerfilModel perfil = perfilDto.toDomain();
+            // Obtener el perfil existente
+            var perfilOptional = perfilService.getById(id);
+            if (perfilOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "No se encontró el perfil con ID: " + id));
+            }
             
-            // Llama al servicio para actualizar el perfil con los nuevos datos
-            PerfilModel updatedPerfil = this.perfilService.updateByID(perfil, id);
+            PerfilModel existingPerfil = perfilOptional.get();
             
-            // Retorna el perfil actualizado
+            // Preparar el perfil para actualizar
+            PerfilModel perfilToUpdate = new PerfilModel();
+            perfilToUpdate.setId(existingPerfil.getId());
+            perfilToUpdate.setUsuario_id(id);
+            perfilToUpdate.setDescripcion(descripcion);
+            perfilToUpdate.setFecha_nacimiento(Date.valueOf(fechaNacimiento));
+            
+            // Manejar la imagen si se proporciona
+            if (imagen != null && !imagen.isEmpty()) {
+                // Eliminar la imagen anterior si existe
+                if (existingPerfil.getImg() != null) {
+                    fileStorageService.deleteFile(existingPerfil.getImg());
+                }
+                // Guardar la nueva imagen
+                String imagenPath = fileStorageService.storeFile(imagen);
+                perfilToUpdate.setImg(imagenPath);
+            } else {
+                perfilToUpdate.setImg(existingPerfil.getImg());
+            }
+            
+            // Actualizar el perfil
+            PerfilModel updatedPerfil = perfilService.updateByID(perfilToUpdate, id);
+            
             return ResponseEntity.ok(new PerfilModelDtoResponse(updatedPerfil));
+        } catch (ValidationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al procesar la imagen: " + e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al actualizar el perfil: " + e.getMessage());
+                    .body(Map.of("error", "Error al actualizar el perfil: " + e.getMessage()));
         }
     }
 
@@ -126,10 +195,15 @@ public class PerfilController {
     @DeleteMapping(path = "/usuarios/{id}/perfiles")
     public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
         try {
-            // Intenta eliminar el perfil con el ID especificado
-            boolean ok = this.perfilService.deletePerfil(id);
+            // Obtener el perfil para eliminar su imagen si existe
+            var perfilOptional = perfilService.getById(id);
+            if (perfilOptional.isPresent() && perfilOptional.get().getImg() != null) {
+                fileStorageService.deleteFile(perfilOptional.get().getImg());
+            }
+            
+            // Eliminar el perfil
+            boolean ok = perfilService.deletePerfil(id);
     
-            // Devuelve un mensaje indicando si la eliminación fue exitosa o no
             if (ok) {
                 return ResponseEntity.ok("Se ha eliminado el perfil con id: " + id);
             } else {
@@ -138,7 +212,7 @@ public class PerfilController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al eliminar el perfil: " + e.getMessage());
+                .body(Map.of("error", "Error al eliminar el perfil: " + e.getMessage()));
         }
     }
 }

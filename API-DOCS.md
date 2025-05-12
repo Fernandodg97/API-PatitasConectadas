@@ -782,16 +782,22 @@ Status: 204 No Content
 - Si no hay perfiles, se devolverá una lista vacía
 
 ### `POST /perfiles`
-**Descripción:** Crea un nuevo perfil en el sistema.
+**Descripción:** Crea un nuevo perfil en el sistema con imagen opcional.
 
-**Ejemplo Request:**
-```json
-{
-  "usuario_id": 1,
-  "descripcion": "Amante de los animales",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "https://ejemplo.com/imagen.jpg"
-}
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- descripcion: string (requerido)
+- fechaNacimiento: string (requerido, formato: YYYY-MM-DD)
+- usuarioId: number (requerido)
+- imagen: file (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+descripcion: "Amante de los animales"
+fechaNacimiento: "1990-01-01"
+usuarioId: 1
+imagen: [archivo de imagen]
 ```
 
 **Ejemplo Response:**
@@ -801,14 +807,18 @@ Status: 204 No Content
   "usuario_id": 1,
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
-  "img": "https://ejemplo.com/imagen.jpg"
+  "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
 }
 ```
 
 **Notas:**
-- El usuario_id es obligatorio y debe corresponder a un usuario existente
-- La fecha_nacimiento debe estar en formato YYYY-MM-DD
-- La imagen debe ser una URL válida
+- El usuarioId es obligatorio y debe corresponder a un usuario existente
+- La fechaNacimiento debe estar en formato YYYY-MM-DD
+- Para la imagen:
+  - Tipos permitidos: jpg, jpeg, png, gif
+  - Tamaño máximo: 10MB
+  - Se almacena en `uploads/perfiles/YYYY/MM/`
+  - Las URLs son accesibles vía `/uploads/perfiles/YYYY/MM/nombre-archivo`
 - Si ocurre un error al crear el perfil, se devolverá un error 500 Internal Server Error
 
 ### `GET /usuarios/{id}/perfiles`
@@ -821,7 +831,7 @@ Status: 204 No Content
   "usuario_id": 1,
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
-  "img": "https://ejemplo.com/imagen.jpg"
+  "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
 }
 ```
 
@@ -830,16 +840,20 @@ Status: 204 No Content
 - Si ocurre un error al obtener el perfil, se devolverá un error 500 Internal Server Error
 
 ### `PUT /usuarios/{id}/perfiles`
-**Descripción:** Actualiza el perfil de un usuario específico.
+**Descripción:** Actualiza el perfil de un usuario específico con imagen opcional.
 
-**Ejemplo Request:**
-```json
-{
-  "usuario_id": 1,
-  "descripcion": "Amante de los animales y la naturaleza",
-  "fecha_nacimiento": "1990-01-01",
-  "img": "https://ejemplo.com/nueva-imagen.jpg"
-}
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- descripcion: string (requerido)
+- fechaNacimiento: string (requerido, formato: YYYY-MM-DD)
+- imagen: file (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+descripcion: "Amante de los animales y la naturaleza"
+fechaNacimiento: "1990-01-01"
+imagen: [archivo de imagen]
 ```
 
 **Ejemplo Response:**
@@ -849,19 +863,22 @@ Status: 204 No Content
   "usuario_id": 1,
   "descripcion": "Amante de los animales y la naturaleza",
   "fecha_nacimiento": "1990-01-01",
-  "img": "https://ejemplo.com/nueva-imagen.jpg"
+  "img": "/uploads/perfiles/2024/03/nueva-imagen.jpg"
 }
 ```
 
 **Notas:**
 - Si el perfil no existe, se devolverá un error 404 Not Found
-- El usuario_id es obligatorio y debe corresponder a un usuario existente
-- La fecha_nacimiento debe estar en formato YYYY-MM-DD
-- La imagen debe ser una URL válida
-- Si ocurre un error al actualizar el perfil, se devolverá un error 500 Internal Server Error
+- La fechaNacimiento debe estar en formato YYYY-MM-DD
+- Para la imagen:
+  - Tipos permitidos: jpg, jpeg, png, gif
+  - Tamaño máximo: 10MB
+  - Al actualizar con nueva imagen, la anterior se elimina automáticamente
+  - Se almacena en `uploads/perfiles/YYYY/MM/`
+  - Las URLs son accesibles vía `/uploads/perfiles/YYYY/MM/nombre-archivo`
 
 ### `DELETE /usuarios/{id}/perfiles`
-**Descripción:** Elimina el perfil de un usuario específico.
+**Descripción:** Elimina el perfil de un usuario específico y su imagen asociada.
 
 **Ejemplo Response:**
 ```json
@@ -872,8 +889,8 @@ Status: 204 No Content
 
 **Notas:**
 - Si el perfil no existe, se devolverá un error 404 Not Found
+- La imagen asociada al perfil se elimina automáticamente
 - Si ocurre un error al eliminar el perfil, se devolverá un error 500 Internal Server Error
-- Si la eliminación es exitosa, se devolverá un mensaje de confirmación
 
 ## 9. Posts
 
