@@ -18,4 +18,10 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
     boolean existsByEmail(String email);
     
     List<UserModel> findByApellidoStartsWith(String apellido);
+
+    List<UserModel> findByNombreContainingIgnoreCase(String nombre);
+    
+    List<UserModel> findByApellidoContainingIgnoreCase(String apellido);
+    
+    List<UserModel> findByNombreContainingIgnoreCaseAndApellidoContainingIgnoreCase(String nombre, String apellido);
 }

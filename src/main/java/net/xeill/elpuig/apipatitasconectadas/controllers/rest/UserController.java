@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.UserModelDtoRequest;
@@ -143,6 +144,50 @@ public class UserController {
                     HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Busca usuarios por nombre y apellido
+     * @param nombre Nombre del usuario
+     * @param apellido Apellido del usuario
+     * @return ResponseEntity con la lista de usuarios encontrados o mensaje de error
+     */
+    @GetMapping("/buscar")
+    public ResponseEntity<?> searchUsers(
+            @RequestParam(required = false, defaultValue = "") String nombre,
+            @RequestParam(required = false, defaultValue = "") String apellido) {
+        try {
+            System.out.println("Buscando usuarios con nombre: [" + nombre + "], apellido: [" + apellido + "]");
+            
+            // Si ambos parámetros están vacíos, devolver todos los usuarios
+            if (nombre.isEmpty() && apellido.isEmpty()) {
+                System.out.println("No se proporcionaron criterios de búsqueda, devolviendo todos los usuarios");
+                ArrayList<UserModel> allUsers = this.userService.getUsers();
+                List<UserModelDtoResponse> usersDto = allUsers.stream()
+                    .map(UserModelDtoResponse::new)
+                    .collect(Collectors.toList());
+                return new ResponseEntity<>(usersDto, HttpStatus.OK);
+            }
+
+            // Si los parámetros están vacíos, establecerlos como null
+            String nombreParam = nombre.isEmpty() ? null : nombre;
+            String apellidoParam = apellido.isEmpty() ? null : apellido;
+            
+            System.out.println("Parámetros procesados - nombre: [" + nombreParam + "], apellido: [" + apellidoParam + "]");
+            
+            List<UserModel> users = this.userService.searchUsers(nombreParam, apellidoParam);
+            System.out.println("Usuarios encontrados: " + users.size());
+            
+            List<UserModelDtoResponse> usersDto = users.stream()
+                .map(UserModelDtoResponse::new)
+                .collect(Collectors.toList());
+                
+            return new ResponseEntity<>(usersDto, HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println("Error al buscar usuarios: " + e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }

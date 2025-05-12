@@ -531,6 +531,11 @@ COPY public.comentario (id, contenido, created_at, fecha, img, updated_at, usuar
 20	wredgnfds	2025-05-07 16:37:37.533603	2025-05-07 16:37:37.489722	\N	2025-05-07 16:37:37.533702	3	4
 21	oli	2025-05-08 16:55:11.447771	2025-05-08 16:55:11.418606	\N	2025-05-08 16:55:11.447865	3	4
 22	patatas	2025-05-09 18:56:00.240631	2025-05-09 18:56:00.223714	\N	2025-05-09 18:56:00.240691	3	4
+23	hola	2025-05-09 19:40:06.508567	2025-05-09 19:40:06.419523	\N	2025-05-09 19:40:06.508672	1	4
+24	patata	2025-05-12 18:40:47.6866	2025-05-12 18:40:47.659172	\N	2025-05-12 18:40:47.686643	1	4
+25	Me meo con estos pollitos! 	2025-05-12 20:36:33.196969	2025-05-12 20:36:33.185095	\N	2025-05-12 20:36:33.197017	1	39
+26	que frio!!!	2025-05-12 20:37:20.008868	2025-05-12 20:37:20.008304	\N	2025-05-12 20:37:20.008896	1	40
+27	gfhggh	2025-05-12 20:52:51.318156	2025-05-12 20:52:51.317468	\N	2025-05-12 20:52:51.31819	1	41
 \.
 
 
@@ -548,6 +553,7 @@ COPY public.evento (id, descripcion, fecha, nombre, ubicacion) FROM stdin;
 
 COPY public.grupo (id, nombre, descripcion) FROM stdin;
 4	Perros callejeros	zshxdrjytkujyrthd
+5	paseos	para pasar
 \.
 
 
@@ -572,7 +578,6 @@ COPY public.notificaciones (id, fecha) FROM stdin;
 --
 
 COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM stdin;
-1	1	Hola, me llamo fernando y estoy desarollando esto	1997-03-10	https://lh3.googleusercontent.com/a/ACg8ocJh-1G_Vs8xegmv-8oTwwWAQ3zT-JX2frK4e9Q54ChIZYQg1yw=s288-c-no
 5	3		\N	\N
 4	3		\N	\N
 6	15		\N	\N
@@ -586,6 +591,8 @@ COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM std
 14	15		\N	\N
 15	15		\N	https://pbs.twimg.com/media/GoKTG8YXUAAITe-.jpg
 3	3	Hola, me llamo Mouad10	2003-07-13	https://assets.laliga.com/squad/2024/t186/p244855/1024x1024/p244855_t186_2024_1_003_000.png
+16	8	Soy un amante de los perros	1990-01-01	posts/2025/05/71b0d7ca-6823-4bda-a1f7-053ec4481bea.jpg
+1	1	Hola, me llamo fernando y estoy desarollando esto	1997-03-10	posts/2025/05/6a329c2e-edaa-4e78-8fe0-17c27c52daed.png
 \.
 
 
@@ -619,6 +626,17 @@ COPY public.post (id, grupo_id, creador_id, contenido, fecha, img, created_at, u
 26	\N	3	fg b d	2025-05-06 17:01:53.7608	\N	2025-05-06 17:01:53.769845	2025-05-06 17:01:53.769886
 27	\N	3	Perros	2025-05-06 19:11:35.575171	https://www.infobae.com/resizer/v2/ZJ7J3APDKNGTXPTWS6H2EKCUKU.jpg?auth=2f59d41907d2ab0799312d22027d6cb00f2ea7d59fb2037756d6f4b6d6b833cf&smart=true&width=1200&height=675&quality=85	2025-05-06 19:11:35.624767	2025-05-06 19:11:35.62481
 28	\N	3	zbi 	2025-05-06 19:27:43.337957	\N	2025-05-06 19:27:43.338408	2025-05-06 19:27:43.338421
+30	\N	1	Un pollito	2025-05-12 20:16:48.67634	\N	2025-05-12 20:16:48.677271	2025-05-12 20:16:48.677311
+31	\N	1	pollito	2025-05-12 20:21:34.805291	\N	2025-05-12 20:21:34.805992	2025-05-12 20:21:34.806044
+32	\N	1	pollito	2025-05-12 20:21:45.756955	\N	2025-05-12 20:21:45.757625	2025-05-12 20:21:45.757658
+33	\N	1	pollito	2025-05-12 20:24:36.2879	\N	2025-05-12 20:24:36.288687	2025-05-12 20:24:36.288727
+34	\N	1	seasd	2025-05-12 20:24:44.748514	\N	2025-05-12 20:24:44.749329	2025-05-12 20:24:44.749367
+35	\N	1	pollitosss	2025-05-12 20:26:16.700286	\N	2025-05-12 20:26:16.700998	2025-05-12 20:26:16.701035
+37	\N	1	Pollitos por 2	2025-05-12 20:28:35.571619	\N	2025-05-12 20:28:35.572346	2025-05-12 20:28:35.572386
+38	\N	1	Pollitos 20210	2025-05-12 20:33:33.07929	posts/2025/05/92e50f3e-e073-41ad-b523-02b11d7d0f58.jpg	2025-05-12 20:33:33.080066	2025-05-12 20:33:33.080104
+39	\N	1	Pollitos y mas pollitos. 	2025-05-12 20:36:19.1877	posts/2025/05/29d8e036-2f52-4ee9-bb6e-1eb5025c1749.jpg	2025-05-12 20:36:19.188576	2025-05-12 20:36:19.188628
+40	\N	1	Perros	2025-05-12 20:37:06.963642	posts/2025/05/18eb8919-6046-4638-9bc0-8e9312c68dcc.jpg	2025-05-12 20:37:06.964397	2025-05-12 20:37:06.964437
+41	\N	1	Un perrito!	2025-05-12 20:52:37.913289	posts/2025/05/abd2a36f-0e52-4d90-8637-420952655f22.jpg	2025-05-12 20:52:37.914137	2025-05-12 20:52:37.914177
 \.
 
 
@@ -696,6 +714,7 @@ COPY public.usuario_grupo (id, grupo_id, usuario_id, rol) FROM stdin;
 45	4	3	Miembro
 46	4	3	Miembro
 47	4	3	Miembro
+48	5	1	Admin
 \.
 
 
@@ -733,7 +752,7 @@ SELECT pg_catalog.setval('public.chat_id_seq', 1, false);
 -- Name: comentario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.comentario_id_seq', 22, true);
+SELECT pg_catalog.setval('public.comentario_id_seq', 27, true);
 
 
 --
@@ -747,7 +766,7 @@ SELECT pg_catalog.setval('public.evento_id_seq', 1, false);
 -- Name: grupo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.grupo_id_seq', 4, true);
+SELECT pg_catalog.setval('public.grupo_id_seq', 5, true);
 
 
 --
@@ -768,14 +787,14 @@ SELECT pg_catalog.setval('public.notificaciones_id_seq', 1, false);
 -- Name: perfil_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.perfil_id_seq', 15, true);
+SELECT pg_catalog.setval('public.perfil_id_seq', 16, true);
 
 
 --
 -- Name: post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.post_id_seq', 28, true);
+SELECT pg_catalog.setval('public.post_id_seq', 41, true);
 
 
 --
@@ -796,7 +815,7 @@ SELECT pg_catalog.setval('public.usuario_evento_id_seq', 1, false);
 -- Name: usuario_grupo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.usuario_grupo_id_seq', 47, true);
+SELECT pg_catalog.setval('public.usuario_grupo_id_seq', 48, true);
 
 
 --
@@ -930,7 +949,7 @@ ALTER TABLE ONLY public.valoracion
 --
 
 ALTER TABLE ONLY public.comentario
-    ADD CONSTRAINT fk5tm5pw9ofhc1dxw2xulc348jg FOREIGN KEY (post_id) REFERENCES public.post(id);
+    ADD CONSTRAINT fk5tm5pw9ofhc1dxw2xulc348jg FOREIGN KEY (post_id) REFERENCES public.post(id) ON DELETE CASCADE;
 
 
 --
@@ -954,7 +973,7 @@ ALTER TABLE ONLY public.valoracion
 --
 
 ALTER TABLE ONLY public.comentario
-    ADD CONSTRAINT fk_comentario_post FOREIGN KEY (post_id) REFERENCES public.post(id);
+    ADD CONSTRAINT fk_comentario_post FOREIGN KEY (post_id) REFERENCES public.post(id) ON DELETE CASCADE;
 
 
 --

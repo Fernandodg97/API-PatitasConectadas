@@ -93,4 +93,40 @@ public class UserService {
     public UserModel getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
+
+    /**
+     * Busca usuarios por nombre y apellido
+     * @param nombre Nombre del usuario
+     * @param apellido Apellido del usuario
+     * @return Lista de usuarios que coinciden con los criterios de búsqueda
+     */
+    public List<UserModel> searchUsers(String nombre, String apellido) {
+        System.out.println("UserService.searchUsers - nombre: [" + nombre + "], apellido: [" + apellido + "]");
+        
+        try {
+            if (nombre != null && apellido != null) {
+                System.out.println("Buscando por nombre y apellido");
+                List<UserModel> results = userRepository.findByNombreContainingIgnoreCaseAndApellidoContainingIgnoreCase(nombre, apellido);
+                System.out.println("Resultados encontrados: " + results.size());
+                return results;
+            } else if (nombre != null) {
+                System.out.println("Buscando solo por nombre");
+                List<UserModel> results = userRepository.findByNombreContainingIgnoreCase(nombre);
+                System.out.println("Resultados encontrados: " + results.size());
+                return results;
+            } else if (apellido != null) {
+                System.out.println("Buscando solo por apellido");
+                List<UserModel> results = userRepository.findByApellidoContainingIgnoreCase(apellido);
+                System.out.println("Resultados encontrados: " + results.size());
+                return results;
+            } else {
+                System.out.println("No se proporcionaron criterios de búsqueda");
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.err.println("Error en UserService.searchUsers: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

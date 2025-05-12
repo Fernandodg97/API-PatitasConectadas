@@ -1335,6 +1335,41 @@ imagen: [nuevo archivo de imagen]
 - Si ocurre un error al obtener los usuarios, se devolverá un error 400 Bad Request
 - La contraseña no se incluye en la respuesta por seguridad
 
+### `GET /usuarios/buscar`
+**Descripción:** Busca usuarios por nombre y/o apellido.
+
+**Parámetros Query (opcionales):**
+- nombre: Texto para buscar en el nombre del usuario
+- apellido: Texto para buscar en el apellido del usuario
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com"
+  },
+  {
+    "id": 3,
+    "nombre": "Juan Carlos",
+    "apellido": "Pérez García",
+    "email": "juancarlos@ejemplo.com"
+  }
+]
+```
+
+**Notas:**
+- La búsqueda es parcial (usando `Containing`), lo que significa que encontrará coincidencias parciales
+- Si se proporcionan ambos parámetros, buscará usuarios que coincidan con ambos criterios
+- Si solo se proporciona nombre, buscará solo por nombre
+- Si solo se proporciona apellido, buscará solo por apellido
+- Si no se proporciona ningún parámetro, devolverá una lista vacía
+- La búsqueda es insensible a mayúsculas/minúsculas
+- La contraseña no se incluye en la respuesta por seguridad
+- Si ocurre un error en la búsqueda, se devolverá un error 400 Bad Request
+
 ### `POST /usuarios`
 **Descripción:** Crea un nuevo usuario en el sistema.
 
