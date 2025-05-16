@@ -518,24 +518,16 @@ COPY public.chat (id, contenido, created_at, fecha_hora, updated_at, visto, emis
 --
 
 COPY public.comentario (id, contenido, created_at, fecha, img, updated_at, usuario_id, post_id) FROM stdin;
-10	Test comment	\N	2025-05-06 20:08:38.87905	\N	\N	1	4
-11	hh	2025-05-06 20:09:48.602548	2025-05-06 20:09:48.60204	\N	2025-05-06 20:09:48.602564	3	4
 12	ghuj	2025-05-06 20:10:07.925556	2025-05-06 20:10:07.924445	\N	2025-05-06 20:10:07.925606	3	3
-13	hjh	2025-05-06 20:10:50.542505	2025-05-06 20:10:50.541925	\N	2025-05-06 20:10:50.542525	3	4
 14	fewcds	2025-05-07 01:02:01.995256	2025-05-07 01:02:01.994728	\N	2025-05-07 01:02:01.995292	3	1
 15	scdc d	2025-05-07 01:02:06.566373	2025-05-07 01:02:06.565352	\N	2025-05-07 01:02:06.566408	3	2
 16	d vscds 🐵	2025-05-07 01:04:51.401794	2025-05-07 01:04:51.401343	\N	2025-05-07 01:04:51.401809	3	5
 17	🦮	2025-05-07 01:04:57.266647	2025-05-07 01:04:57.265939	\N	2025-05-07 01:04:57.266672	3	5
 18	kharya	2025-05-07 13:15:29.228775	2025-05-07 13:15:29.213007	\N	2025-05-07 13:15:29.228819	3	1
-19	vshf dbnkj	2025-05-07 16:25:21.401057	2025-05-07 16:25:21.399715	\N	2025-05-07 16:25:21.401089	3	4
-20	wredgnfds	2025-05-07 16:37:37.533603	2025-05-07 16:37:37.489722	\N	2025-05-07 16:37:37.533702	3	4
-21	oli	2025-05-08 16:55:11.447771	2025-05-08 16:55:11.418606	\N	2025-05-08 16:55:11.447865	3	4
-22	patatas	2025-05-09 18:56:00.240631	2025-05-09 18:56:00.223714	\N	2025-05-09 18:56:00.240691	3	4
-23	hola	2025-05-09 19:40:06.508567	2025-05-09 19:40:06.419523	\N	2025-05-09 19:40:06.508672	1	4
-24	patata	2025-05-12 18:40:47.6866	2025-05-12 18:40:47.659172	\N	2025-05-12 18:40:47.686643	1	4
 25	Me meo con estos pollitos! 	2025-05-12 20:36:33.196969	2025-05-12 20:36:33.185095	\N	2025-05-12 20:36:33.197017	1	39
 26	que frio!!!	2025-05-12 20:37:20.008868	2025-05-12 20:37:20.008304	\N	2025-05-12 20:37:20.008896	1	40
-27	gfhggh	2025-05-12 20:52:51.318156	2025-05-12 20:52:51.317468	\N	2025-05-12 20:52:51.31819	1	41
+29	Que bonitpo!!	2025-05-12 22:13:43.460823	2025-05-12 22:13:43.458451	\N	2025-05-12 22:13:43.460891	1	42
+31	hermoso ese perro, el mio tenia una enfermedad se llamaba mouad	2025-05-14 19:56:43.067351	2025-05-14 19:56:43.057716	\N	2025-05-14 19:56:43.067404	17	42
 \.
 
 
@@ -590,9 +582,9 @@ COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM std
 13	15		\N	\N
 14	15		\N	\N
 15	15		\N	https://pbs.twimg.com/media/GoKTG8YXUAAITe-.jpg
-3	3	Hola, me llamo Mouad10	2003-07-13	https://assets.laliga.com/squad/2024/t186/p244855/1024x1024/p244855_t186_2024_1_003_000.png
 16	8	Soy un amante de los perros	1990-01-01	posts/2025/05/71b0d7ca-6823-4bda-a1f7-053ec4481bea.jpg
-1	1	Hola, me llamo fernando y estoy desarollando esto	1997-03-10	posts/2025/05/6a329c2e-edaa-4e78-8fe0-17c27c52daed.png
+1	1	Hola, me llamo fernando y estoy desarollando esto	1997-03-10	posts/2025/05/075ad422-144e-4230-abb4-9b6ca62833c6.jpg
+3	3	Hola, me llamo Mouad10	2003-07-13	posts/2025/05/9dd45694-5d58-4401-b90d-bad7cf428076.jpeg
 \.
 
 
@@ -601,15 +593,12 @@ COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM std
 --
 
 COPY public.post (id, grupo_id, creador_id, contenido, fecha, img, created_at, updated_at) FROM stdin;
-4	\N	1	Este es mi gato luco.	2025-04-11 15:58:50.486669	https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQd1kWKsODGmz1P44kiLTfpeIOkaemYITnaRVOZEn372xCyrpNoQQ_dMDAV4dWLpVTDFekNEtlkJaDnhlTzoQWdNg	2025-04-11 15:58:50.614697	2025-04-11 15:58:50.614909
 3	\N	1	El retrato de POPI.	2025-04-10 20:38:08.37809	https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1	2025-04-10 20:38:08.427828	2025-04-11 16:15:45.33574
 1	\N	1	Este es un nuevo post	2025-04-01 00:00:00	https://images.pexels.com/photos/45170/kittens-cat-cat-puppy-rush-45170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1	\N	2025-04-11 16:16:22.485728
 2	\N	1	Hoy tuvimos una caminata con los perritos del refugio (PRUEBA)	2025-04-10 18:31:33.409983	https://images.pexels.com/photos/33287/dog-viszla-close.jpg?auto=compress&cs=tinysrgb&w=600	2025-04-10 18:31:33.437484	2025-04-11 16:17:47.107813
 5	\N	3	Paseando a mi gato.	2025-04-11 16:26:38.988433	https://scontent-mad2-1.xx.fbcdn.net/v/t39.30808-6/464555325_8558598987522595_4024770004962422813_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=urpUzOvrTIIQ7kNvwH9w2MW&_nc_oc=AdmWqo6UZymyM9_lrUY5ZC_UBW0z5dmzG3By-pdiAYoOO6-mOwudBYOetMVrSX8iH18&_nc_zt=23&_nc_ht=scontent-mad2-1.xx&_nc_gid=9oynF_w7A0JJmPoZUjwVoA&oh=00_AfHFtKyEPZTKOC9NHzDCPWmKGjeSiJhBwNfXQPXZnVH9vw&oe=67FEF35E	2025-04-11 16:26:38.989125	2025-04-11 16:26:38.989153
 8	\N	1	Lo que vimos hoy en el parque.	2025-04-11 17:48:29.542252	https://images.pexels.com/photos/460775/pexels-photo-460775.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1	2025-04-11 17:48:29.561819	2025-04-11 17:48:29.561958
 9	\N	3	Nuevo miembro en la familia.2	2025-04-11 19:16:32.224763	https://images.pexels.com/photos/59523/pexels-photo-59523.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1	2025-04-11 19:16:32.259106	2025-04-11 19:16:32.259172
-11	\N	1	Este es el contenido de mi publicación.	2025-04-14 16:05:24.318107	https://media.istockphoto.com/id/1395878741/es/foto/formaci%C3%B3n-de-pastor-belga.jpg	2025-04-14 16:05:24.319	2025-04-14 16:05:24.319027
-12	\N	1	zbi	2025-04-14 16:10:13.332777	https://media.istockphoto.com/id/1395878741/es/foto/formaci%C3%B3n-de-pastor-belga.jpg?s=612x612&w=0&k=20&c=GMdWQWLSe47_Uvq93wyjzbMQXpmQ6r_lncnbeFoMrgs=	2025-04-14 16:10:13.333484	2025-04-14 16:10:13.333507
 13	\N	1	dcsfc 	2025-04-14 16:21:53.657208	https://media.istockphoto.com/id/1395878741/es/foto/formaci%C3%B3n-de-pastor-belga.jpg?s=612x612&w=0&k=20&c=GMdWQWLSe47_Uvq93wyjzbMQXpmQ6r_lncnbeFoMrgs=	2025-04-14 16:21:53.658181	2025-04-14 16:21:53.65822
 14	\N	1	Con mi gato	2025-04-14 16:29:45.415518	https://imagenes.elpais.com/resizer/v2/L6HBHYIV233RQH75ZJWWTFSIVM.jpg?auth=4bd07f210948e2141605fcd598cecb02199a9af44625e01362801e3efb0e72d9&width=1960&height=1470&smart=true	2025-04-14 16:29:45.41597	2025-04-14 16:29:45.415988
 15	\N	1	fvgbhnij	2025-04-14 16:40:05.054857	https://i.gifer.com/origin/2e/2e24e08b6d57c9db57c3ed51091aa5f3_w200.webp	2025-04-14 16:40:05.055357	2025-04-14 16:40:05.055378
@@ -621,22 +610,14 @@ COPY public.post (id, grupo_id, creador_id, contenido, fecha, img, created_at, u
 21	\N	3	🦮	2025-04-29 19:03:16.623519	\N	2025-04-29 19:03:16.624475	2025-04-29 19:03:16.624585
 22	\N	3	Buenos dias! Hemos ido a dar una vuelta y nos hemos quedado sin luz!! suerte que tenemos una muy buena linterna :)	2025-04-29 19:06:49.77979	https://i0.wp.com/blog.cuidamimascota.com/wp-content/uploads/2020/01/1344e-jack-waiting-1.gif?resize=203%2C360&ssl=1	2025-04-29 19:06:49.780692	2025-04-29 19:06:49.780727
 23	\N	3	Un pato es para toda la vida!	2025-04-29 19:13:38.738668	https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Anas_platyrhynchos_qtl1.jpg/1024px-Anas_platyrhynchos_qtl1.jpg	2025-04-29 19:13:38.778723	2025-04-29 19:13:38.778816
-24	\N	1	nn	2025-05-05 19:39:15.346027	\N	2025-05-05 19:39:15.359505	2025-05-05 19:39:15.359546
 25	\N	3	dd	2025-05-05 19:39:40.433032	vv	2025-05-05 19:39:40.433686	2025-05-05 19:39:40.433708
 26	\N	3	fg b d	2025-05-06 17:01:53.7608	\N	2025-05-06 17:01:53.769845	2025-05-06 17:01:53.769886
 27	\N	3	Perros	2025-05-06 19:11:35.575171	https://www.infobae.com/resizer/v2/ZJ7J3APDKNGTXPTWS6H2EKCUKU.jpg?auth=2f59d41907d2ab0799312d22027d6cb00f2ea7d59fb2037756d6f4b6d6b833cf&smart=true&width=1200&height=675&quality=85	2025-05-06 19:11:35.624767	2025-05-06 19:11:35.62481
 28	\N	3	zbi 	2025-05-06 19:27:43.337957	\N	2025-05-06 19:27:43.338408	2025-05-06 19:27:43.338421
-30	\N	1	Un pollito	2025-05-12 20:16:48.67634	\N	2025-05-12 20:16:48.677271	2025-05-12 20:16:48.677311
-31	\N	1	pollito	2025-05-12 20:21:34.805291	\N	2025-05-12 20:21:34.805992	2025-05-12 20:21:34.806044
-32	\N	1	pollito	2025-05-12 20:21:45.756955	\N	2025-05-12 20:21:45.757625	2025-05-12 20:21:45.757658
-33	\N	1	pollito	2025-05-12 20:24:36.2879	\N	2025-05-12 20:24:36.288687	2025-05-12 20:24:36.288727
-34	\N	1	seasd	2025-05-12 20:24:44.748514	\N	2025-05-12 20:24:44.749329	2025-05-12 20:24:44.749367
-35	\N	1	pollitosss	2025-05-12 20:26:16.700286	\N	2025-05-12 20:26:16.700998	2025-05-12 20:26:16.701035
-37	\N	1	Pollitos por 2	2025-05-12 20:28:35.571619	\N	2025-05-12 20:28:35.572346	2025-05-12 20:28:35.572386
 38	\N	1	Pollitos 20210	2025-05-12 20:33:33.07929	posts/2025/05/92e50f3e-e073-41ad-b523-02b11d7d0f58.jpg	2025-05-12 20:33:33.080066	2025-05-12 20:33:33.080104
 39	\N	1	Pollitos y mas pollitos. 	2025-05-12 20:36:19.1877	posts/2025/05/29d8e036-2f52-4ee9-bb6e-1eb5025c1749.jpg	2025-05-12 20:36:19.188576	2025-05-12 20:36:19.188628
 40	\N	1	Perros	2025-05-12 20:37:06.963642	posts/2025/05/18eb8919-6046-4638-9bc0-8e9312c68dcc.jpg	2025-05-12 20:37:06.964397	2025-05-12 20:37:06.964437
-41	\N	1	Un perrito!	2025-05-12 20:52:37.913289	posts/2025/05/abd2a36f-0e52-4d90-8637-420952655f22.jpg	2025-05-12 20:52:37.914137	2025-05-12 20:52:37.914177
+42	\N	1	Un nuevo perro!!	2025-05-12 22:13:30.219525	posts/2025/05/dde80387-dfe0-4ee2-be97-6bae3c482ba9.jpg	2025-05-12 22:13:30.270016	2025-05-12 22:13:30.270103
 \.
 
 
@@ -664,6 +645,8 @@ COPY public.usuario (id, nombre, email, password, apellido) FROM stdin;
 14	Mouad	mouadtest@gmail.coxm	$2a$10$NuKxOqI7516/vADBy9Ynfut1LYt9Nra6OeWHc1pIHfgKFV.Id0S7K	
 15	Mouad	mouadtest@gmail.com	$2a$10$9KW4D5XG6Tu40hZZbVcJaOPZIFxu5IzAqpSV4njaYzYVe1m5NzfDK	
 16	Luna	Luna@gmail.com	$2a$10$BoFP14JvJPu79JWj0q/L5OPRglvgnSng4Gqb41jfw2BD3I3JaaZpq	Pepito
+17	cristian	ctapasco907@gmail.com	$2a$10$dKAPiDgrZ1.pifA6FAEAP./vRDWJBus3wCc/sWQL0fZyYXAiRwj92	Tapasco
+18	Paco	pacogrande@email.com	$2a$10$3cobaoqtxnTFo/5C3DBNOuuDEoibLFxM5xRtHW77uWjfx7sWT9cxG	Grande
 \.
 
 
@@ -715,6 +698,7 @@ COPY public.usuario_grupo (id, grupo_id, usuario_id, rol) FROM stdin;
 46	4	3	Miembro
 47	4	3	Miembro
 48	5	1	Admin
+49	4	1	Miembro
 \.
 
 
@@ -738,7 +722,7 @@ COPY public.valoracion (id, contenido, created_at, fecha, img, updated_at, usuar
 -- Name: Usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public."Usuario_id_seq"', 16, true);
+SELECT pg_catalog.setval('public."Usuario_id_seq"', 18, true);
 
 
 --
@@ -752,7 +736,7 @@ SELECT pg_catalog.setval('public.chat_id_seq', 1, false);
 -- Name: comentario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.comentario_id_seq', 27, true);
+SELECT pg_catalog.setval('public.comentario_id_seq', 32, true);
 
 
 --
@@ -766,7 +750,7 @@ SELECT pg_catalog.setval('public.evento_id_seq', 1, false);
 -- Name: grupo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.grupo_id_seq', 5, true);
+SELECT pg_catalog.setval('public.grupo_id_seq', 6, true);
 
 
 --
@@ -794,7 +778,7 @@ SELECT pg_catalog.setval('public.perfil_id_seq', 16, true);
 -- Name: post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.post_id_seq', 41, true);
+SELECT pg_catalog.setval('public.post_id_seq', 47, true);
 
 
 --
@@ -815,7 +799,7 @@ SELECT pg_catalog.setval('public.usuario_evento_id_seq', 1, false);
 -- Name: usuario_grupo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.usuario_grupo_id_seq', 48, true);
+SELECT pg_catalog.setval('public.usuario_grupo_id_seq', 50, true);
 
 
 --
@@ -942,14 +926,6 @@ ALTER TABLE ONLY public.usuario_post
 
 ALTER TABLE ONLY public.valoracion
     ADD CONSTRAINT valoracion_pkey PRIMARY KEY (id);
-
-
---
--- Name: comentario fk5tm5pw9ofhc1dxw2xulc348jg; Type: FK CONSTRAINT; Schema: public; Owner: mouad
---
-
-ALTER TABLE ONLY public.comentario
-    ADD CONSTRAINT fk5tm5pw9ofhc1dxw2xulc348jg FOREIGN KEY (post_id) REFERENCES public.post(id) ON DELETE CASCADE;
 
 
 --
