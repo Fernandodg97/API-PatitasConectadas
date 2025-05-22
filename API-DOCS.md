@@ -1488,6 +1488,63 @@ imagen: [nuevo archivo de imagen]
 - Si ocurre un error al eliminar el usuario, se devolverá un error 400 Bad Request
 - La eliminación de un usuario también eliminará todas sus relaciones con grupos y eventos
 
+### `PATCH /usuarios/{id}`
+**Descripción:** Actualiza parcialmente un usuario existente.
+
+**Ejemplo Request:**
+```json
+{
+  "nombre": "Juan Carlos",
+  "apellido": "Pérez García",
+  "email": "juancarlos@ejemplo.com"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Juan Carlos",
+  "apellido": "Pérez García",
+  "email": "juancarlos@ejemplo.com"
+}
+```
+
+**Notas:**
+- Solo se actualizan los campos proporcionados en la petición
+- El email debe ser único si se está actualizando
+- No se permite actualizar la contraseña a través de este endpoint
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- Si el email ya está en uso, se devolverá un error 400 Bad Request
+
+### `PATCH /usuarios/{id}/password`
+**Descripción:** Actualiza la contraseña de un usuario.
+
+**Ejemplo Request:**
+```json
+{
+  "currentPassword": "contraseña_actual",
+  "newPassword": "nueva_contraseña"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "id": 1,
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "email": "juan@ejemplo.com"
+}
+```
+
+**Notas:**
+- Se requiere la contraseña actual para verificar la identidad del usuario
+- La nueva contraseña se encripta automáticamente antes de guardarse
+- Si la contraseña actual es incorrecta, se devolverá un error 400 Bad Request
+- Si el usuario no existe, se devolverá un error 404 Not Found
+- La contraseña no se devuelve en la respuesta por seguridad
+
 ## 13. Usuario-Comentario
 
 ### `GET /usuario-comentario`

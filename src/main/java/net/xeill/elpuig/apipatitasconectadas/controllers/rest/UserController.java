@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -123,6 +124,59 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(Map.of("error", "Error al actualizar el usuario: " + e.getMessage()), 
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Actualiza parcialmente un usuario existente
+     * @param updates Mapa con los campos a actualizar
+     * @param id ID del usuario a actualizar
+     * @return ResponseEntity con el usuario actualizado o mensaje de error
+     */
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<?> patchUserById(@RequestBody Map<String, Object> updates, @PathVariable("id") Long id) {
+        try {
+            // Actualizar usuario
+            UserModel updatedUser = this.userService.patchUser(id, updates);
+            
+            // Convertir a DTO para la respuesta
+            UserModelDtoResponse response = new UserModelDtoResponse(updatedUser);
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", "Error al actualizar el usuario: " + e.getMessage()), 
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Actualiza la contraseña de un usuario
+     * @param id ID del usuario
+     * @param passwordData Datos de la contraseña (actual y nueva)
+     * @return ResponseEntity con el usuario actualizado o mensaje de error
+     */
+    @PatchMapping(path = "/{id}/password")
+    public ResponseEntity<?> updatePassword(
+            @PathVariable("id") Long id,
+            @RequestBody Map<String, String> passwordData) {
+        try {
+            String currentPassword = passwordData.get("currentPassword");
+            String newPassword = passwordData.get("newPassword");
+
+            if (currentPassword == null || newPassword == null) {
+                return new ResponseEntity<>(
+                    Map.of("error", "Se requieren tanto la contraseña actual como la nueva"),
+                    HttpStatus.BAD_REQUEST);
+            }
+
+            UserModel updatedUser = this.userService.updatePassword(id, currentPassword, newPassword);
+            UserModelDtoResponse response = new UserModelDtoResponse(updatedUser);
+            
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                Map.of("error", "Error al actualizar la contraseña: " + e.getMessage()),
+                HttpStatus.BAD_REQUEST);
         }
     }
 

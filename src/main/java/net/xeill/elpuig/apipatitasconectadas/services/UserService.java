@@ -3,8 +3,10 @@ package net.xeill.elpuig.apipatitasconectadas.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
@@ -20,6 +22,9 @@ public class UserService {
     //Sirve para injectar dependencias
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * Obtiene todos los usuarios registrados en el sistema.
@@ -128,5 +133,70 @@ public class UserService {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    /**
+     * Actualiza la contraseña de un usuario
+     * @param id ID del usuario
+     * @param currentPassword Contraseña actual
+     * @param newPassword Nueva contraseña
+     * @return El usuario actualizado
+     * @throws Exception si la contraseña actual es incorrecta o hay otros errores
+     */
+    public UserModel updatePassword(Long id, String currentPassword, String newPassword) throws Exception {
+        UserModel user = userRepository.findById(id)
+            .orElseThrow(() -> new Exception("Usuario no encontrado con ID: " + id));
+
+        // Verificar que la contraseña actual sea correcta
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new Exception("La contraseña actual es incorrecta");
+        }
+
+        // Encriptar y guardar la nueva contraseña
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(user);
+    }
+
+    /**
+     * Actualiza parcialmente un usuario existente
+     * @param id ID del usuario a actualizar
+     * @param updates Mapa con los campos a actualizar
+     * @return El usuario actualizado
+     * @throws Exception si el usuario no existe o hay un error en la actualización
+     */
+    public UserModel patchUser(Long id, Map<String, Object> updates) throws Exception {
+        UserModel user = userRepository.findById(id)
+            .orElseThrow(() -> new Exception("Usuario no encontrado con ID: " + id));
+
+        // Validar que el email no esté en uso si se está actualizando
+        if (updates.containsKey("email")) {
+            String newEmail = (String) updates.get("email");
+            if (!newEmail.equals(user.getEmail()) && userRepository.existsByEmail(newEmail)) {
+                throw new Exception("El email ya está en uso");
+            }
+        }
+
+        // Actualizar solo los campos proporcionados
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "nombre":
+                    user.setNombre((String) value);
+                    break;
+                case "apellido":
+                    user.setApellido((String) value);
+                    break;
+                case "email":
+                    user.setEmail((String) value);
+                    break;
+                case "password":
+                    // No permitir actualización directa de contraseña
+                    throw new IllegalArgumentException("Para actualizar la contraseña, use el endpoint específico de actualización de contraseña");
+                default:
+                    // Ignorar campos no reconocidos
+                    break;
+            }
+        });
+
+        return userRepository.save(user);
     }
 }
