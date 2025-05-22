@@ -109,14 +109,14 @@ public class PerfilController {
     @GetMapping(path = "/usuarios/{id}/perfiles")
     public ResponseEntity<?> getPerfilById(@PathVariable("id") Long id) {
         try {
-            // Llama al servicio para buscar el perfil por ID
-            var perfilOptional = this.perfilService.getById(id);
+            // Llama al servicio para buscar el perfil por ID de usuario
+            var perfilOptional = this.perfilService.getByUsuarioId(id);
             
             if (perfilOptional.isPresent()) {
                 return ResponseEntity.ok(new PerfilModelDtoResponse(perfilOptional.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No se encontró el perfil con ID: " + id);
+                        .body("No se encontró el perfil para el usuario con ID: " + id);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -140,10 +140,10 @@ public class PerfilController {
             @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
             // Obtener el perfil existente
-            var perfilOptional = perfilService.getById(id);
+            var perfilOptional = perfilService.getByUsuarioId(id);
             if (perfilOptional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "No se encontró el perfil con ID: " + id));
+                        .body(Map.of("error", "No se encontró el perfil para el usuario con ID: " + id));
             }
             
             PerfilModel existingPerfil = perfilOptional.get();

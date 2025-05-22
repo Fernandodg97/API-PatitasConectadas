@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import net.xeill.elpuig.apipatitasconectadas.models.*;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 
 /**
  * Servicio que gestiona las operaciones relacionadas con los perfiles de usuario.
@@ -19,6 +21,9 @@ public class PerfilService {
     //Sirve para injectar dependencias
     @Autowired
     PerfilRepository perfilRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     /**
      * Obtiene todos los perfiles registrados en el sistema.
@@ -35,7 +40,16 @@ public class PerfilService {
      * @return El perfil guardado con su ID asignado
      */
     public PerfilModel savePerfil(PerfilModel perfil) {
-        //save() es un metodo que me permite guardar un registro en la tabla
+        // Verificar que el usuario existe
+        UserModel usuario = userRepository.findById(perfil.getUsuario_id())
+            .orElseThrow(() -> new EntityNotFoundException("No se encontró el usuario con ID: " + perfil.getUsuario_id()));
+
+        // Verificar que el usuario no tiene ya un perfil
+        if (perfilRepository.findByUsuarioId(usuario.getId()).isPresent()) {
+            throw new ValidationException("El usuario ya tiene un perfil asociado");
+        }
+
+        perfil.setUsuario(usuario);
         return perfilRepository.save(perfil);
     }
 
@@ -52,13 +66,25 @@ public class PerfilService {
     /**
      * Actualiza los datos de un perfil existente.
      * @param request Objeto PerfilModel con los nuevos datos
-     * @param id ID del perfil a actualizar
+     * @param id ID del usuario cuyo perfil se actualizará
      * @return El perfil actualizado
      */
     public PerfilModel updateByID(PerfilModel request, Long id) {
-        PerfilModel perfil = perfilRepository.findById(id).get();
+        PerfilModel perfil = perfilRepository.findByUsuarioId(id)
+            .orElseThrow(() -> new EntityNotFoundException("No se encontró el perfil para el usuario con ID: " + id));
 
-        perfil.setUsuario_id(request.getUsuario_id());
+        // Verificar que el usuario existe
+        UserModel usuario = userRepository.findById(request.getUsuario_id())
+            .orElseThrow(() -> new EntityNotFoundException("No se encontró el usuario con ID: " + request.getUsuario_id()));
+        
+        // Si el usuario está cambiando, verificar que no tiene otro perfil
+        if (!usuario.getId().equals(id)) {
+            if (perfilRepository.findByUsuarioId(usuario.getId()).isPresent()) {
+                throw new ValidationException("El usuario ya tiene un perfil asociado");
+            }
+        }
+
+        perfil.setUsuario(usuario);
         perfil.setDescripcion(request.getDescripcion());
         perfil.setFecha_nacimiento(request.getFecha_nacimiento());
         perfil.setImg(request.getImg());
@@ -78,5 +104,14 @@ public class PerfilService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Busca un perfil por el ID del usuario.
+     * @param usuarioId ID del usuario cuyo perfil se busca
+     * @return Optional con el perfil si existe, o vacío si no se encuentra
+     */
+    public Optional<PerfilModel> getByUsuarioId(Long usuarioId) {
+        return perfilRepository.findByUsuarioId(usuarioId);
     }
 } 

@@ -4,14 +4,17 @@ import java.sql.Date;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "perfil")
+@Table(name = "perfil", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"usuario_id"})
+})
 public class PerfilModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column
-    private Long usuario_id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false, unique = true)
+    private UserModel usuario;
 
     @Column
     private String descripcion;
@@ -30,12 +33,23 @@ public class PerfilModel {
         this.id = id;
     }
 
+    public UserModel getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UserModel usuario) {
+        this.usuario = usuario;
+    }
+
     public Long getUsuario_id() {
-        return usuario_id;
+        return usuario != null ? usuario.getId() : null;
     }
 
     public void setUsuario_id(Long usuario_id) {
-        this.usuario_id = usuario_id;
+        if (this.usuario == null) {
+            this.usuario = new UserModel();
+        }
+        this.usuario.setId(usuario_id);
     }
 
     public String getDescripcion() {

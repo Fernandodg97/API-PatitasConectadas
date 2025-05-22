@@ -770,7 +770,12 @@ Status: 204 No Content
 [
   {
     "id": 1,
-    "usuario_id": 1,
+    "usuario": {
+      "id": 1,
+      "nombre": "Juan",
+      "apellido": "Pérez",
+      "email": "juan@ejemplo.com"
+    },
     "descripcion": "Amante de los animales",
     "fecha_nacimiento": "1990-01-01",
     "img": "https://ejemplo.com/imagen.jpg"
@@ -805,7 +810,12 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario_id": 1,
+  "usuario": {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com"
+  },
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
@@ -815,6 +825,7 @@ imagen: [archivo de imagen]
 **Notas:**
 - El usuarioId es obligatorio y debe corresponder a un usuario existente
 - La fechaNacimiento debe estar en formato YYYY-MM-DD
+- Un usuario solo puede tener un perfil. Si intenta crear otro, se devolverá un error 400 Bad Request
 - Para la imagen:
   - Tipos permitidos: jpg, jpeg, png, gif
   - Tamaño máximo: 10MB
@@ -829,7 +840,12 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario_id": 1,
+  "usuario": {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com"
+  },
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
@@ -861,7 +877,12 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario_id": 1,
+  "usuario": {
+    "id": 1,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com"
+  },
   "descripcion": "Amante de los animales y la naturaleza",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nueva-imagen.jpg"
