@@ -17,7 +17,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Permite solicitudes CORS en todas las rutas (/**)
                         .allowedOrigins("*") // Permite todas las fuentes (orígenes) para acceder a los recursos
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Permite estos métodos HTTP para solicitudes CORS
+                        .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS") // Permite estos métodos HTTP para solicitudes CORS
                         .allowedHeaders("*"); // Permite todos los encabezados en las solicitudes CORS
             }
         };
