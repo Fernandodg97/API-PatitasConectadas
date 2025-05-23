@@ -10,7 +10,7 @@ public class ValoracionModelDtoRequest {
     
     private Long receptorId;
     
-    private String puntuacion;
+    private Integer puntuacion;
     
     private String contenido;
     
@@ -42,11 +42,11 @@ public class ValoracionModelDtoRequest {
         this.receptorId = receptorId;
     }
     
-    public String getPuntuacion() {
+    public Integer getPuntuacion() {
         return puntuacion;
     }
     
-    public void setPuntuacion(String puntuacion) {
+    public void setPuntuacion(Integer puntuacion) {
         this.puntuacion = puntuacion;
     }
     

@@ -12,7 +12,7 @@ public class ValoracionModelDtoResponse {
     private Long receptorId;
     private String nombreReceptor;
     private String apellidoReceptor;
-    private String puntuacion;
+    private Integer puntuacion;
     private String contenido;
     private LocalDateTime fecha;
     private LocalDateTime createdAt;
@@ -96,11 +96,11 @@ public class ValoracionModelDtoResponse {
         this.apellidoReceptor = apellidoReceptor;
     }
     
-    public String getPuntuacion() {
+    public Integer getPuntuacion() {
         return puntuacion;
     }
     
-    public void setPuntuacion(String puntuacion) {
+    public void setPuntuacion(Integer puntuacion) {
         this.puntuacion = puntuacion;
     }
     

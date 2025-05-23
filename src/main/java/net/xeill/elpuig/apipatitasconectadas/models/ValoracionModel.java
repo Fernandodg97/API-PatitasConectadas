@@ -29,7 +29,7 @@ public class ValoracionModel {
 
     @Column(nullable = false)
     @Min(1) @Max(5) // Si es una puntuación de 1 a 5
-    private String puntuacion;
+    private Integer puntuacion;
 
     @Column(nullable = false)
     @Size(message = "El contenido es obligatoria")
@@ -72,11 +72,11 @@ public class ValoracionModel {
         this.receptor = receptor;
     }
 
-    public String getPuntuacion() {
+    public Integer getPuntuacion() {
         return puntuacion;
     }
 
-    public void setPuntuacion(String puntuacion) {
+    public void setPuntuacion(Integer puntuacion) {
         this.puntuacion = puntuacion;
     }
 
