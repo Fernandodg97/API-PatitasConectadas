@@ -1545,6 +1545,32 @@ imagen: [nuevo archivo de imagen]
 - Si el usuario no existe, se devolverá un error 404 Not Found
 - La contraseña no se devuelve en la respuesta por seguridad
 
+### `POST /usuarios/restablecer-contrasena`
+**Descripción:** Restablece la contraseña de un usuario.
+
+**Ejemplo Request:**
+```json
+{
+  "email": "usuario@ejemplo.com",
+  "nuevaContrasena": "nueva_contraseña"
+}
+```
+
+**Ejemplo Response:**
+```json
+{
+  "mensaje": "Contraseña actualizada exitosamente"
+}
+```
+
+**Notas:**
+- El email y la nueva contraseña son obligatorios
+- La nueva contraseña debe tener al menos 8 caracteres
+- Si el email no existe, se devolverá un error 400 Bad Request
+- Si la contraseña no cumple con los requisitos mínimos, se devolverá un error 400 Bad Request
+- La nueva contraseña no puede ser igual a la contraseña actual
+- Si ocurre un error interno, se devolverá un error 500 Internal Server Error
+
 ## 13. Usuario-Comentario
 
 ### `GET /usuario-comentario`
