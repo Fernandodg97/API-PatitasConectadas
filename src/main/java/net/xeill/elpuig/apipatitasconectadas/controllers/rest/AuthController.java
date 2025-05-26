@@ -62,12 +62,15 @@ public class AuthController {
             );
             
             UserModel user = (UserModel) result.get("user");
+            String token = (String) result.get("token");
+            
             AuthDtoResponse response = new AuthDtoResponse(
                 user.getId(),
                 user.getNombre(),
                 user.getApellido(),
                 user.getEmail()
             );
+            response.setToken(token);
             
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
