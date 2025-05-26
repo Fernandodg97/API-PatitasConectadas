@@ -1,6 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.dto;
 
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
+import java.util.Date;
 
 public class MascotaModelDtoRequest {
     
@@ -10,14 +11,22 @@ public class MascotaModelDtoRequest {
     
     private String genero;
     
-    private String raza;
+    private String especie;
+    
+    private String foto;
+    
+    private String fechaNacimiento;
     
     public MascotaModel toDomain() {
         MascotaModel mascota = new MascotaModel();
         mascota.setUsuarioId(this.usuarioId);
         mascota.setNombre(this.nombre);
         mascota.setGenero(this.genero);
-        mascota.setRaza(this.raza);
+        mascota.setEspecie(this.especie);
+        mascota.setFoto(this.foto);
+        if (this.fechaNacimiento != null && !this.fechaNacimiento.isEmpty()) {
+            mascota.setFechaNacimiento(new Date(this.fechaNacimiento));
+        }
         return mascota;
     }
     
@@ -45,11 +54,27 @@ public class MascotaModelDtoRequest {
         this.genero = genero;
     }
     
-    public String getRaza() {
-        return raza;
+    public String getEspecie() {
+        return especie;
     }
     
-    public void setRaza(String raza) {
-        this.raza = raza;
+    public void setEspecie(String especie) {
+        this.especie = especie;
+    }
+    
+    public String getFoto() {
+        return foto;
+    }
+    
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+    
+    public String getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+    
+    public void setFechaNacimiento(String fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 } 

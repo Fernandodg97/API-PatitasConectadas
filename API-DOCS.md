@@ -20,11 +20,11 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 13. [Seguidos](#13-seguidos)
 14. [Valoraciones](#14-valoraciones)
 15. [Relaciones](#15-relaciones)
-    - [Usuario-Comentario](#usuario-comentario)
-    - [Usuario-Evento](#usuario-evento)
-    - [Usuario-Grupo](#usuario-grupo)
-    - [Usuario-Post](#usuario-post)
-    - [Usuario-Interacción](#usuario-interacción)
+    - [Usuario-Comentario](#151-usuario-comentario)
+    - [Usuario-Evento](#152-usuario-evento)
+    - [Usuario-Grupo](#153-usuario-grupo)
+    - [Usuario-Post](#154-usuario-post)
+    - [Usuario-Interacción](#155-usuario-interacción)
 
 ## 1. Introducción
 
@@ -418,12 +418,7 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario": {
-    "id": 1,
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "email": "juan@ejemplo.com"
-  },
+  "usuario_id": 1,
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
@@ -440,6 +435,7 @@ imagen: [archivo de imagen]
   - Se almacena en `uploads/perfiles/YYYY/MM/`
   - Las URLs son accesibles vía `/uploads/perfiles/YYYY/MM/nombre-archivo`
 - Si ocurre un error al crear el perfil, se devolverá un error 500 Internal Server Error
+- La respuesta incluye el ID del perfil, el ID del usuario, la descripción, la fecha de nacimiento y la ruta de la imagen
 
 ### `GET /usuarios/{id}/perfiles`
 **Descripción:** Obtiene el perfil asociado a un usuario específico.
@@ -448,12 +444,7 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario": {
-    "id": 1,
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "email": "juan@ejemplo.com"
-  },
+  "usuario_id": 1,
   "descripcion": "Amante de los animales",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nombre-archivo.jpg"
@@ -463,6 +454,7 @@ imagen: [archivo de imagen]
 **Notas:**
 - Si el perfil no existe, se devolverá un error 404 Not Found
 - Si ocurre un error al obtener el perfil, se devolverá un error 500 Internal Server Error
+- La respuesta incluye el ID del perfil, el ID del usuario, la descripción, la fecha de nacimiento y la ruta de la imagen
 
 ### `PUT /usuarios/{id}/perfiles`
 **Descripción:** Actualiza el perfil de un usuario específico con imagen opcional.
@@ -485,12 +477,7 @@ imagen: [archivo de imagen]
 ```json
 {
   "id": 1,
-  "usuario": {
-    "id": 1,
-    "nombre": "Juan",
-    "apellido": "Pérez",
-    "email": "juan@ejemplo.com"
-  },
+  "usuario_id": 1,
   "descripcion": "Amante de los animales y la naturaleza",
   "fecha_nacimiento": "1990-01-01",
   "img": "/uploads/perfiles/2024/03/nueva-imagen.jpg"
@@ -506,6 +493,7 @@ imagen: [archivo de imagen]
   - Al actualizar con nueva imagen, la anterior se elimina automáticamente
   - Se almacena en `uploads/perfiles/YYYY/MM/`
   - Las URLs son accesibles vía `/uploads/perfiles/YYYY/MM/nombre-archivo`
+- La respuesta incluye el ID del perfil, el ID del usuario, la descripción, la fecha de nacimiento y la ruta de la imagen actualizada
 
 ### `DELETE /usuarios/{id}/perfiles`
 **Descripción:** Elimina el perfil de un usuario específico y su imagen asociada.
@@ -755,8 +743,8 @@ imagen: [nuevo archivo de imagen]
 
 **Ejemplo Response:**
 ```json
-{
-  "id": 1,
+  {
+    "id": 1,
   "grupoId": 1,
   "nombreGrupo": "Amantes de los Perros",
   "creadorId": 1,
@@ -765,7 +753,7 @@ imagen: [nuevo archivo de imagen]
   "contenido": "¡Actualización: Mi perrito ya está adaptado!",
   "fecha": "2024-03-20T16:30:00",
   "img": "https://ejemplo.com/nueva-imagen.jpg",
-  "createdAt": "2024-03-20T15:30:00",
+    "createdAt": "2024-03-20T15:30:00",
   "updatedAt": "2024-03-20T16:30:00",
   "comentarios": [
     {
@@ -1316,7 +1304,8 @@ Status: 204 No Content
     "usuarioId": 1,
     "nombre": "Toby",
     "genero": "Macho",
-    "raza": "Labrador"
+    "especie": "Labrador",
+    "foto": "/uploads/mascotas/2024/03/toby-123456.jpg"
   }
 ]
 ```
@@ -1324,17 +1313,25 @@ Status: 204 No Content
 **Notas:**
 - Si el usuario no existe, se devolverá un error 400 Bad Request
 - Si el usuario no tiene mascotas, se devolverá una lista vacía
+- La foto es opcional y puede ser null
 
 ### `POST /usuarios/{usuarioId}/mascotas`
 **Descripción:** Crea una nueva mascota asociada a un usuario específico.
 
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Toby",
-  "genero": "Macho",
-  "raza": "Labrador"
-}
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- nombre: string (requerido)
+- genero: string (requerido)
+- especie: string (requerido)
+- imagen: file (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+nombre: "Toby"
+genero: "Macho"
+especie: "Labrador"
+imagen: [archivo de imagen]
 ```
 
 **Ejemplo Response:**
@@ -1344,15 +1341,22 @@ Status: 204 No Content
   "usuarioId": 1,
   "nombre": "Toby",
   "genero": "Macho",
-  "raza": "Labrador"
+  "especie": "Labrador",
+  "foto": "/uploads/mascotas/2024/03/toby-123456.jpg"
 }
 ```
 
 **Notas:**
-- El nombre, género y raza son campos obligatorios
+- El nombre, género y especie son campos obligatorios
 - El género debe tener un máximo de 10 caracteres
-- El nombre y la raza deben tener un máximo de 50 caracteres
+- El nombre y la especie deben tener un máximo de 50 caracteres
 - Si el usuario no existe, se devolverá un error 400 Bad Request
+- Para la imagen:
+  - Tipos permitidos: jpg, jpeg, png, gif
+  - Tamaño máximo: 5MB
+  - Se almacena en `uploads/mascotas/YYYY/MM/`
+  - Las URLs son accesibles vía `/uploads/mascotas/YYYY/MM/nombre-archivo`
+  - La imagen es opcional
 
 ### `GET /usuarios/{usuarioId}/mascotas/{mascotaId}`
 **Descripción:** Obtiene una mascota específica de un usuario por su ID.
@@ -1364,7 +1368,8 @@ Status: 204 No Content
   "usuarioId": 1,
   "nombre": "Toby",
   "genero": "Macho",
-  "raza": "Labrador"
+  "especie": "Labrador",
+  "foto": "/uploads/mascotas/2024/03/toby-123456.jpg"
 }
 ```
 
@@ -1374,13 +1379,20 @@ Status: 204 No Content
 ### `PUT /usuarios/{usuarioId}/mascotas/{mascotaId}`
 **Descripción:** Actualiza una mascota específica de un usuario.
 
-**Ejemplo Request:**
-```json
-{
-  "nombre": "Toby",
-  "genero": "Macho",
-  "raza": "Labrador Retriever"
-}
+**Content-Type:** multipart/form-data
+
+**Parámetros:**
+- nombre: string (requerido)
+- genero: string (requerido)
+- especie: string (requerido)
+- imagen: file (opcional)
+
+**Ejemplo Request (multipart/form-data):**
+```
+nombre: "Toby"
+genero: "Macho"
+especie: "Labrador Retriever"
+imagen: [nuevo archivo de imagen]
 ```
 
 **Ejemplo Response:**
@@ -1390,15 +1402,23 @@ Status: 204 No Content
   "usuarioId": 1,
   "nombre": "Toby",
   "genero": "Macho",
-  "raza": "Labrador Retriever"
+  "especie": "Labrador Retriever",
+  "foto": "/uploads/mascotas/2024/03/nueva-imagen-789012.jpg"
 }
 ```
 
 **Notas:**
 - Si la mascota no existe o no pertenece al usuario, se devolverá un error 404 Not Found
-- El nombre, género y raza son campos obligatorios
+- El nombre, género y especie son campos obligatorios
 - El género debe tener un máximo de 10 caracteres
-- El nombre y la raza deben tener un máximo de 50 caracteres
+- El nombre y la especie deben tener un máximo de 50 caracteres
+- Para la imagen:
+  - Tipos permitidos: jpg, jpeg, png, gif
+  - Tamaño máximo: 5MB
+  - Al actualizar con nueva imagen, la anterior se elimina automáticamente
+  - Se almacena en `uploads/mascotas/YYYY/MM/`
+  - Las URLs son accesibles vía `/uploads/mascotas/YYYY/MM/nombre-archivo`
+  - La imagen es opcional
 
 ### `DELETE /usuarios/{usuarioId}/mascotas/{mascotaId}`
 **Descripción:** Elimina una mascota específica de un usuario.
@@ -1413,6 +1433,7 @@ Status: 204 No Content
 **Notas:**
 - Si la mascota no existe o no pertenece al usuario, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un mensaje de confirmación
+- La imagen asociada a la mascota se elimina automáticamente del sistema de archivos
 
 ## 12. Notificaciones
 
@@ -1630,8 +1651,8 @@ Status: 204 No Content
 
 **Ejemplo Response:**
 ```json
-{
-  "id": 1,
+  {
+    "id": 1,
   "autorId": 1,
   "nombreAutor": "Juan",
   "apellidoAutor": "Pérez",
@@ -1743,8 +1764,8 @@ Status: 204 No Content
 **Ejemplo Response:**
 ```json
 [
-  {
-    "id": 1,
+{
+  "id": 1,
     "autorId": 1,
     "nombreAutor": "Juan",
     "apellidoAutor": "Pérez",
@@ -1792,6 +1813,8 @@ Status: 204 No Content
 - Si el usuario no tiene valoraciones emitidas, se devolverá una lista vacía
 
 ## 15. Relaciones
+
+### 15.1. Usuario-Comentario
 
 ### `GET /usuario-comentario`
 **Descripción:** Obtiene todas las relaciones entre usuarios y comentarios.
@@ -2007,6 +2030,8 @@ Status: 204 No Content
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si el post no tiene relaciones, se devolverá una lista vacía
 
+### 15.2. Usuario-Evento
+
 ### `GET /usuario-evento`
 **Descripción:** Obtiene todas las relaciones entre usuarios y eventos.
 
@@ -2176,7 +2201,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-## 16. Usuario-Grupo
+### 15.3. Usuario-Grupo
 
 ### `GET /usuario-grupo`
 **Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
@@ -2387,7 +2412,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si el usuario o el grupo no existen, se devolverá un error 404 Not Found
 
-## 17. Usuario-Post
+### 15.4. Usuario-Post
 
 ### `GET /usuario-post`
 **Descripción:** Obtiene todas las relaciones entre usuarios y posts.
@@ -2544,7 +2569,7 @@ Status: 204 No Content
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-## 18. Usuario-Interacción
+### 15.5. Usuario-Interacción
 
 ### `GET /usuario-interaccion`
 **Descripción:** Obtiene todas las relaciones entre usuarios y comentarios/posts.
@@ -2771,3 +2796,75 @@ Status: 204 No Content
 **Notas:**
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
+
+### Mascotas
+
+#### POST /mascotas
+Crea una nueva mascota.
+
+**Parámetros:**
+- `nombre` (string, requerido): Nombre de la mascota
+- `genero` (string, requerido): Género de la mascota (Macho/Hembra)
+- `especie` (string, requerido): Especie de la mascota
+- `usuarioId` (number, requerido): ID del usuario propietario
+- `fechaNacimiento` (string, opcional): Fecha de nacimiento de la mascota en formato YYYY-MM-DD
+- `foto` (file, opcional): Foto de la mascota
+
+**Respuesta:**
+```json
+{
+  "id": 1,
+  "nombre": "Nombre de la mascota",
+  "genero": "Macho",
+  "especie": "Perro",
+  "usuarioId": 1,
+  "fechaNacimiento": "2020-01-01",
+  "foto": "/uploads/mascotas/nombre-archivo.jpg"
+}
+```
+
+#### PUT /mascotas/{id}
+Actualiza una mascota existente.
+
+**Parámetros:**
+- `nombre` (string, requerido): Nombre de la mascota
+- `genero` (string, requerido): Género de la mascota (Macho/Hembra)
+- `especie` (string, requerido): Especie de la mascota
+- `fechaNacimiento` (string, opcional): Fecha de nacimiento de la mascota en formato YYYY-MM-DD
+- `foto` (file, opcional): Foto de la mascota
+
+**Respuesta:**
+```json
+{
+  "id": 1,
+  "nombre": "Nombre actualizado",
+  "genero": "Hembra",
+  "especie": "Gato",
+  "usuarioId": 1,
+  "fechaNacimiento": "2021-02-15",
+  "foto": "/uploads/mascotas/nuevo-archivo.jpg"
+}
+```
+
+#### GET /mascotas/{id}
+Obtiene una mascota específica.
+
+**Respuesta:**
+```json
+{
+  "id": 1,
+  "nombre": "Nombre de la mascota",
+  "genero": "Macho",
+  "especie": "Perro",
+  "usuarioId": 1,
+  "fechaNacimiento": "2020-01-01",
+  "foto": "/uploads/mascotas/nombre-archivo.jpg"
+}
+```
+
+#### DELETE /mascotas/{id}
+Elimina una mascota específica.
+
+**Respuesta:**
+- 204 No Content si la eliminación fue exitosa
+- 404 Not Found si la mascota no existe

@@ -18,7 +18,7 @@ public class FileStorageService {
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
 
-    public String storeFile(MultipartFile file) throws IOException {
+    public String storeFile(MultipartFile file, String type) throws IOException {
         // Validar el archivo
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("El archivo está vacío");
@@ -31,7 +31,7 @@ public class FileStorageService {
         }
 
         // Crear el directorio si no existe
-        Path uploadPath = Paths.get(uploadDir, "posts", getCurrentYearMonth());
+        Path uploadPath = Paths.get(uploadDir, type, getCurrentYearMonth());
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -46,7 +46,11 @@ public class FileStorageService {
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
         // Devolver la ruta relativa del archivo
-        return "posts/" + getCurrentYearMonth() + "/" + newFilename;
+        return type + "/" + getCurrentYearMonth() + "/" + newFilename;
+    }
+
+    public String storeFile(MultipartFile file) throws IOException {
+        return storeFile(file, "posts");
     }
 
     private String getCurrentYearMonth() {

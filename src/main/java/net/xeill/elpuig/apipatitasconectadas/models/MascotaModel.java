@@ -1,6 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.models;
 
 import jakarta.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "mascota")
@@ -24,9 +25,18 @@ public class MascotaModel {
     @Column(length = 10, nullable = false)
     private String genero;
 
-    // Raza de la mascota
+    // Especie de la mascota (cambiado de Raza)
     @Column(length = 50, nullable = false)
-    private String raza;
+    private String especie;
+
+    // Ruta de la foto de la mascota
+    @Column(name = "foto")
+    private String foto;
+
+    // Fecha de nacimiento de la mascota
+    @Column(name = "fecha_nacimiento")
+    @Temporal(TemporalType.DATE)
+    private Date fechaNacimiento;
 
     // Getters y Setters
 
@@ -62,11 +72,27 @@ public class MascotaModel {
         this.genero = genero;
     }
 
-    public String getRaza() {
-        return raza;
+    public String getEspecie() {
+        return especie;
     }
 
-    public void setRaza(String raza) {
-        this.raza = raza;
+    public void setEspecie(String especie) {
+        this.especie = especie;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 }

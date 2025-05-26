@@ -2,12 +2,18 @@ package net.xeill.elpuig.apipatitasconectadas.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
 import net.xeill.elpuig.apipatitasconectadas.repositories.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Servicio que gestiona las operaciones relacionadas con las mascotas de los usuarios.
@@ -19,6 +25,18 @@ public class MascotaService {
 
     @Autowired
     MascotaRepository mascotaRepository;
+
+    private final Path rootLocation = Paths.get("uploads/mascotas");
+
+    public MascotaService() {
+        try {
+            if (!Files.exists(rootLocation)) {
+                Files.createDirectories(rootLocation);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("No se pudo crear el directorio para las fotos de mascotas", e);
+        }
+    }
 
     /**
      * Obtiene todas las mascotas asociadas a un usuario específico.
@@ -63,7 +81,8 @@ public class MascotaService {
             MascotaModel mascota = optionalMascota.get();
             mascota.setNombre(request.getNombre());
             mascota.setGenero(request.getGenero());
-            mascota.setRaza(request.getRaza());
+            mascota.setEspecie(request.getEspecie());
+            mascota.setFoto(request.getFoto());
             return mascotaRepository.save(mascota);
         } else {
             throw new RuntimeException("Mascota no encontrada con ID: " + id + " para el usuario con ID: " + usuarioId);
@@ -83,5 +102,38 @@ public class MascotaService {
             return true;
         }
         return false;
+    }
+
+    public String saveFoto(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new RuntimeException("No se puede guardar un archivo vacío");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String newFilename = UUID.randomUUID().toString() + extension;
+
+        Path targetLocation = rootLocation.resolve(newFilename);
+        Files.copy(file.getInputStream(), targetLocation);
+
+        return "/uploads/mascotas/" + newFilename;
+    }
+
+    public void delete(Long id) {
+        Optional<MascotaModel> mascota = getByIdAndUsuarioId(id, null);
+        if (mascota.isPresent()) {
+            // Eliminar la foto si existe
+            String fotoPath = mascota.get().getFoto();
+            if (fotoPath != null && !fotoPath.isEmpty()) {
+                try {
+                    Path filePath = Paths.get(fotoPath.substring(1)); // Eliminar el primer slash
+                    Files.deleteIfExists(filePath);
+                } catch (IOException e) {
+                    // Log el error pero continuar con la eliminación de la mascota
+                    System.err.println("Error al eliminar la foto: " + e.getMessage());
+                }
+            }
+            mascotaRepository.deleteById(id);
+        }
     }
 }

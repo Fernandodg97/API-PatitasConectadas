@@ -1,5 +1,7 @@
 package net.xeill.elpuig.apipatitasconectadas.controllers.rest;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -7,13 +9,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.MascotaModelDtoRequest;
 import net.xeill.elpuig.apipatitasconectadas.controllers.dto.MascotaModelDtoResponse;
 import net.xeill.elpuig.apipatitasconectadas.models.MascotaModel;
 import net.xeill.elpuig.apipatitasconectadas.services.MascotaService;
+import net.xeill.elpuig.apipatitasconectadas.services.FileStorageService;
 
 /**
  * Controlador REST para gestionar operaciones relacionadas con mascotas de usuarios.
@@ -28,6 +33,9 @@ public class MascotaController {
 
     @Autowired
     private MascotaService mascotaService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     /**
      * Obtiene todas las mascotas asociadas a un usuario específico
@@ -50,17 +58,41 @@ public class MascotaController {
     /**
      * Crea una nueva mascota asociada a un usuario específico
      * @param usuarioId ID del usuario al que se asociará la mascota
-     * @param mascotaDto Datos de la mascota en formato DTO
+     * @param nombre Nombre de la mascota
+     * @param genero Género de la mascota
+     * @param especie Especie de la mascota
+     * @param fechaNacimiento Nueva fecha de nacimiento de la mascota
+     * @param imagen Nueva imagen de la mascota
      * @return ResponseEntity con la mascota creada o mensaje de error
      */
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveMascota(
             @PathVariable("usuarioId") Long usuarioId, 
-            @RequestBody MascotaModelDtoRequest mascotaDto) {
+            @RequestParam("nombre") String nombre,
+            @RequestParam("genero") String genero,
+            @RequestParam("especie") String especie,
+            @RequestParam(value = "fechaNacimiento", required = false) String fechaNacimiento,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
-            // Convertir DTO a modelo
-            MascotaModel mascota = mascotaDto.toDomain();
-            mascota.setUsuarioId(usuarioId); // Aseguramos que se asigne el ID del usuario
+            // Crear el modelo de mascota
+            MascotaModel mascota = new MascotaModel();
+            mascota.setUsuarioId(usuarioId);
+            mascota.setNombre(nombre);
+            mascota.setGenero(genero);
+            mascota.setEspecie(especie);
+
+            // Establecer fecha de nacimiento si se proporciona
+            if (fechaNacimiento != null && !fechaNacimiento.isEmpty()) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date fecha = formatter.parse(fechaNacimiento);
+                mascota.setFechaNacimiento(fecha);
+            }
+
+            // Si hay imagen, guardarla
+            if (imagen != null && !imagen.isEmpty()) {
+                String fotoPath = fileStorageService.storeFile(imagen, "mascotas");
+                mascota.setFoto(fotoPath);
+            }
             
             // Guardar mascota
             MascotaModel saved = mascotaService.saveMascota(mascota);
@@ -104,31 +136,67 @@ public class MascotaController {
      * Actualiza una mascota específica de un usuario
      * @param usuarioId ID del usuario propietario de la mascota
      * @param mascotaId ID de la mascota a actualizar
-     * @param mascotaDto Datos actualizados de la mascota
+     * @param nombre Nombre actualizado de la mascota
+     * @param genero Género actualizado de la mascota
+     * @param especie Especie actualizada de la mascota
+     * @param fechaNacimiento Nueva fecha de nacimiento de la mascota
+     * @param imagen Nueva imagen de la mascota
      * @return ResponseEntity con la mascota actualizada o mensaje de error
      */
-    @PutMapping("/{mascotaId}")
+    @PutMapping(value = "/{mascotaId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateMascota(
             @PathVariable("usuarioId") Long usuarioId,
             @PathVariable("mascotaId") Long mascotaId,
-            @RequestBody MascotaModelDtoRequest mascotaDto) {
+            @RequestParam("nombre") String nombre,
+            @RequestParam("genero") String genero,
+            @RequestParam("especie") String especie,
+            @RequestParam(value = "fechaNacimiento", required = false) String fechaNacimiento,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen) {
         try {
-            // Convertir DTO a modelo
-            MascotaModel mascota = mascotaDto.toDomain();
-            mascota.setUsuarioId(usuarioId);
+            // Obtener la mascota existente
+            Optional<MascotaModel> optionalMascota = mascotaService.getByIdAndUsuarioId(mascotaId, usuarioId);
             
-            // Actualizar mascota
-            MascotaModel updated = mascotaService.updateByIdAndUsuarioId(mascota, mascotaId, usuarioId);
+            if (optionalMascota.isPresent()) {
+                MascotaModel mascota = optionalMascota.get();
+                mascota.setNombre(nombre);
+                mascota.setGenero(genero);
+                mascota.setEspecie(especie);
+
+                // Actualizar fecha de nacimiento si se proporciona
+                if (fechaNacimiento != null && !fechaNacimiento.isEmpty()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    Date fecha = formatter.parse(fechaNacimiento);
+                    mascota.setFechaNacimiento(fecha);
+                }
+
+                // Si hay nueva imagen, guardarla
+                if (imagen != null && !imagen.isEmpty()) {
+                    // Eliminar la imagen anterior si existe
+                    if (mascota.getFoto() != null) {
+                        try {
+                            fileStorageService.deleteFile(mascota.getFoto());
+                        } catch (Exception e) {
+                            // Solo loguear el error, no interrumpir el proceso
+                            System.err.println("Error al eliminar la imagen anterior: " + e.getMessage());
+                        }
+                    }
+                    String fotoPath = fileStorageService.storeFile(imagen, "mascotas");
+                    mascota.setFoto(fotoPath);
+                }
             
-            // Convertir a DTO para la respuesta
-            MascotaModelDtoResponse response = new MascotaModelDtoResponse(updated);
+                // Actualizar mascota
+                MascotaModel updated = mascotaService.saveMascota(mascota);
             
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.NOT_FOUND);
+                // Convertir a DTO para la respuesta
+                MascotaModelDtoResponse response = new MascotaModelDtoResponse(updated);
+            
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(Map.of("error", "Mascota no encontrada con ID: " + mascotaId), 
+                    HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("error", "Error al actualizar la mascota: " + e.getMessage()), 
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
