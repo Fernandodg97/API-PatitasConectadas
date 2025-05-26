@@ -9,22 +9,21 @@ También puedes acceder a la documentación interactiva de la API en la ruta `/s
 2. [Autenticación (Auth)](#2-autenticación-auth)
 3. [Usuarios](#3-usuarios)
 4. [Perfiles](#4-perfiles)
-5. [Manejo de Imágenes](#5-manejo-de-imágenes)
-6. [Posts](#6-posts)
-7. [Comentarios](#7-comentarios)
-8. [Chat](#8-chat)
-9. [Eventos](#9-eventos)
-10. [Grupos](#10-grupos)
-11. [Mascotas](#11-mascotas)
-12. [Notificaciones](#12-notificaciones)
-13. [Seguidos](#13-seguidos)
-14. [Valoraciones](#14-valoraciones)
-15. [Relaciones](#15-relaciones)
-    - [Usuario-Comentario](#151-usuario-comentario)
-    - [Usuario-Evento](#152-usuario-evento)
-    - [Usuario-Grupo](#153-usuario-grupo)
-    - [Usuario-Post](#154-usuario-post)
-    - [Usuario-Interacción](#155-usuario-interacción)
+5. [Posts](#5-posts)
+6. [Comentarios](#6-comentarios)
+7. [Chat](#7-chat)
+8. [Eventos](#8-eventos)
+9. [Grupos](#9-grupos)
+10. [Mascotas](#10-mascotas)
+11. [Notificaciones](#11-notificaciones)
+12. [Seguidos](#12-seguidos)
+13. [Valoraciones](#13-valoraciones)
+14. [Relaciones](#14-relaciones)
+    - [Usuario-Comentario](#141-usuario-comentario)
+    - [Usuario-Evento](#142-usuario-evento)
+    - [Usuario-Grupo](#143-usuario-grupo)
+    - [Usuario-Post](#144-usuario-post)
+    - [Usuario-Interacción](#145-usuario-interacción)
 
 ## 1. Introducción
 
@@ -510,10 +509,50 @@ imagen: [archivo de imagen]
 - La imagen asociada al perfil se elimina automáticamente
 - Si ocurre un error al eliminar el perfil, se devolverá un error 500 Internal Server Error
 
-## 5. Manejo de Imágenes
+## 5. Posts
+
+### `GET /posts`
+**Descripción:** Obtiene todas las publicaciones con posibilidad de filtrar por contenido o rango de fechas.
+
+**Parámetros Query (opcionales):**
+- contenido: Texto para filtrar por contenido
+- fechaInicio: Fecha inicial para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
+- fechaFin: Fecha final para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
+
+**Ejemplo Response:**
+```json
+[
+  {
+    "id": 1,
+    "grupoId": 1,
+    "nombreGrupo": "Amantes de los Perros",
+    "creadorId": 1,
+    "nombreCreador": "Juan",
+    "apellidoCreador": "Pérez",
+    "contenido": "¡Hoy adopté un nuevo perrito!",
+    "fecha": "2024-03-20T15:30:00",
+    "img": "https://ejemplo.com/imagen.jpg",
+    "createdAt": "2024-03-20T15:30:00",
+    "updatedAt": "2024-03-20T15:30:00",
+    "comentarios": [
+      {
+        "id": 1,
+        "contenido": "¡Felicidades!",
+        "fecha": "2024-03-20T15:35:00"
+      }
+    ]
+  }
+]
+```
+
+**Notas:**
+- Si no se proporcionan filtros, se devuelven todas las publicaciones
+- Si se proporciona contenido, se buscan publicaciones que contengan ese texto
+- Si se proporcionan fechas, se filtran las publicaciones entre esas fechas
+- Las fechas deben estar en formato ISO 8601
 
 ### `POST /posts`
-**Descripción:** Crea una nueva publicación con imagen.
+**Descripción:** Crea una nueva publicación en el sistema.
 
 **Content-Type:** multipart/form-data
 
@@ -616,176 +655,6 @@ imagen: [nuevo archivo de imagen]
 - Si la publicación no existe, se devolverá un error 404 Not Found
 - Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
 
-## 6. Posts
-
-### `GET /posts`
-**Descripción:** Obtiene todas las publicaciones con posibilidad de filtrar por contenido o rango de fechas.
-
-**Parámetros Query (opcionales):**
-- contenido: Texto para filtrar por contenido
-- fechaInicio: Fecha inicial para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
-- fechaFin: Fecha final para filtrar por rango (formato: YYYY-MM-DDThh:mm:ss)
-
-**Ejemplo Response:**
-```json
-[
-  {
-    "id": 1,
-    "grupoId": 1,
-    "nombreGrupo": "Amantes de los Perros",
-    "creadorId": 1,
-    "nombreCreador": "Juan",
-    "apellidoCreador": "Pérez",
-    "contenido": "¡Hoy adopté un nuevo perrito!",
-    "fecha": "2024-03-20T15:30:00",
-    "img": "https://ejemplo.com/imagen.jpg",
-    "createdAt": "2024-03-20T15:30:00",
-    "updatedAt": "2024-03-20T15:30:00",
-    "comentarios": [
-      {
-        "id": 1,
-        "contenido": "¡Felicidades!",
-        "fecha": "2024-03-20T15:35:00"
-      }
-    ]
-  }
-]
-```
-
-**Notas:**
-- Si no se proporcionan filtros, se devuelven todas las publicaciones
-- Si se proporciona contenido, se buscan publicaciones que contengan ese texto
-- Si se proporcionan fechas, se filtran las publicaciones entre esas fechas
-- Las fechas deben estar en formato ISO 8601
-
-### `POST /posts`
-**Descripción:** Crea una nueva publicación en el sistema.
-
-**Ejemplo Request:**
-```json
-{
-  "grupoId": 1,
-  "creadorId": 1,
-  "contenido": "¡Hoy adopté un nuevo perrito!",
-  "fecha": "2024-03-20T15:30:00",
-  "img": "https://ejemplo.com/imagen.jpg"
-}
-```
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "grupoId": 1,
-  "nombreGrupo": "Amantes de los Perros",
-  "creadorId": 1,
-  "nombreCreador": "Juan",
-  "apellidoCreador": "Pérez",
-  "contenido": "¡Hoy adopté un nuevo perrito!",
-  "fecha": "2024-03-20T15:30:00",
-  "img": "https://ejemplo.com/imagen.jpg",
-  "createdAt": "2024-03-20T15:30:00",
-  "updatedAt": "2024-03-20T15:30:00",
-  "comentarios": []
-}
-```
-
-**Notas:**
-- El creadorId es obligatorio y debe corresponder a un usuario existente
-- El grupoId es opcional, pero si se proporciona debe corresponder a un grupo existente
-- El contenido no puede estar vacío y tiene un límite de 255 caracteres
-- La fecha es opcional, si no se proporciona se usará la fecha actual
-- La imagen debe ser una URL válida
-
-### `GET /posts/{id}`
-**Descripción:** Obtiene una publicación específica por su ID.
-
-**Ejemplo Response:**
-```json
-{
-  "id": 1,
-  "grupoId": 1,
-  "nombreGrupo": "Amantes de los Perros",
-  "creadorId": 1,
-  "nombreCreador": "Juan",
-  "apellidoCreador": "Pérez",
-  "contenido": "¡Hoy adopté un nuevo perrito!",
-  "fecha": "2024-03-20T15:30:00",
-  "img": "https://ejemplo.com/imagen.jpg",
-  "createdAt": "2024-03-20T15:30:00",
-  "updatedAt": "2024-03-20T15:30:00",
-  "comentarios": [
-    {
-      "id": 1,
-      "contenido": "¡Felicidades!",
-      "fecha": "2024-03-20T15:35:00"
-    }
-  ]
-}
-```
-
-**Notas:**
-- Si la publicación no existe, se devolverá un error 404 Not Found
-
-### `PUT /posts/{id}`
-**Descripción:** Actualiza una publicación existente.
-
-**Ejemplo Request:**
-```json
-{
-  "grupoId": 1,
-  "creadorId": 1,
-  "contenido": "¡Actualización: Mi perrito ya está adaptado!",
-  "fecha": "2024-03-20T16:30:00",
-  "img": "https://ejemplo.com/nueva-imagen.jpg"
-}
-```
-
-**Ejemplo Response:**
-```json
-  {
-    "id": 1,
-  "grupoId": 1,
-  "nombreGrupo": "Amantes de los Perros",
-  "creadorId": 1,
-  "nombreCreador": "Juan",
-  "apellidoCreador": "Pérez",
-  "contenido": "¡Actualización: Mi perrito ya está adaptado!",
-  "fecha": "2024-03-20T16:30:00",
-  "img": "https://ejemplo.com/nueva-imagen.jpg",
-    "createdAt": "2024-03-20T15:30:00",
-  "updatedAt": "2024-03-20T16:30:00",
-  "comentarios": [
-    {
-      "id": 1,
-      "contenido": "¡Felicidades!",
-      "fecha": "2024-03-20T15:35:00"
-    }
-  ]
-}
-```
-
-**Notas:**
-- Si la publicación no existe, se devolverá un error 404 Not Found
-- El creadorId es obligatorio y debe corresponder a un usuario existente
-- El grupoId es opcional, pero si se proporciona debe corresponder a un grupo existente
-- El contenido no puede estar vacío y tiene un límite de 255 caracteres
-- La imagen debe ser una URL válida
-
-### `DELETE /posts/{id}`
-**Descripción:** Elimina una publicación existente.
-
-**Ejemplo Response:**
-```json
-{
-  "mensaje": "Post eliminado correctamente"
-}
-```
-
-**Notas:**
-- Si la publicación no existe, se devolverá un error 404 Not Found
-- Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
-
 ### `GET /usuarios/{userId}/posts`
 **Descripción:** Obtiene todas las publicaciones realizadas por un usuario específico.
 
@@ -840,7 +709,7 @@ imagen: [nuevo archivo de imagen]
 - Si el grupo no existe, se devolverá un error 404 Not Found
 - Si el grupo no tiene publicaciones, se devolverá una lista vacía
 
-## 7. Comentarios
+## 6. Comentarios
 
 ### `GET /posts/{postId}/comentarios`
 **Descripción:** Obtiene todos los comentarios asociados a una publicación específica.
@@ -954,7 +823,7 @@ imagen: [nuevo archivo de imagen]
 }
 ```
 
-## 8. Chat
+## 7. Chat
 
 ### `POST /chat/enviar`
 **Descripción:** Envía un nuevo mensaje de un usuario a otro.
@@ -1092,7 +961,7 @@ imagen: [nuevo archivo de imagen]
 }
 ```
 
-## 9. Eventos
+## 8. Eventos
 
 ### `GET /eventos`
 **Descripción:** Obtiene todos los eventos existentes en el sistema.
@@ -1205,7 +1074,7 @@ Status: 204 No Content
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 - La eliminación del evento también eliminará todas sus relaciones con usuarios en la tabla usuario_evento
 
-## 10. Grupos
+## 9. Grupos
 
 ### `GET /grupos`
 **Descripción:** Obtiene todos los grupos existentes en el sistema.
@@ -1291,7 +1160,7 @@ Status: 204 No Content
 }
 ```
 
-## 11. Mascotas
+## 10. Mascotas
 
 ### `GET /usuarios/{usuarioId}/mascotas`
 **Descripción:** Obtiene todas las mascotas asociadas a un usuario específico.
@@ -1435,7 +1304,7 @@ imagen: [nuevo archivo de imagen]
 - Si la eliminación es exitosa, se devolverá un mensaje de confirmación
 - La imagen asociada a la mascota se elimina automáticamente del sistema de archivos
 
-## 12. Notificaciones
+## 11. Notificaciones
 
 ### `GET /notificaciones`
 **Descripción:** Obtiene todas las notificaciones existentes en el sistema.
@@ -1531,7 +1400,7 @@ imagen: [nuevo archivo de imagen]
 - Si la notificación no existe, se devolverá un error 404 Not Found
 - Si ocurre un error al eliminar la notificación, se devolverá un error 500 Internal Server Error
 
-## 13. Seguidos
+## 12. Seguidos
 
 ### `GET /usuarios/{usuarioId}/seguidos`
 **Descripción:** Obtiene todos los usuarios que sigue un usuario específico.
@@ -1617,7 +1486,7 @@ imagen: [nuevo archivo de imagen]
 - Si la relación de seguimiento no existe, se devolverá un error 404 Not Found
 - Si ocurre un error al eliminar, se devolverá un error 500 Internal Server Error
 
-## 14. Valoraciones
+## 13. Valoraciones
 
 ### `GET /valoraciones`
 **Descripción:** Obtiene todas las valoraciones existentes en el sistema.
@@ -1812,9 +1681,9 @@ imagen: [nuevo archivo de imagen]
 - Si el usuario no existe, se devolverá un error 400 Bad Request
 - Si el usuario no tiene valoraciones emitidas, se devolverá una lista vacía
 
-## 15. Relaciones
+## 14. Relaciones
 
-### 15.1. Usuario-Comentario
+### 14.1. Usuario-Comentario
 
 ### `GET /usuario-comentario`
 **Descripción:** Obtiene todas las relaciones entre usuarios y comentarios.
@@ -2030,7 +1899,7 @@ Status: 204 No Content
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si el post no tiene relaciones, se devolverá una lista vacía
 
-### 15.2. Usuario-Evento
+### 14.2. Usuario-Evento
 
 ### `GET /usuario-evento`
 **Descripción:** Obtiene todas las relaciones entre usuarios y eventos.
@@ -2201,7 +2070,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-### 15.3. Usuario-Grupo
+### 14.3. Usuario-Grupo
 
 ### `GET /usuario-grupo`
 **Descripción:** Obtiene todas las relaciones entre usuarios y grupos.
@@ -2412,7 +2281,7 @@ Status: 204 No Content
 - Si la relación no existe, se devolverá un error 404 Not Found
 - Si el usuario o el grupo no existen, se devolverá un error 404 Not Found
 
-### 15.4. Usuario-Post
+### 14.4. Usuario-Post
 
 ### `GET /usuario-post`
 **Descripción:** Obtiene todas las relaciones entre usuarios y posts.
@@ -2569,7 +2438,7 @@ Status: 204 No Content
 - Si el post no existe, se devolverá un error 404 Not Found
 - Si la eliminación es exitosa, se devolverá un status 204 sin contenido
 
-### 15.5. Usuario-Interacción
+### 14.5. Usuario-Interacción
 
 ### `GET /usuario-interaccion`
 **Descripción:** Obtiene todas las relaciones entre usuarios y comentarios/posts.
