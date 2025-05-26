@@ -224,8 +224,8 @@ La API de Patitas Conectadas proporciona una interfaz RESTful para gestionar una
 
 **Ejemplo Response:**
 ```json
-{
-  "id": 1,
+  {
+    "id": 1,
   "nombre": "Juan",
   "apellido": "Pérez",
   "email": "juan@ejemplo.com"

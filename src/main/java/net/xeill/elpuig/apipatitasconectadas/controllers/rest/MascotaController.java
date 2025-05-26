@@ -184,13 +184,13 @@ public class MascotaController {
                     mascota.setFoto(fotoPath);
                 }
             
-                // Actualizar mascota
+            // Actualizar mascota
                 MascotaModel updated = mascotaService.saveMascota(mascota);
             
-                // Convertir a DTO para la respuesta
-                MascotaModelDtoResponse response = new MascotaModelDtoResponse(updated);
+            // Convertir a DTO para la respuesta
+            MascotaModelDtoResponse response = new MascotaModelDtoResponse(updated);
             
-                return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(Map.of("error", "Mascota no encontrada con ID: " + mascotaId), 
                     HttpStatus.NOT_FOUND);
