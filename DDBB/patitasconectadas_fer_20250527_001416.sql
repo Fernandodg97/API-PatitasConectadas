@@ -581,6 +581,9 @@ COPY public.grupo (id, nombre, descripcion) FROM stdin;
 
 COPY public.mascota (id, genero, nombre, especie, usuario_id, foto, fecha_nacimiento) FROM stdin;
 1	Macho	Lucas	Pato	1	mascotas/2025/05/b94c5456-8fbf-4ac5-a7f9-c2b2326d60e8.jpg	2025-05-01
+11	Macho	Gato Dev	Gato 	24	mascotas/2025/05/3f2127a3-3e5f-4eec-b1c9-df419036b843.jpeg	2021-04-14
+12	Macho	Perro Programador	Perro	25	mascotas/2025/05/38ab47b2-308c-46f2-9a32-b041deb050fe.jpg	2018-07-24
+13	Macho	Gato IT	Gato	26	mascotas/2025/05/c3bd9746-b72c-4b17-888d-5a8a21a8ba68.jpeg	2017-01-12
 \.
 
 
@@ -599,6 +602,9 @@ COPY public.notificaciones (id, fecha) FROM stdin;
 COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM stdin;
 16	8	Soy un amante de los perros	1990-01-01	posts/2025/05/71b0d7ca-6823-4bda-a1f7-053ec4481bea.jpg
 21	1	Hola, estoy creando esto!!!	1997-03-10	posts/2025/05/1742db55-967b-462d-b584-6da3f028de40.jpg
+22	24	¡Hola, soy Yago Morales!	2018-09-17	posts/2025/05/f131dcd5-9086-4a40-b16f-1ca602b69714.jpeg
+23	25	¡Hola, soy Fernando Porrino!	2024-01-25	posts/2025/05/1aa9de49-fc13-4b03-8b82-a9f72d49a106.jpg
+24	26	¡Hola, soy Luis Elía!	2022-09-21	posts/2025/05/d9186b2b-9b3a-44e0-a016-d5922d0d3d3e.jpg
 3	3	Hola, me llamo Mouad10	2003-07-13	posts/2025/05/9dd45694-5d58-4401-b90d-bad7cf428076.jpeg
 \.
 
@@ -644,6 +650,12 @@ COPY public.seguido (id, usuario_que_es_seguido_id, usuario_que_sigue_id) FROM s
 2	1	3
 3	3	8
 4	1	8
+5	24	26
+6	25	26
+7	26	25
+8	24	25
+9	25	24
+10	26	24
 \.
 
 
@@ -655,6 +667,10 @@ COPY public.usuario (id, nombre, email, password, apellido) FROM stdin;
 8	Prueba	Prueba@ejemplo.com	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	Prueba
 3	Mouad	msedjari@elpuig.xeill.net	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	Sedjari
 1	Fernando	fdiaz1997@gmail.com	$2a$10$7EUeb7fwyxeMNkKpoDqES.DAR.WJKeHaIP3xoXjnFuq6Vu05PtJKO	Diaz
+20	Lucas	ddd@gmail.com	$2a$10$Symuhc2/3qcD0pm16XFjN.aiybNee0SWusRJxfy1UEBB.NVzX3pf6	sada
+24	Yago	yago.morales@elpuig.xeill.net	$2a$10$IingKenPvV298Obpv8TXY.jvAqI34JfSf6V7Ngwq4vSCSG3m66J96	Morales
+25	Fernando	porrino.fernando@elpuig.xeill.net	$2a$10$ExuP.7XV8PFPDxa1cc6BkOs5wejfuf5j2RooOIpFOBP926NI8oeZO	Porrino
+26	 Luis	luis@elpuig.xeill.net	$2a$10$eEmnOv2l6HCWwBGQUqw3Ye5EymZMy7djA2KHpMrGzQ9.L5PJfPPUC	Elía
 \.
 
 
@@ -726,13 +742,8 @@ COPY public.usuario_post (id, fecha, post_id, usuario_id) FROM stdin;
 --
 
 COPY public.valoracion (id, autor_id, receptor_id, puntuacion, contenido, fecha, created_at, updated_at) FROM stdin;
-1	3	1	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-22 23:04:34.965531	2025-05-22 23:04:34.965612
-2	1	3	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-22 23:09:03.548384	2025-05-22 23:09:03.548445
-3	3	1	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-23 03:23:09.524528	2025-05-23 03:23:09.524609
-5	1	3	5	Muy buen cuidador	2025-05-25 21:41:24.357	2025-05-25 23:41:24.479017	2025-05-25 23:41:24.479136
-6	1	3	3	un craCk\n	2025-05-26 05:52:06.487	2025-05-26 07:52:06.538313	2025-05-26 07:52:06.538402
-7	8	3	5	Muy buen cuidador, firulais vino contento!	2025-05-26 16:25:07.681	2025-05-26 18:25:07.747813	2025-05-26 18:25:07.748008
-8	1	3	5	Muy bueno	2025-05-26 16:34:17.58	2025-05-26 18:34:17.637816	2025-05-26 18:34:17.637957
+9	3	1	5	Muy buen cuidador, me mandaba fotos de mi mascota cada dia!	2025-05-26 22:11:16.924	2025-05-27 00:11:17.002232	2025-05-27 00:11:17.002308
+10	1	3	5	Le deje a mi perra y cada vez que lo ve lo quiere saludar. Un trato excelente.	2025-05-26 22:12:11.686	2025-05-27 00:12:11.761797	2025-05-27 00:12:11.761825
 \.
 
 
@@ -740,7 +751,7 @@ COPY public.valoracion (id, autor_id, receptor_id, puntuacion, contenido, fecha,
 -- Name: Usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public."Usuario_id_seq"', 18, true);
+SELECT pg_catalog.setval('public."Usuario_id_seq"', 26, true);
 
 
 --
@@ -775,7 +786,7 @@ SELECT pg_catalog.setval('public.grupo_id_seq', 6, true);
 -- Name: mascota_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.mascota_id_seq', 10, true);
+SELECT pg_catalog.setval('public.mascota_id_seq', 13, true);
 
 
 --
@@ -789,7 +800,7 @@ SELECT pg_catalog.setval('public.notificaciones_id_seq', 1, false);
 -- Name: perfil_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.perfil_id_seq', 21, true);
+SELECT pg_catalog.setval('public.perfil_id_seq', 24, true);
 
 
 --
@@ -803,7 +814,7 @@ SELECT pg_catalog.setval('public.post_id_seq', 54, true);
 -- Name: seguido_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.seguido_id_seq', 4, true);
+SELECT pg_catalog.setval('public.seguido_id_seq', 10, true);
 
 
 --
@@ -831,7 +842,7 @@ SELECT pg_catalog.setval('public.usuario_post_id_seq', 10, true);
 -- Name: valoracion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fernando
 --
 
-SELECT pg_catalog.setval('public.valoracion_id_seq', 8, true);
+SELECT pg_catalog.setval('public.valoracion_id_seq', 10, true);
 
 
 --
