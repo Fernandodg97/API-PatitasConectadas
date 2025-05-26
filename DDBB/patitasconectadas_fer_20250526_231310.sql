@@ -193,8 +193,10 @@ CREATE TABLE public.mascota (
     id bigint NOT NULL,
     genero character varying(10) NOT NULL,
     nombre character varying(50) NOT NULL,
-    raza character varying(50) NOT NULL,
-    usuario_id bigint NOT NULL
+    especie character varying(50) NOT NULL,
+    usuario_id bigint NOT NULL,
+    foto character varying(255),
+    fecha_nacimiento date
 );
 
 
@@ -523,6 +525,11 @@ ALTER TABLE ONLY public.valoracion ALTER COLUMN id SET DEFAULT nextval('public.v
 --
 
 COPY public.chat (id, contenido, created_at, fecha_hora, updated_at, visto, emisor_id, receptor_id) FROM stdin;
+1	Hola maouad!	2025-05-25 23:42:15.005597	2025-05-25 23:42:14.98766	2025-05-26 07:54:19.169168	t	1	3
+2	fsdfs	2025-05-26 07:54:27.566086	2025-05-26 07:54:27.565254	2025-05-26 07:54:34.98071	t	3	1
+3	sdf	2025-05-26 07:54:34.12816	2025-05-26 07:54:34.127198	2025-05-26 07:54:39.121795	t	1	3
+4	kjgk	2025-05-26 07:54:44.640725	2025-05-26 07:54:44.639499	2025-05-26 07:54:44.979202	t	3	1
+5	Hola Mouad	2025-05-26 16:27:01.056161	2025-05-26 16:27:01.012608	2025-05-26 16:27:01.056231	f	1	3
 \.
 
 
@@ -542,6 +549,10 @@ COPY public.comentario (id, contenido, created_at, fecha, img, updated_at, usuar
 37	asdS	2025-05-23 04:04:47.319267	2025-05-23 04:04:47.318283	\N	2025-05-23 04:04:47.319305	1	28
 43	hhs	2025-05-23 12:41:59.925288	2025-05-23 12:41:59.885648	\N	2025-05-23 12:41:59.925379	1	28
 44	jkjhjk	2025-05-23 17:37:38.01085	2025-05-23 17:37:37.966342	\N	2025-05-23 17:37:38.010932	1	40
+45	hj	2025-05-24 18:17:43.277391	2025-05-24 18:17:43.249224	\N	2025-05-24 18:17:43.277496	1	23
+46	jjj	2025-05-24 18:18:21.335365	2025-05-24 18:18:21.334493	\N	2025-05-24 18:18:21.3354	1	5
+47	kkk	2025-05-24 18:18:27.518413	2025-05-24 18:18:27.517481	\N	2025-05-24 18:18:27.518473	1	3
+48	hkjhj	2025-05-26 07:51:26.484932	2025-05-26 07:51:26.364623	\N	2025-05-26 07:51:26.48513	1	23
 \.
 
 
@@ -568,8 +579,8 @@ COPY public.grupo (id, nombre, descripcion) FROM stdin;
 -- Data for Name: mascota; Type: TABLE DATA; Schema: public; Owner: mouad
 --
 
-COPY public.mascota (id, genero, nombre, raza, usuario_id) FROM stdin;
-1	Macho	Lucas	Pato	1
+COPY public.mascota (id, genero, nombre, especie, usuario_id, foto, fecha_nacimiento) FROM stdin;
+1	Macho	Lucas	Pato	1	mascotas/2025/05/b94c5456-8fbf-4ac5-a7f9-c2b2326d60e8.jpg	2025-05-01
 \.
 
 
@@ -587,7 +598,7 @@ COPY public.notificaciones (id, fecha) FROM stdin;
 
 COPY public.perfil (id, usuario_id, descripcion, fecha_nacimiento, img) FROM stdin;
 16	8	Soy un amante de los perros	1990-01-01	posts/2025/05/71b0d7ca-6823-4bda-a1f7-053ec4481bea.jpg
-21	1	Hola, estoy creando esto	1997-03-10	posts/2025/05/1742db55-967b-462d-b584-6da3f028de40.jpg
+21	1	Hola, estoy creando esto!!!	1997-03-10	posts/2025/05/1742db55-967b-462d-b584-6da3f028de40.jpg
 3	3	Hola, me llamo Mouad10	2003-07-13	posts/2025/05/9dd45694-5d58-4401-b90d-bad7cf428076.jpeg
 \.
 
@@ -629,6 +640,10 @@ COPY public.post (id, grupo_id, creador_id, contenido, fecha, img, created_at, u
 --
 
 COPY public.seguido (id, usuario_que_es_seguido_id, usuario_que_sigue_id) FROM stdin;
+1	3	1
+2	1	3
+3	3	8
+4	1	8
 \.
 
 
@@ -638,17 +653,7 @@ COPY public.seguido (id, usuario_que_es_seguido_id, usuario_que_sigue_id) FROM s
 
 COPY public.usuario (id, nombre, email, password, apellido) FROM stdin;
 8	Prueba	Prueba@ejemplo.com	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	Prueba
-6	Mouad	mouad10@gmail.com	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	sedjari
-5	Mouad	mouad@gmail.com	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	sedjari
-4	Test	test@test.com	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	User
 3	Mouad	msedjari@elpuig.xeill.net	$2a$10$qEdrO.My/Z0FSNUm/QC4NODH6wWU.PtPwtwPtskoLdiYGHtE3xfdC	Sedjari
-10	fer	fer@ejemplo.com	$2a$10$ZcMmd6K/1NLPnVE35qAHDuuro9LAMnsY5caj/k7SB99qFTJHzDOVq	fer
-11	yago	yago2@ejemplo.com	$2a$10$ymA1X9.d2t1e4Y36yVQ4meJuKQmMvWrY8UmVu69oIl1wsoOxpQduC	yago
-14	Mouad	mouadtest@gmail.coxm	$2a$10$NuKxOqI7516/vADBy9Ynfut1LYt9Nra6OeWHc1pIHfgKFV.Id0S7K	
-15	Mouad	mouadtest@gmail.com	$2a$10$9KW4D5XG6Tu40hZZbVcJaOPZIFxu5IzAqpSV4njaYzYVe1m5NzfDK	
-16	Luna	Luna@gmail.com	$2a$10$BoFP14JvJPu79JWj0q/L5OPRglvgnSng4Gqb41jfw2BD3I3JaaZpq	Pepito
-17	cristian	ctapasco907@gmail.com	$2a$10$dKAPiDgrZ1.pifA6FAEAP./vRDWJBus3wCc/sWQL0fZyYXAiRwj92	Tapasco
-18	Paco	pacogrande@email.com	$2a$10$3cobaoqtxnTFo/5C3DBNOuuDEoibLFxM5xRtHW77uWjfx7sWT9cxG	Grande
 1	Fernando	fdiaz1997@gmail.com	$2a$10$7EUeb7fwyxeMNkKpoDqES.DAR.WJKeHaIP3xoXjnFuq6Vu05PtJKO	Diaz
 \.
 
@@ -724,7 +729,10 @@ COPY public.valoracion (id, autor_id, receptor_id, puntuacion, contenido, fecha,
 1	3	1	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-22 23:04:34.965531	2025-05-22 23:04:34.965612
 2	1	3	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-22 23:09:03.548384	2025-05-22 23:09:03.548445
 3	3	1	5	Muy responsable y amable con los animales.	2025-04-29 15:30:00	2025-05-23 03:23:09.524528	2025-05-23 03:23:09.524609
-4	3	1	1	Una patata de cuiador 	2025-04-29 15:30:00	2025-05-23 03:24:09.392601	2025-05-23 03:24:09.392638
+5	1	3	5	Muy buen cuidador	2025-05-25 21:41:24.357	2025-05-25 23:41:24.479017	2025-05-25 23:41:24.479136
+6	1	3	3	un craCk\n	2025-05-26 05:52:06.487	2025-05-26 07:52:06.538313	2025-05-26 07:52:06.538402
+7	8	3	5	Muy buen cuidador, firulais vino contento!	2025-05-26 16:25:07.681	2025-05-26 18:25:07.747813	2025-05-26 18:25:07.748008
+8	1	3	5	Muy bueno	2025-05-26 16:34:17.58	2025-05-26 18:34:17.637816	2025-05-26 18:34:17.637957
 \.
 
 
@@ -739,14 +747,14 @@ SELECT pg_catalog.setval('public."Usuario_id_seq"', 18, true);
 -- Name: chat_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.chat_id_seq', 1, false);
+SELECT pg_catalog.setval('public.chat_id_seq', 5, true);
 
 
 --
 -- Name: comentario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.comentario_id_seq', 44, true);
+SELECT pg_catalog.setval('public.comentario_id_seq', 48, true);
 
 
 --
@@ -767,7 +775,7 @@ SELECT pg_catalog.setval('public.grupo_id_seq', 6, true);
 -- Name: mascota_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.mascota_id_seq', 1, true);
+SELECT pg_catalog.setval('public.mascota_id_seq', 10, true);
 
 
 --
@@ -795,7 +803,7 @@ SELECT pg_catalog.setval('public.post_id_seq', 54, true);
 -- Name: seguido_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.seguido_id_seq', 1, false);
+SELECT pg_catalog.setval('public.seguido_id_seq', 4, true);
 
 
 --
@@ -816,14 +824,14 @@ SELECT pg_catalog.setval('public.usuario_grupo_id_seq', 50, true);
 -- Name: usuario_post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mouad
 --
 
-SELECT pg_catalog.setval('public.usuario_post_id_seq', 9, true);
+SELECT pg_catalog.setval('public.usuario_post_id_seq', 10, true);
 
 
 --
 -- Name: valoracion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fernando
 --
 
-SELECT pg_catalog.setval('public.valoracion_id_seq', 4, true);
+SELECT pg_catalog.setval('public.valoracion_id_seq', 8, true);
 
 
 --
